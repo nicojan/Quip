@@ -3,6 +3,25 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.0</title>
+            <pubDate>Mon, 13 Jul 2026 12:16:48 -0700</pubDate>
+            <sparkle:version>3</sparkle:version>
+            <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>New</h3>
+<ul>
+<li>Global hotkey (default ⌘⇧G) opens Quip from any app; change it or turn it off in Settings.</li>
+<li>Right-click the menu-bar icon for Settings and Quit.</li>
+<li>Trending GIFs in the empty view, plus search-term suggestions as you type.</li>
+<li>Search stickers instead of GIFs, and set a content rating.</li>
+<li>Drag a GIF into another app, or ⌥-click to copy its link.</li>
+<li>Filter your favorites once the list grows.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.0/Quip-1.1.0.dmg" length="2603568" type="application/octet-stream" sparkle:edSignature="TgdJr5R/ymZPRiB9svkTWif6EojWqINiW6sdiEqvOxDckj4YykbZa0klNEUj53kNGT4jy4BklnY3C1Sfk9+eDw=="/>
+        </item>
+        <item>
             <title>1.0.0</title>
             <pubDate>Mon, 13 Jul 2026 11:20:22 -0700</pubDate>
             <sparkle:version>1</sparkle:version>
