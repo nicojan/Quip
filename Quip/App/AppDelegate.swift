@@ -1,21 +1,31 @@
 import AppKit
 import SwiftUI
+import Sparkle
 import KeyboardShortcuts
 
-/// Owns the menu-bar status item and the popover. Using AppKit here (rather than
-/// SwiftUI `MenuBarExtra`) so the global hotkey can open the popover
-/// programmatically — `MenuBarExtra` can't be opened in code.
+/// Owns the menu-bar status item, the popover, the Settings window, and the
+/// Sparkle updater. Using AppKit here (rather than SwiftUI `MenuBarExtra` /
+/// `Settings`) so the global hotkey can open the popover and so opening Settings
+/// doesn't depend on the `showSettingsWindow:` responder action, which isn't
+/// reachable in an agent (LSUIElement) app.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private let popover = NSPopover()
+    private var settingsWindow: NSWindow?
+
+    /// Owns the Sparkle updater for the app's lifetime: drives "Check for
+    /// Updates…" and the scheduled background checks (see Info.plist).
+    private let updaterController = SPUStandardUpdaterController(
+        startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "play.square.stack", accessibilityDescription: "Quip")
-            button.action = #selector(togglePopover)
+            button.action = #selector(handleStatusClick)
             button.target = self
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
 
         popover.behavior = .transient
@@ -39,7 +49,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    @objc private func togglePopover() {
+    // Left-click toggles the popover; right-click (or control-click) shows a menu.
+    @objc private func handleStatusClick() {
+        let event = NSApp.currentEvent
+        let isRightClick = event?.type == .rightMouseUp
+            || (event?.modifierFlags.contains(.control) ?? false)
+        if isRightClick {
+            showContextMenu()
+        } else {
+            togglePopover()
+        }
+    }
+
+    private func showContextMenu() {
+        if popover.isShown { popover.performClose(nil) }
+
+        let menu = NSMenu()
+        let settingsItem = NSMenuItem(title: "Settings…", action: #selector(openSettingsFromMenu), keyEquivalent: ",")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+        menu.addItem(.separator())
+        let quitItem = NSMenuItem(title: "Quit Quip", action: #selector(quit), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        // Assign the menu and click to pop it up under the item, then clear it so
+        // the next left-click toggles the popover instead of opening the menu.
+        statusItem.menu = menu
+        statusItem.button?.performClick(nil)
+        statusItem.menu = nil
+    }
+
+    @objc private func openSettingsFromMenu() { openSettings() }
+
+    @objc private func quit() { NSApp.terminate(nil) }
+
+    private func togglePopover() {
         if popover.isShown {
             popover.performClose(nil)
         } else if let button = statusItem.button {
@@ -50,20 +95,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    /// Opens the SwiftUI `Settings` scene from the detached popover, where the
-    /// SwiftUI `SettingsLink`/`openSettings` environment isn't available.
+    /// Shows our own Settings window (created lazily). Reliable in an agent app,
+    /// unlike routing through the SwiftUI Settings scene.
     private func openSettings() {
         popover.performClose(nil)
         NSApp.activate(ignoringOtherApps: true)
-        // Defer so the responder chain settles after the popover closes. Don't
-        // gate on NSApp.responds(to:) — the Settings action lives in the
-        // responder chain (installed by the SwiftUI Settings scene), not on
-        // NSApplication, so responds(to:) is false and would skip the call.
-        // sendAction returns whether it was handled; fall back to the older name.
-        DispatchQueue.main.async {
-            if !NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil) {
-                NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
-            }
+
+        if settingsWindow == nil {
+            let hosting = NSHostingController(
+                rootView: SettingsView(updater: updaterController.updater)
+                    .environment(GifLibrary.shared)
+            )
+            let window = NSWindow(contentViewController: hosting)
+            window.title = "Quip Settings"
+            window.styleMask = [.titled, .closable]
+            window.isReleasedWhenClosed = false
+            window.center()
+            settingsWindow = window
         }
+        settingsWindow?.makeKeyAndOrderFront(nil)
     }
 }
