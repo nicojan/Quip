@@ -105,6 +105,10 @@ struct GiphyClient: Sendable {
     private static func url(path: String, apiKey: String, items: [URLQueryItem]) throws -> URL {
         var components = URLComponents(string: "https://api.giphy.com\(path)")
         components?.queryItems = [URLQueryItem(name: "api_key", value: apiKey)] + items
+        // URLComponents leaves '+' literal in query values, and servers read '+'
+        // as a space — so encode it, or a query like "c++" reaches Giphy as "c  ".
+        let encoded = components?.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+        components?.percentEncodedQuery = encoded
         guard let url = components?.url else { throw GiphyError.badResponse }
         return url
     }

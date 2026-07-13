@@ -52,4 +52,26 @@ final class GifLibraryTests: XCTestCase {
         XCTAssertTrue(second.isFavorite(gif("fav")))
         XCTAssertEqual(second.recents.map(\.id), ["rec"])
     }
+
+    func testFavoritesCapDropsOldest() {
+        let lib = makeLibrary()
+        for i in 0..<(GifLibrary.favoritesLimit + 3) {
+            lib.toggleFavorite(gif("f\(i)"))
+        }
+        XCTAssertEqual(lib.favorites.count, GifLibrary.favoritesLimit)
+        XCTAssertEqual(lib.favorites.first?.id, "f\(GifLibrary.favoritesLimit + 2)") // newest first
+        XCTAssertFalse(lib.favorites.contains { $0.id == "f0" })                      // oldest dropped
+    }
+
+    func testLoadToleratesOneBadRecord() {
+        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
+        let good1: [String: Any] = ["id": "g1", "gifURL": "https://x/1.gif", "previewURL": "https://x/1.gif", "title": ""]
+        let bad: [String: Any] = ["id": "b"]  // missing gifURL — undecodable
+        let good2: [String: Any] = ["id": "g2", "gifURL": "https://x/2.gif", "previewURL": "https://x/2.gif", "title": ""]
+        let data = try! JSONSerialization.data(withJSONObject: [good1, bad, good2])
+        defaults.set(data, forKey: "favoriteGifs")
+
+        let lib = GifLibrary(defaults: defaults)
+        XCTAssertEqual(lib.favorites.map(\.id), ["g1", "g2"])  // bad record skipped, rest survive
+    }
 }

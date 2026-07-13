@@ -14,6 +14,9 @@ final class GifLibrary {
     private(set) var recents: [Gif] = []
 
     static let recentsLimit = 24
+    /// A generous ceiling so favorites don't grow the UserDefaults plist without
+    /// bound. Far above realistic use; the oldest is dropped past this.
+    static let favoritesLimit = 500
 
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private let favoritesKey = "favoriteGifs"
@@ -34,6 +37,9 @@ final class GifLibrary {
             favorites.remove(at: index)
         } else {
             favorites.insert(gif, at: 0)
+            if favorites.count > Self.favoritesLimit {
+                favorites = Array(favorites.prefix(Self.favoritesLimit))
+            }
         }
         save(favorites, favoritesKey)
     }
@@ -65,10 +71,22 @@ final class GifLibrary {
     }
 
     private static func load(_ key: String, from defaults: UserDefaults) -> [Gif] {
-        guard let data = defaults.data(forKey: key),
-              let decoded = try? JSONDecoder().decode([Gif].self, from: data) else {
+        guard let data = defaults.data(forKey: key) else { return [] }
+        // Fast path.
+        if let decoded = try? JSONDecoder().decode([Gif].self, from: data) {
+            return decoded
+        }
+        // Tolerant fallback: decode each element independently so one bad or
+        // outdated record doesn't discard the whole list.
+        guard let rawArray = try? JSONSerialization.jsonObject(with: data) as? [Any] else {
             return []
         }
-        return decoded
+        let decoder = JSONDecoder()
+        return rawArray.compactMap { element in
+            guard let elementData = try? JSONSerialization.data(withJSONObject: element) else {
+                return nil
+            }
+            return try? decoder.decode(Gif.self, from: elementData)
+        }
     }
 }

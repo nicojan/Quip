@@ -20,6 +20,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        TempClips.prepare()   // clear last session's copy/drag temp files
+
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "play.square.stack", accessibilityDescription: "Quip")
@@ -53,6 +55,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func handleStatusClick() {
         let event = NSApp.currentEvent
         let isRightClick = event?.type == .rightMouseUp
+            || event?.type == .rightMouseDown
             || (event?.modifierFlags.contains(.control) ?? false)
         if isRightClick {
             showContextMenu()
@@ -114,5 +117,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             settingsWindow = window
         }
         settingsWindow?.makeKeyAndOrderFront(nil)
+        NotificationCenter.default.post(name: .quipSettingsShown, object: nil)
     }
 }

@@ -31,6 +31,8 @@
 		A87DB63C6C5CA1208378AA76 /* PopoverEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC43E38D0883846EE510BAE /* PopoverEvents.swift */; };
 		B6E3C205794BBDC0CAC012AF /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */; };
 		C05BA03FF020DFD373E12BF1 /* QuipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7D2ACB961493233251651D /* QuipApp.swift */; };
+		DA0629DB3527EBAEACB0C6B9 /* GifCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */; };
+		E89291B978D8DE6B2D32119D /* TempClips.swift in Sources */ = {isa = PBXBuildFile; fileRef = E507AEEF4F8AF976662A154E /* TempClips.swift */; };
 		EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */; };
 		F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A601EAED4E5759F30A405D /* GifLibraryTests.swift */; };
 		F7CA9DF5B5FD1DF007D841D2 /* MenuContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329ED5656C8204B0D481217E /* MenuContentView.swift */; };
@@ -69,8 +71,10 @@
 		BA19FE181D760F4BDA356692 /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
 		C9E1DC6F296F4E8BE7F18ADE /* GifImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifImageCache.swift; sourceTree = "<group>"; };
 		DCE69FCADC29D43ACC52A748 /* RecentSearchesRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchesRow.swift; sourceTree = "<group>"; };
+		E507AEEF4F8AF976662A154E /* TempClips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempClips.swift; sourceTree = "<group>"; };
 		EAC43E38D0883846EE510BAE /* PopoverEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverEvents.swift; sourceTree = "<group>"; };
 		EBFF15A2C60060D053FAEEE9 /* GiphyClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyClient.swift; sourceTree = "<group>"; };
+		F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCodableTests.swift; sourceTree = "<group>"; };
 		F6D011C67D2E1CEA260F227F /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
 		FD662B3C125B123FE10FFC0D /* GifLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifLibrary.swift; sourceTree = "<group>"; };
@@ -146,6 +150,7 @@
 		43D25ED04D49AE171B3F6D45 /* QuipTests */ = {
 			isa = PBXGroup;
 			children = (
+				F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */,
 				42A601EAED4E5759F30A405D /* GifLibraryTests.swift */,
 				8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */,
 			);
@@ -165,6 +170,7 @@
 			children = (
 				EAC43E38D0883846EE510BAE /* PopoverEvents.swift */,
 				86BAEA701E5EE511509170FB /* Shortcuts.swift */,
+				E507AEEF4F8AF976662A154E /* TempClips.swift */,
 				99C83A68E9C8860698D8C44B /* Theme.swift */,
 				FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */,
 			);
@@ -293,6 +299,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA0629DB3527EBAEACB0C6B9 /* GifCodableTests.swift in Sources */,
 				F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */,
 				EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */,
 			);
@@ -320,6 +327,7 @@
 				3B38857BCF6329F14195ACFD /* SearchViewModel.swift in Sources */,
 				090BA255191D69993B6B55DB /* SettingsView.swift in Sources */,
 				647F5462C4DC73977CD4AF50 /* Shortcuts.swift in Sources */,
+				E89291B978D8DE6B2D32119D /* TempClips.swift in Sources */,
 				53857FCF1F6F4BA2DAA30C15 /* Theme.swift in Sources */,
 				468D9C5C270E472712F22B69 /* UpdaterView.swift in Sources */,
 			);

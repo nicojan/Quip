@@ -17,6 +17,10 @@ final class SearchViewModel {
     /// The id of the GIF most recently copied, for a brief "Copied!" overlay on
     /// that thumbnail. Cleared after a short delay.
     var copiedGifID: String?
+    /// The id of a GIF whose copy just failed, for a brief transient overlay.
+    /// Kept separate from `errorMessage` so a copy failure never replaces the
+    /// whole results/library view.
+    var copyFailedGifID: String?
 
     @ObservationIgnored private let client = GiphyClient()
     @ObservationIgnored private let maxRecentSearches = 5
@@ -24,6 +28,7 @@ final class SearchViewModel {
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored private var suggestTask: Task<Void, Never>?
     @ObservationIgnored private var copiedResetTask: Task<Void, Never>?
+    @ObservationIgnored private var copyFailedResetTask: Task<Void, Never>?
 
     init() {
         recentSearches = UserDefaults.standard.stringArray(forKey: recentSearchesKey) ?? []
@@ -114,9 +119,7 @@ final class SearchViewModel {
             guard let self else { return }
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
-                let file = FileManager.default.temporaryDirectory
-                    .appendingPathComponent(UUID().uuidString)
-                    .appendingPathExtension("gif")
+                let file = TempClips.newGifURL()
                 try data.write(to: file)
                 let pasteboard = NSPasteboard.general
                 pasteboard.clearContents()
@@ -124,7 +127,9 @@ final class SearchViewModel {
                 library.addRecent(gif)
                 self.markCopied(gif.id)
             } catch {
-                self.errorMessage = "Couldn't copy that GIF."
+                // Transient, non-destructive — never route through errorMessage,
+                // which gates the whole content region.
+                self.markCopyFailed(gif.id)
             }
         }
     }
@@ -145,6 +150,16 @@ final class SearchViewModel {
             try? await Task.sleep(for: .seconds(1.5))
             guard let self, !Task.isCancelled else { return }
             withAnimation { if self.copiedGifID == id { self.copiedGifID = nil } }
+        }
+    }
+
+    private func markCopyFailed(_ id: String) {
+        withAnimation { copyFailedGifID = id }
+        copyFailedResetTask?.cancel()
+        copyFailedResetTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            guard let self, !Task.isCancelled else { return }
+            withAnimation { if self.copyFailedGifID == id { self.copyFailedGifID = nil } }
         }
     }
 

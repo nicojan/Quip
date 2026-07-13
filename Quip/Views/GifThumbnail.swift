@@ -9,6 +9,7 @@ struct GifThumbnail: View {
     let gif: Gif
     let isFavorite: Bool
     let justCopied: Bool
+    let copyFailed: Bool
     let onCopy: () -> Void
     let onCopyLink: () -> Void
     let onToggleFavorite: () -> Void
@@ -33,6 +34,8 @@ struct GifThumbnail: View {
             .overlay {
                 if justCopied {
                     copiedOverlay
+                } else if copyFailed {
+                    failedOverlay
                 } else if hovering {
                     copyHint
                 }
@@ -66,8 +69,7 @@ struct GifThumbnail: View {
             }
             let task = URLSession.shared.dataTask(with: url) { data, _, error in
                 guard let data else { completion(nil, false, error); return }
-                let file = FileManager.default.temporaryDirectory
-                    .appendingPathComponent(UUID().uuidString).appendingPathExtension("gif")
+                let file = TempClips.newGifURL()
                 do {
                     try data.write(to: file)
                     completion(file, false, nil)
@@ -113,6 +115,20 @@ struct GifThumbnail: View {
                 VStack(spacing: 3) {
                     Image(systemName: "checkmark.circle.fill").font(.title3)
                     Text("Copied!").font(.caption2.weight(.bold))
+                }
+                .foregroundStyle(.white)
+            )
+            .allowsHitTesting(false)
+            .transition(.opacity)
+    }
+
+    private var failedOverlay: some View {
+        RoundedRectangle(cornerRadius: Theme.thumbCorner)
+            .fill(Color.red.opacity(0.82))
+            .overlay(
+                VStack(spacing: 3) {
+                    Image(systemName: "exclamationmark.triangle.fill").font(.title3)
+                    Text("Couldn't copy").font(.caption2.weight(.bold))
                 }
                 .foregroundStyle(.white)
             )

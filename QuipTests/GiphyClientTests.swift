@@ -72,6 +72,14 @@ final class GiphyClientTests: XCTestCase {
         XCTAssertEqual(items["limit"], "6")
     }
 
+    func testPlusInQueryIsPercentEncoded() throws {
+        // URLComponents leaves '+' literal; our builder must encode it so Giphy
+        // doesn't read "c++" as "c  ".
+        let url = try GiphyClient.searchURL(query: "c++", apiKey: "K")
+        XCTAssertTrue(url.absoluteString.contains("c%2B%2B"), url.absoluteString)
+        XCTAssertFalse(url.absoluteString.contains("q=c++"))
+    }
+
     private func queryItems(_ url: URL) -> [String: String] {
         let comps = URLComponents(url: url, resolvingAgainstBaseURL: false)
         return Dictionary(uniqueKeysWithValues: (comps?.queryItems ?? []).map { ($0.name, $0.value ?? "") })

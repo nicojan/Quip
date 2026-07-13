@@ -46,14 +46,20 @@ struct MenuContentView: View {
         .padding(12)
         .frame(width: isCompact ? 640 : 320, height: isCompact ? 470 : 600)
         .background(Theme.surface)
-        .onAppear {
-            focusSearchSoon()
-            vm.loadTrending(apiKey: apiKey, content: content, rating: rating)
-        }
+        .onAppear { refreshOnOpen() }
         .onReceive(NotificationCenter.default.publisher(for: .quipPopoverShown)) { _ in
-            focusSearchSoon()
+            refreshOnOpen()
         }
         .onExitCommand(perform: closePopover)   // Esc closes the popover
+    }
+
+    /// Runs on every popover open (onAppear fires only once because the hosting
+    /// controller is reused, so the notification carries the rest). Focuses the
+    /// field and refreshes trending — which also picks up a key added after first
+    /// open and any rating/stickers change.
+    private func refreshOnOpen() {
+        focusSearchSoon()
+        vm.loadTrending(apiKey: apiKey, content: content, rating: rating)
     }
 
     // MARK: Header
@@ -103,6 +109,7 @@ struct MenuContentView: View {
                 trending: vm.trending,
                 isFavorite: { library.isFavorite($0) },
                 justCopied: { vm.copiedGifID == $0.id },
+                copyFailed: { vm.copyFailedGifID == $0.id },
                 onCopy: copy,
                 onCopyLink: { vm.copyLink($0) },
                 onToggleFavorite: { library.toggleFavorite($0) }
@@ -113,6 +120,7 @@ struct MenuContentView: View {
                 columns: columns,
                 isFavorite: { library.isFavorite($0) },
                 justCopied: { vm.copiedGifID == $0.id },
+                copyFailed: { vm.copyFailedGifID == $0.id },
                 onCopy: copy,
                 onCopyLink: { vm.copyLink($0) },
                 onToggleFavorite: { library.toggleFavorite($0) }
@@ -188,6 +196,10 @@ struct MenuContentView: View {
     }
 
     private func focusSearchSoon() {
+        // Reset first: @FocusState isn't cleared when the popover closes, so
+        // re-assigning true would be a no-op and the field wouldn't regain focus
+        // on reopen. Toggle false → true across a runloop tick.
+        searchFocused = false
         DispatchQueue.main.async { searchFocused = true }
     }
 }

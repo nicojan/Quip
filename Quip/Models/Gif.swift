@@ -15,6 +15,20 @@ struct Gif: Identifiable, Codable, Hashable, Sendable {
         self.title = title
     }
 
+    private enum CodingKeys: String, CodingKey { case id, gifURL, previewURL, title }
+
+    /// Tolerant decode: only `id` and `gifURL` are required; `previewURL` and
+    /// `title` fall back to sensible defaults. Combined with per-element loading
+    /// in `GifLibrary`, this keeps a persisted favorites/recents list from being
+    /// wiped when the schema gains a field or one record is malformed.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        gifURL = try container.decode(String.self, forKey: .gifURL)
+        previewURL = try container.decodeIfPresent(String.self, forKey: .previewURL) ?? gifURL
+        title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
+    }
+
     /// Build from one element of Giphy's search `data[]`. Returns nil if the
     /// shape isn't what we expect, so callers can `compactMap`.
     init?(giphy dict: [String: Any]) {

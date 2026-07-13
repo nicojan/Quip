@@ -88,10 +88,15 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 440, height: 640)
-        .onAppear {
-            startAtLogin = LoginItem.isEnabled
-            refreshCacheSize()
+        .onAppear { refreshWindowState() }
+        .onReceive(NotificationCenter.default.publisher(for: .quipSettingsShown)) { _ in
+            refreshWindowState()
         }
+    }
+
+    private func refreshWindowState() {
+        startAtLogin = LoginItem.isEnabled
+        refreshCacheSize()
     }
 
     private var cacheSizeText: String {
