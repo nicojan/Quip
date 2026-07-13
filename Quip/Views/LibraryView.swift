@@ -26,7 +26,7 @@ struct LibraryView: View {
                         Button("Clear") { library.clearRecents() }
                             .buttonStyle(.plain)
                             .font(.caption)
-                            .foregroundStyle(Theme.accent)
+                            .foregroundStyle(Theme.accentText)
                     }
                     .padding(.top, 4)
                     grid(library.recents)
