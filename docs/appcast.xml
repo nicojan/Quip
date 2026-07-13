@@ -2,11 +2,22 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
         <title>Quip</title>
-        <!--
-          One <item> per release, newest first. Add them by hand per
-          release/DISTRIBUTION.md: enclosure URL points at the GitHub release
-          asset, with sparkle:version (build number), sparkle:shortVersionString,
-          length, and edSignature from `sign_update`.
-        -->
+        <item>
+            <title>1.0.0</title>
+            <pubDate>Mon, 13 Jul 2026 11:20:22 -0700</pubDate>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>First release</h3>
+<ul>
+<li>Search GIFs from the menu bar and copy any of them to the clipboard with a click.</li>
+<li>Bring your own free Giphy key.</li>
+<li>Star the ones you like; Quip keeps the GIFs you've copied and your recent searches close by.</li>
+<li>A narrow and a wide layout, start at login, and automatic updates.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.0.0/Quip-1.0.0.dmg" length="2339456" type="application/octet-stream" sparkle:edSignature="9zAbz3M9rftox4U1WZU14AXmRaW83w1UZCArvbs8qJJgrryKx+sZKOB2ce1ayVtpemQWO/6HCXcUe8XvPTMeCA=="/>
+        </item>
     </channel>
 </rss>
