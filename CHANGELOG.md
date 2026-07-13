@@ -3,6 +3,19 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.1] - 2026-07-13
+
+### Fixed
+
+- A failed copy no longer replaces the whole window with an error; it shows a
+  brief "Couldn't copy" mark on the GIF instead.
+- Trending GIFs now appear after you add your key, and refresh when you change
+  the stickers or rating setting, instead of loading only once.
+- The search field focuses every time you open Quip.
+- Filtering favorites can no longer strand them when the list shrinks.
+- Favorites and recents survive an app update even if their data format changes.
+- Queries with a "+" (like "c++") now search correctly.
+
 ## [1.1.0] - 2026-07-13
 
 ### Added
