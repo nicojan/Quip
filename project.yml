@@ -12,6 +12,9 @@ packages:
   SDWebImageSwiftUI:
     url: https://github.com/SDWebImage/SDWebImageSwiftUI
     majorVersion: 3.1.0
+  SDWebImage:
+    url: https://github.com/SDWebImage/SDWebImage
+    majorVersion: 5.19.0
 
 targets:
   Quip:
@@ -24,12 +27,13 @@ targets:
     dependencies:
       - package: Sparkle
       - package: SDWebImageSwiftUI
+      - package: SDWebImage
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nicojan.Quip
         PRODUCT_NAME: Quip
-        MARKETING_VERSION: "1.0.0"
-        CURRENT_PROJECT_VERSION: "1"
+        MARKETING_VERSION: "1.0.1"
+        CURRENT_PROJECT_VERSION: "2"
         SWIFT_VERSION: "6.0"
         MACOSX_DEPLOYMENT_TARGET: "14.6"
         INFOPLIST_FILE: Quip/Info.plist

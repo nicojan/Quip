@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		090BA255191D69993B6B55DB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ADAE926E78216EC67B516 /* SettingsView.swift */; };
+		0A1DB03A7E4FE9E45940A226 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = BF9785AC963A6D0494EADB84 /* SDWebImage */; };
 		1EF5424DE5E62D26C8B96FA1 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC7C5D217AAF7EECC5D318E /* LibraryView.swift */; };
 		2AFDCE010F9A7AADFD3F0C69 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 547D70D9AEC97B185F195D22 /* Sparkle */; };
 		2B6886FA998CD123C8B74ACC /* GiphyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFF15A2C60060D053FAEEE9 /* GiphyClient.swift */; };
@@ -22,6 +23,7 @@
 		5D26FAA4669502592670C855 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC6B3554A631E6327007F7 /* SearchBar.swift */; };
 		8598B7AA9372E5CE75637129 /* LayoutToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 561B68C798B101F8AA028472 /* LayoutToggle.swift */; };
 		8DCA84714CC1A9315EC32EC7 /* RecentSearchesRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE69FCADC29D43ACC52A748 /* RecentSearchesRow.swift */; };
+		91E68197A4440754F55C63AC /* GifImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E1DC6F296F4E8BE7F18ADE /* GifImageCache.swift */; };
 		A7C0802AE25F752F0BF1B6D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */; };
 		B6E3C205794BBDC0CAC012AF /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */; };
 		C05BA03FF020DFD373E12BF1 /* QuipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7D2ACB961493233251651D /* QuipApp.swift */; };
@@ -59,6 +61,7 @@
 		A20AEE5F8920C4B47860662B /* GifThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifThumbnail.swift; sourceTree = "<group>"; };
 		A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BA19FE181D760F4BDA356692 /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
+		C9E1DC6F296F4E8BE7F18ADE /* GifImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifImageCache.swift; sourceTree = "<group>"; };
 		DCE69FCADC29D43ACC52A748 /* RecentSearchesRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchesRow.swift; sourceTree = "<group>"; };
 		EBFF15A2C60060D053FAEEE9 /* GiphyClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyClient.swift; sourceTree = "<group>"; };
 		F6D011C67D2E1CEA260F227F /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
@@ -73,6 +76,7 @@
 			files = (
 				2AFDCE010F9A7AADFD3F0C69 /* Sparkle in Frameworks */,
 				B6E3C205794BBDC0CAC012AF /* SDWebImageSwiftUI in Frameworks */,
+				0A1DB03A7E4FE9E45940A226 /* SDWebImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +86,7 @@
 		08B0925EAEA796C100ADFD2C /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				C9E1DC6F296F4E8BE7F18ADE /* GifImageCache.swift */,
 				FD662B3C125B123FE10FFC0D /* GifLibrary.swift */,
 				EBFF15A2C60060D053FAEEE9 /* GiphyClient.swift */,
 				BA19FE181D760F4BDA356692 /* LoginItem.swift */,
@@ -199,6 +204,7 @@
 			packageProductDependencies = (
 				547D70D9AEC97B185F195D22 /* Sparkle */,
 				DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */,
+				BF9785AC963A6D0494EADB84 /* SDWebImage */,
 			);
 			productName = Quip;
 			productReference = 3B106C80CAE0ADFDA212A97C /* Quip.app */;
@@ -243,6 +249,7 @@
 			mainGroup = 2247C22EE84177CEE2273460;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				E0624EA61C9DC374A25818D9 /* XCRemoteSwiftPackageReference "SDWebImage" */,
 				9967324DB1CD8A4909BC87AF /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				6CD24DB3FBBD28E431F99319 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
@@ -283,6 +290,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				302D12051D6472704DF9E36B /* Gif.swift in Sources */,
+				91E68197A4440754F55C63AC /* GifImageCache.swift in Sources */,
 				36A042FE879EADCC29BA532C /* GifLibrary.swift in Sources */,
 				5524DF7B4D9D90EDF0350376 /* GifThumbnail.swift in Sources */,
 				2B6886FA998CD123C8B74ACC /* GiphyClient.swift in Sources */,
@@ -318,7 +326,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Quip/Info.plist;
@@ -328,7 +336,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;
@@ -443,7 +451,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 3CY4DX3K45;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -454,7 +462,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;
@@ -567,6 +575,14 @@
 				minimumVersion = 3.1.0;
 			};
 		};
+		E0624EA61C9DC374A25818D9 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.19.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -574,6 +590,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6CD24DB3FBBD28E431F99319 /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
+		};
+		BF9785AC963A6D0494EADB84 /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E0624EA61C9DC374A25818D9 /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
 		};
 		DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -8,6 +8,7 @@ struct SettingsView: View {
     @AppStorage("giphyApiKey") private var apiKey = ""
     @AppStorage("isCompactLayout") private var isCompact = false
     @State private var startAtLogin = false
+    @State private var cacheBytes: UInt64 = 0
 
     var body: some View {
         Form {
@@ -34,6 +35,18 @@ struct SettingsView: View {
                 Button("Clear recent GIFs") { library.clearRecents() }
             }
 
+            Section("Cache") {
+                LabeledContent("Cached GIFs on disk", value: cacheSizeText)
+                Button("Clear image cache") {
+                    GifImageCache.clear()
+                    refreshCacheSize()
+                }
+                .disabled(cacheBytes == 0)
+                Text("Favorites and recent GIFs are cached here so Quip doesn't re-download them.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
             Section("Updates") {
                 CheckForUpdatesButton(updater: updater)
                 Text("Quip checks for updates automatically.")
@@ -54,7 +67,22 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 420, height: 480)
-        .onAppear { startAtLogin = LoginItem.isEnabled }
+        .frame(width: 420, height: 560)
+        .onAppear {
+            startAtLogin = LoginItem.isEnabled
+            refreshCacheSize()
+        }
+    }
+
+    private var cacheSizeText: String {
+        ByteCountFormatter.string(fromByteCount: Int64(cacheBytes), countStyle: .file)
+    }
+
+    private func refreshCacheSize() {
+        Task { @MainActor in
+            cacheBytes = await Task.detached(priority: .utility) {
+                GifImageCache.diskSizeBytes()
+            }.value
+        }
     }
 }

@@ -36,9 +36,7 @@ struct MenuContentView: View {
 
             content
 
-            Text("Powered by GIPHY")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+            footer
         }
         .padding(12)
         .frame(width: isCompact ? 640 : 320, height: isCompact ? 470 : 600)
@@ -126,6 +124,25 @@ struct MenuContentView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal)
+    }
+
+    private var footer: some View {
+        HStack(spacing: 6) {
+            Text("Powered by GIPHY")
+            Text("•")
+            HStack(spacing: 3) {
+                Text("Made with")
+                Image(systemName: "heart.fill")
+                    .foregroundStyle(.pink)
+                    .imageScale(.small)
+                    .accessibilityHidden(true)
+                Text("by")
+                Link("Nico Jan", destination: URL(string: "https://nicojan.com/")!)
+            }
+        }
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+        .lineLimit(1)
     }
 
     private func copy(_ gif: Gif) {
