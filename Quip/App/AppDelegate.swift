@@ -21,8 +21,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         popover.behavior = .transient
         popover.contentSize = NSSize(width: 320, height: 600)
         popover.contentViewController = NSHostingController(
-            rootView: MenuContentView(openSettings: { [weak self] in self?.openSettings() })
-                .environment(GifLibrary.shared)
+            rootView: MenuContentView(
+                openSettings: { [weak self] in self?.openSettings() },
+                closePopover: { [weak self] in self?.popover.performClose(nil) }
+            )
+            .environment(GifLibrary.shared)
         )
 
         // Seed the default shortcut exactly once, so a user who later clears it
@@ -43,6 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.activate(ignoringOtherApps: true)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             popover.contentViewController?.view.window?.makeKey()
+            NotificationCenter.default.post(name: .quipPopoverShown, object: nil)
         }
     }
 
@@ -51,11 +55,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func openSettings() {
         popover.performClose(nil)
         NSApp.activate(ignoringOtherApps: true)
-        let selector = Selector(("showSettingsWindow:"))
-        if NSApp.responds(to: selector) {
-            NSApp.sendAction(selector, to: nil, from: nil)
-        } else {
-            NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+        // Defer so the responder chain settles after the popover closes. Don't
+        // gate on NSApp.responds(to:) — the Settings action lives in the
+        // responder chain (installed by the SwiftUI Settings scene), not on
+        // NSApplication, so responds(to:) is false and would skip the call.
+        // sendAction returns whether it was handled; fall back to the older name.
+        DispatchQueue.main.async {
+            if !NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil) {
+                NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+            }
         }
     }
 }

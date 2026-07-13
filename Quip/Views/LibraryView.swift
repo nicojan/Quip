@@ -1,13 +1,24 @@
 import SwiftUI
 
-/// Shown when there's no active search: favorites first, then recently copied.
+/// Shown when there's no active search: favorites (filterable), recently copied,
+/// then trending.
 struct LibraryView: View {
     @Environment(GifLibrary.self) private var library
     let columns: [GridItem]
+    let trending: [Gif]
     let isFavorite: (Gif) -> Bool
     let justCopied: (Gif) -> Bool
     let onCopy: (Gif) -> Void
+    let onCopyLink: (Gif) -> Void
     let onToggleFavorite: (Gif) -> Void
+
+    @State private var favoriteFilter = ""
+
+    private var filteredFavorites: [Gif] {
+        let query = favoriteFilter.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return library.favorites }
+        return library.favorites.filter { $0.title.localizedCaseInsensitiveContains(query) }
+    }
 
     var body: some View {
         ScrollView {
@@ -16,7 +27,16 @@ struct LibraryView: View {
                 if library.favorites.isEmpty {
                     hint("Star a GIF to save it here.")
                 } else {
-                    grid(library.favorites)
+                    if library.favorites.count > 6 {
+                        TextField("Filter favorites", text: $favoriteFilter)
+                            .textFieldStyle(.roundedBorder)
+                            .controlSize(.small)
+                    }
+                    if filteredFavorites.isEmpty {
+                        hint("No favorites match “\(favoriteFilter)”.")
+                    } else {
+                        grid(filteredFavorites)
+                    }
                 }
 
                 if !library.recents.isEmpty {
@@ -31,6 +51,12 @@ struct LibraryView: View {
                     .padding(.top, 4)
                     grid(library.recents)
                 }
+
+                if !trending.isEmpty {
+                    sectionHeader("Trending")
+                        .padding(.top, 4)
+                    grid(trending)
+                }
             }
             .padding(.vertical, 2)
         }
@@ -44,6 +70,7 @@ struct LibraryView: View {
                     isFavorite: isFavorite(gif),
                     justCopied: justCopied(gif),
                     onCopy: { onCopy(gif) },
+                    onCopyLink: { onCopyLink(gif) },
                     onToggleFavorite: { onToggleFavorite(gif) }
                 )
             }

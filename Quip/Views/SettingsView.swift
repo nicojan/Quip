@@ -8,6 +8,8 @@ struct SettingsView: View {
     @Environment(GifLibrary.self) private var library
     @AppStorage("giphyApiKey") private var apiKey = ""
     @AppStorage("isCompactLayout") private var isCompact = false
+    @AppStorage("giphyRating") private var rating = GiphyClient.defaultRating
+    @AppStorage("useStickers") private var useStickers = false
     @State private var startAtLogin = false
     @State private var cacheBytes: UInt64 = 0
 
@@ -35,6 +37,16 @@ struct SettingsView: View {
                 Picker("Default layout", selection: $isCompact) {
                     Text("Narrow — 2 per row").tag(false)
                     Text("Wide — 5 per row").tag(true)
+                }
+            }
+
+            Section("Content") {
+                Toggle("Search stickers instead of GIFs", isOn: $useStickers)
+                Picker("Content rating", selection: $rating) {
+                    Text("G").tag("g")
+                    Text("PG").tag("pg")
+                    Text("PG-13").tag("pg-13")
+                    Text("R").tag("r")
                 }
             }
 
@@ -75,7 +87,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 420, height: 560)
+        .frame(width: 440, height: 640)
         .onAppear {
             startAtLogin = LoginItem.isEnabled
             refreshCacheSize()

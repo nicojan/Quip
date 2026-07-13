@@ -46,4 +46,34 @@ final class GiphyClientTests: XCTestCase {
         XCTAssertNil(Gif(giphy: ["id": "x"]))                 // no images
         XCTAssertNil(Gif(giphy: ["images": [:]]))             // no id
     }
+
+    func testStickersAndRatingInSearchURL() throws {
+        let url = try GiphyClient.searchURL(query: "cat", apiKey: "K", content: .stickers, rating: "g")
+        XCTAssertEqual(url.path, "/v1/stickers/search")
+        let items = queryItems(url)
+        XCTAssertEqual(items["rating"], "g")
+        XCTAssertEqual(items["q"], "cat")
+    }
+
+    func testTrendingURL() throws {
+        let url = try GiphyClient.trendingURL(apiKey: "K", content: .gifs, rating: "pg")
+        XCTAssertEqual(url.path, "/v1/gifs/trending")
+        let items = queryItems(url)
+        XCTAssertEqual(items["rating"], "pg")
+        XCTAssertEqual(items["limit"], "36")
+        XCTAssertNil(items["q"])                              // trending takes no query
+    }
+
+    func testAutocompleteURL() throws {
+        let url = try GiphyClient.autocompleteURL(query: "ca", apiKey: "K")
+        XCTAssertEqual(url.path, "/v1/gifs/search/tags")
+        let items = queryItems(url)
+        XCTAssertEqual(items["q"], "ca")
+        XCTAssertEqual(items["limit"], "6")
+    }
+
+    private func queryItems(_ url: URL) -> [String: String] {
+        let comps = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        return Dictionary(uniqueKeysWithValues: (comps?.queryItems ?? []).map { ($0.name, $0.value ?? "") })
+    }
 }

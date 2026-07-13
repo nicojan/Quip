@@ -2,13 +2,15 @@ import SwiftUI
 import AppKit
 import Observation
 
-/// Drives search, results, and copy-to-clipboard. All UI state lives on the main
-/// actor.
+/// Drives search, results, trending, autocomplete, and copy-to-clipboard. All
+/// UI state lives on the main actor.
 @MainActor
 @Observable
 final class SearchViewModel {
     var query = ""
     var results: [Gif] = []
+    var trending: [Gif] = []
+    var suggestions: [String] = []
     var isLoading = false
     var errorMessage: String?
     var recentSearches: [String] = []
@@ -20,24 +22,27 @@ final class SearchViewModel {
     @ObservationIgnored private let maxRecentSearches = 5
     @ObservationIgnored private let recentSearchesKey = "recentSearches"
     @ObservationIgnored private var searchTask: Task<Void, Never>?
+    @ObservationIgnored private var suggestTask: Task<Void, Never>?
     @ObservationIgnored private var copiedResetTask: Task<Void, Never>?
 
     init() {
         recentSearches = UserDefaults.standard.stringArray(forKey: recentSearchesKey) ?? []
     }
 
-    /// Explicit search (Return / chip tap): records the term, then runs.
-    func search(apiKey: String) {
+    /// Explicit search (Return / chip / suggestion tap): records the term, runs.
+    func search(apiKey: String, content: GiphyClient.Content, rating: String) {
         let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !term.isEmpty else { return }
+        suggestions = []
         addRecentSearch(term)
-        run(query: term, apiKey: apiKey)
+        run(query: term, apiKey: apiKey, content: content, rating: rating)
     }
 
-    /// Debounced as-you-type search; does not record recent searches.
-    func liveSearch(apiKey: String) {
+    /// Debounced as-you-type search plus autocomplete; does not record recents.
+    func liveSearch(apiKey: String, content: GiphyClient.Content, rating: String) {
         let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
         searchTask?.cancel()
+        updateSuggestions(apiKey: apiKey)
         guard !term.isEmpty else {
             results = []
             errorMessage = nil
@@ -47,18 +52,18 @@ final class SearchViewModel {
         searchTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(350))
             guard let self, !Task.isCancelled else { return }
-            self.run(query: term, apiKey: apiKey)
+            self.run(query: term, apiKey: apiKey, content: content, rating: rating)
         }
     }
 
-    private func run(query term: String, apiKey: String) {
+    private func run(query term: String, apiKey: String, content: GiphyClient.Content, rating: String) {
         searchTask?.cancel()
         searchTask = Task { [weak self] in
             guard let self else { return }
             self.isLoading = true
             self.errorMessage = nil
             do {
-                let gifs = try await self.client.search(term, apiKey: apiKey)
+                let gifs = try await self.client.search(term, apiKey: apiKey, content: content, rating: rating)
                 if Task.isCancelled { return }
                 self.results = gifs
                 self.errorMessage = gifs.isEmpty ? "No GIFs found." : nil
@@ -72,9 +77,32 @@ final class SearchViewModel {
         }
     }
 
-    func runRecentSearch(_ term: String, apiKey: String) {
+    func runRecentSearch(_ term: String, apiKey: String, content: GiphyClient.Content, rating: String) {
         query = term
-        search(apiKey: apiKey)
+        search(apiKey: apiKey, content: content, rating: rating)
+    }
+
+    /// Loads trending for the empty state. Silent on failure — it's a nicety.
+    func loadTrending(apiKey: String, content: GiphyClient.Content, rating: String) {
+        guard !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        Task { [weak self] in
+            guard let self else { return }
+            let gifs = (try? await self.client.trending(apiKey: apiKey, content: content, rating: rating)) ?? []
+            if !gifs.isEmpty { self.trending = gifs }
+        }
+    }
+
+    private func updateSuggestions(apiKey: String) {
+        let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        suggestTask?.cancel()
+        guard term.count >= 2 else { suggestions = []; return }
+        suggestTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(250))
+            guard let self, !Task.isCancelled else { return }
+            let terms = (try? await self.client.autocomplete(term, apiKey: apiKey)) ?? []
+            if Task.isCancelled { return }
+            self.suggestions = terms
+        }
     }
 
     /// Downloads the GIF and puts it on the pasteboard as a file, so it pastes
@@ -99,6 +127,15 @@ final class SearchViewModel {
                 self.errorMessage = "Couldn't copy that GIF."
             }
         }
+    }
+
+    /// Copies the GIF's Giphy page/asset URL as text (⌥-click), for apps that
+    /// prefer a link over a file.
+    func copyLink(_ gif: Gif) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(gif.gifURL, forType: .string)
+        markCopied(gif.id)
     }
 
     private func markCopied(_ id: String) {

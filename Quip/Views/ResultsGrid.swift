@@ -7,6 +7,7 @@ struct ResultsGrid: View {
     let isFavorite: (Gif) -> Bool
     let justCopied: (Gif) -> Bool
     let onCopy: (Gif) -> Void
+    let onCopyLink: (Gif) -> Void
     let onToggleFavorite: (Gif) -> Void
 
     var body: some View {
@@ -18,6 +19,7 @@ struct ResultsGrid: View {
                         isFavorite: isFavorite(gif),
                         justCopied: justCopied(gif),
                         onCopy: { onCopy(gif) },
+                        onCopyLink: { onCopyLink(gif) },
                         onToggleFavorite: { onToggleFavorite(gif) }
                     )
                 }

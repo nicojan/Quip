@@ -1,13 +1,16 @@
 import SwiftUI
+import AppKit
+import UniformTypeIdentifiers
 import SDWebImageSwiftUI
 
-/// One GIF cell: the animated thumbnail, a hover-revealed favorite star, and a
-/// click-to-copy tap target.
+/// One GIF cell: the animated thumbnail, a hover-revealed favorite star, a
+/// click-to-copy tap target (⌥-click copies the link), and drag-out support.
 struct GifThumbnail: View {
     let gif: Gif
     let isFavorite: Bool
     let justCopied: Bool
     let onCopy: () -> Void
+    let onCopyLink: () -> Void
     let onToggleFavorite: () -> Void
 
     @State private var hovering = false
@@ -34,24 +37,48 @@ struct GifThumbnail: View {
                     copyHint
                 }
             }
+            .scaleEffect(hovering ? 1.04 : 1)
+            .shadow(color: .black.opacity(hovering ? 0.35 : 0), radius: 6, y: 2)
+            .zIndex(hovering ? 1 : 0)
+            .animation(.easeOut(duration: 0.12), value: hovering)
             .contentShape(RoundedRectangle(cornerRadius: Theme.thumbCorner))
-            .onTapGesture(perform: onCopy)
+            .onTapGesture {
+                // ⌥-click copies the link instead of the file.
+                if NSEvent.modifierFlags.contains(.option) { onCopyLink() } else { onCopy() }
+            }
+            .onDrag(dragProvider)
             .onHover { hovering = $0 }
-            .help("Click to copy")
+            .help("Click to copy · ⌥-click to copy link · drag to insert")
     }
 
-    private var copiedOverlay: some View {
-        RoundedRectangle(cornerRadius: Theme.thumbCorner)
-            .fill(Theme.accent.opacity(0.82))
-            .overlay(
-                VStack(spacing: 3) {
-                    Image(systemName: "checkmark.circle.fill").font(.title3)
-                    Text("Copied!").font(.caption2.weight(.bold))
+    /// Drags the GIF out as a file, downloading on demand so it drops into
+    /// Messages, Finder, etc. as an animated attachment.
+    private func dragProvider() -> NSItemProvider {
+        let provider = NSItemProvider()
+        provider.suggestedName = "quip.gif"
+        let urlString = gif.gifURL
+        provider.registerFileRepresentation(
+            forTypeIdentifier: UTType.gif.identifier, fileOptions: [], visibility: .all
+        ) { completion in
+            guard let url = URL(string: urlString) else {
+                completion(nil, false, nil)
+                return nil
+            }
+            let task = URLSession.shared.dataTask(with: url) { data, _, error in
+                guard let data else { completion(nil, false, error); return }
+                let file = FileManager.default.temporaryDirectory
+                    .appendingPathComponent(UUID().uuidString).appendingPathExtension("gif")
+                do {
+                    try data.write(to: file)
+                    completion(file, false, nil)
+                } catch {
+                    completion(nil, false, error)
                 }
-                .foregroundStyle(.white)
-            )
-            .allowsHitTesting(false)
-            .transition(.opacity)
+            }
+            task.resume()
+            return nil
+        }
+        return provider
     }
 
     @ViewBuilder private var star: some View {
@@ -77,5 +104,19 @@ struct GifThumbnail: View {
                     .foregroundStyle(.white)
             )
             .allowsHitTesting(false)
+    }
+
+    private var copiedOverlay: some View {
+        RoundedRectangle(cornerRadius: Theme.thumbCorner)
+            .fill(Theme.accent.opacity(0.82))
+            .overlay(
+                VStack(spacing: 3) {
+                    Image(systemName: "checkmark.circle.fill").font(.title3)
+                    Text("Copied!").font(.caption2.weight(.bold))
+                }
+                .foregroundStyle(.white)
+            )
+            .allowsHitTesting(false)
+            .transition(.opacity)
     }
 }
