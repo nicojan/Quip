@@ -9,6 +9,10 @@ struct MenuContentView: View {
     @State private var vm = SearchViewModel()
     @FocusState private var searchFocused: Bool
 
+    /// Opens the Settings window. Supplied by AppDelegate because the popover is
+    /// hosted outside the SwiftUI scene tree, where SettingsLink doesn't work.
+    let openSettings: () -> Void
+
     private var hasKey: Bool {
         !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -54,7 +58,7 @@ struct MenuContentView: View {
                 .font(.headline)
             Spacer()
             LayoutToggle(isCompact: $isCompact)
-            SettingsLink {
+            Button { openSettings() } label: {
                 Image(systemName: "gearshape")
             }
             .buttonStyle(.plain)
@@ -101,7 +105,7 @@ struct MenuContentView: View {
                 .font(.callout)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
-            SettingsLink { Text("Open Settings") }
+            Button("Open Settings") { openSettings() }
                 .buttonStyle(.borderedProminent)
                 .tint(Theme.accent)
             Spacer()

@@ -21,9 +21,12 @@
 		5524DF7B4D9D90EDF0350376 /* GifThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20AEE5F8920C4B47860662B /* GifThumbnail.swift */; };
 		5996E590EF1C753135A17814 /* ResultsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */; };
 		5D26FAA4669502592670C855 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC6B3554A631E6327007F7 /* SearchBar.swift */; };
+		647F5462C4DC73977CD4AF50 /* Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BAEA701E5EE511509170FB /* Shortcuts.swift */; };
 		8598B7AA9372E5CE75637129 /* LayoutToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 561B68C798B101F8AA028472 /* LayoutToggle.swift */; };
 		8DCA84714CC1A9315EC32EC7 /* RecentSearchesRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE69FCADC29D43ACC52A748 /* RecentSearchesRow.swift */; };
 		91E68197A4440754F55C63AC /* GifImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E1DC6F296F4E8BE7F18ADE /* GifImageCache.swift */; };
+		9F2B2B9526ED0144C025C94D /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 8660C02B6E3D000D231E2FF2 /* KeyboardShortcuts */; };
+		9FEF455E6DA8093FBCD705AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E923A413E48382C48726D7 /* AppDelegate.swift */; };
 		A7C0802AE25F752F0BF1B6D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */; };
 		B6E3C205794BBDC0CAC012AF /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */; };
 		C05BA03FF020DFD373E12BF1 /* QuipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7D2ACB961493233251651D /* QuipApp.swift */; };
@@ -44,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		099696AE8697FED5C13E62CD /* QuipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QuipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		15E923A413E48382C48726D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1D7D2ACB961493233251651D /* QuipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuipApp.swift; sourceTree = "<group>"; };
 		201ADAE926E78216EC67B516 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		329ED5656C8204B0D481217E /* MenuContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuContentView.swift; sourceTree = "<group>"; };
@@ -54,6 +58,7 @@
 		5AE024ADE68494F57F80E6F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6BC7C5D217AAF7EECC5D318E /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		6EAC6B3554A631E6327007F7 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		86BAEA701E5EE511509170FB /* Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcuts.swift; sourceTree = "<group>"; };
 		8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyClientTests.swift; sourceTree = "<group>"; };
 		9961B7E67492052A1F97CB3B /* Gif.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gif.swift; sourceTree = "<group>"; };
 		99C83A68E9C8860698D8C44B /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -77,6 +82,7 @@
 				2AFDCE010F9A7AADFD3F0C69 /* Sparkle in Frameworks */,
 				B6E3C205794BBDC0CAC012AF /* SDWebImageSwiftUI in Frameworks */,
 				0A1DB03A7E4FE9E45940A226 /* SDWebImage in Frameworks */,
+				9F2B2B9526ED0144C025C94D /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,6 +161,7 @@
 		CFEFADA4DD32930A60C79692 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				86BAEA701E5EE511509170FB /* Shortcuts.swift */,
 				99C83A68E9C8860698D8C44B /* Theme.swift */,
 				FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */,
 			);
@@ -180,6 +187,7 @@
 		F046E82FBD2D78630F892A92 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				15E923A413E48382C48726D7 /* AppDelegate.swift */,
 				1D7D2ACB961493233251651D /* QuipApp.swift */,
 			);
 			path = App;
@@ -205,6 +213,7 @@
 				547D70D9AEC97B185F195D22 /* Sparkle */,
 				DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */,
 				BF9785AC963A6D0494EADB84 /* SDWebImage */,
+				8660C02B6E3D000D231E2FF2 /* KeyboardShortcuts */,
 			);
 			productName = Quip;
 			productReference = 3B106C80CAE0ADFDA212A97C /* Quip.app */;
@@ -249,6 +258,7 @@
 			mainGroup = 2247C22EE84177CEE2273460;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				B9BD98617D14A3C2FD1696AA /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 				E0624EA61C9DC374A25818D9 /* XCRemoteSwiftPackageReference "SDWebImage" */,
 				9967324DB1CD8A4909BC87AF /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				6CD24DB3FBBD28E431F99319 /* XCRemoteSwiftPackageReference "Sparkle" */,
@@ -289,6 +299,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FEF455E6DA8093FBCD705AF /* AppDelegate.swift in Sources */,
 				302D12051D6472704DF9E36B /* Gif.swift in Sources */,
 				91E68197A4440754F55C63AC /* GifImageCache.swift in Sources */,
 				36A042FE879EADCC29BA532C /* GifLibrary.swift in Sources */,
@@ -304,6 +315,7 @@
 				5D26FAA4669502592670C855 /* SearchBar.swift in Sources */,
 				3B38857BCF6329F14195ACFD /* SearchViewModel.swift in Sources */,
 				090BA255191D69993B6B55DB /* SettingsView.swift in Sources */,
+				647F5462C4DC73977CD4AF50 /* Shortcuts.swift in Sources */,
 				53857FCF1F6F4BA2DAA30C15 /* Theme.swift in Sources */,
 				468D9C5C270E472712F22B69 /* UpdaterView.swift in Sources */,
 			);
@@ -575,6 +587,14 @@
 				minimumVersion = 3.1.0;
 			};
 		};
+		B9BD98617D14A3C2FD1696AA /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		E0624EA61C9DC374A25818D9 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
@@ -590,6 +610,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6CD24DB3FBBD28E431F99319 /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
+		};
+		8660C02B6E3D000D231E2FF2 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9BD98617D14A3C2FD1696AA /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
 		};
 		BF9785AC963A6D0494EADB84 /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;

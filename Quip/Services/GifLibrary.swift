@@ -6,6 +6,10 @@ import Observation
 @MainActor
 @Observable
 final class GifLibrary {
+    /// Shared app-wide store. The menu-bar popover (AppKit-hosted) and the
+    /// Settings scene are separate view trees, so they share this one instance.
+    static let shared = GifLibrary()
+
     private(set) var favorites: [Gif] = []
     private(set) var recents: [Gif] = []
 

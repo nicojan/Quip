@@ -3,7 +3,7 @@ import Sparkle
 
 @main
 struct QuipApp: App {
-    @State private var library = GifLibrary()
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     /// Owns the Sparkle updater for the app's lifetime: drives "Check for
     /// Updates…" and runs the scheduled background checks (see Info.plist).
@@ -18,17 +18,11 @@ struct QuipApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra {
-            MenuContentView()
-                .environment(library)
-        } label: {
-            Image(systemName: "play.square.stack")
-        }
-        .menuBarExtraStyle(.window)
-
+        // The menu-bar status item and popover are managed by AppDelegate.
+        // This scene provides the Settings window.
         Settings {
             SettingsView(updater: updaterController.updater)
-                .environment(library)
+                .environment(GifLibrary.shared)
         }
     }
 }

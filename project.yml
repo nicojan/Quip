@@ -15,6 +15,9 @@ packages:
   SDWebImage:
     url: https://github.com/SDWebImage/SDWebImage
     majorVersion: 5.19.0
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    majorVersion: 2.0.0
 
 targets:
   Quip:
@@ -28,6 +31,7 @@ targets:
       - package: Sparkle
       - package: SDWebImageSwiftUI
       - package: SDWebImage
+      - package: KeyboardShortcuts
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nicojan.Quip

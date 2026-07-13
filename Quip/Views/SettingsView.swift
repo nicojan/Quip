@@ -1,5 +1,6 @@
 import SwiftUI
 import Sparkle
+import KeyboardShortcuts
 
 struct SettingsView: View {
     let updater: SPUUpdater
@@ -17,6 +18,13 @@ struct SettingsView: View {
                 Link("Get a free Giphy API key ↗",
                      destination: URL(string: "https://developers.giphy.com/dashboard/")!)
                     .font(.caption)
+            }
+
+            Section("Global Shortcut") {
+                KeyboardShortcuts.Recorder("Summon Quip:", name: .summonQuip)
+                Text("Click to record a shortcut, or clear it to turn the global shortcut off.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section("General") {
