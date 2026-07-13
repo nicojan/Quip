@@ -17,7 +17,7 @@ struct SettingsView: View {
         Form {
             Section("Giphy") {
                 TextField("Giphy API key", text: $apiKey)
-                Link("Get a free Giphy API key ↗",
+                Link("Get a free Giphy API key (choose the API option, not SDK) ↗",
                      destination: URL(string: "https://developers.giphy.com/dashboard/")!)
                     .font(.caption)
             }

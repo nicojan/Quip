@@ -29,7 +29,8 @@ rate limit:
 
 1. Open the [Giphy developers dashboard](https://developers.giphy.com/dashboard/)
    and sign in.
-2. Create an app, choose the **API** option, and copy the key.
+2. Create an app and choose the **API** option (not the SDK — Giphy nudges you
+   toward it, but Quip needs a plain API key), then copy the key.
 3. Open Quip's **Settings** and paste the key into the **Giphy API Key** field.
 
 The key stays on your Mac. Until you add one, search asks you for it.

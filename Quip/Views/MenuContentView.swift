@@ -171,6 +171,7 @@ struct MenuContentView: View {
                     .accessibilityHidden(true)
                 Text("by")
                 Link("Nico Jan", destination: URL(string: "https://nicojan.com/")!)
+                    .tint(Theme.accentText)
             }
         }
         .font(.caption2)
