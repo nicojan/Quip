@@ -3,6 +3,25 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.1</title>
+            <pubDate>Mon, 13 Jul 2026 15:40:32 -0700</pubDate>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>1.1.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+<li>A failed copy no longer wipes the whole window; it marks the GIF and moves on.</li>
+<li>Trending shows up after you add your key, and refreshes when you switch stickers or rating.</li>
+<li>The search field focuses every time you open Quip.</li>
+<li>Filtering favorites can no longer strand them when the list shrinks.</li>
+<li>Favorites and recents survive an app update even if their format changes.</li>
+<li>Searches with a "+" (like "c++") work now.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.1/Quip-1.1.1.dmg" length="2090380" type="application/octet-stream" sparkle:edSignature="T8cQk5qxbSSoDp81ga4Wy16re0Tp8AehK48Bi+fsTmDTXTC6iNO1q9PzC1xmUn0EPch17Y0r3HNWHLnuu/aJAA=="/>
+        </item>
+        <item>
             <title>1.1.0</title>
             <pubDate>Mon, 13 Jul 2026 12:16:48 -0700</pubDate>
             <sparkle:version>3</sparkle:version>
