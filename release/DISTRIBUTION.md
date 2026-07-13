@@ -84,9 +84,11 @@ Run from the repo root. Replace `X.Y.Z`. Regenerate the project first if
      build/Quip-X.Y.Z.dmg build/dmg-src
    ```
    `create-dmg` lays out the window with AppleScript, so it needs a logged-in GUI
-   session. Without one, fall back to `hdiutil create -volname "Quip"
-   -srcfolder build/dmg-src -ov -format UDZO build/Quip-X.Y.Z.dmg`. Then sign the
-   DMG:
+   session — but it also adds the drag-to-**Applications** link, so prefer it.
+   The `hdiutil create -volname "Quip" -srcfolder build/dmg-src -ov -format UDZO
+   build/Quip-X.Y.Z.dmg` fallback works headlessly but produces a DMG **without**
+   the Applications drop link (just the app), so only use it when there's no GUI
+   session. Then sign the DMG:
    ```sh
    codesign --force --sign "Developer ID Application: … (3CY4DX3K45)" build/Quip-X.Y.Z.dmg
    ```
