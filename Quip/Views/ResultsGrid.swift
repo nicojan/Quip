@@ -5,6 +5,7 @@ struct ResultsGrid: View {
     let gifs: [Gif]
     let columns: [GridItem]
     let isFavorite: (Gif) -> Bool
+    let justCopied: (Gif) -> Bool
     let onCopy: (Gif) -> Void
     let onToggleFavorite: (Gif) -> Void
 
@@ -15,6 +16,7 @@ struct ResultsGrid: View {
                     GifThumbnail(
                         gif: gif,
                         isFavorite: isFavorite(gif),
+                        justCopied: justCopied(gif),
                         onCopy: { onCopy(gif) },
                         onToggleFavorite: { onToggleFavorite(gif) }
                     )

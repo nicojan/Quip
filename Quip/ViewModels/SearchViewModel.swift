@@ -12,7 +12,9 @@ final class SearchViewModel {
     var isLoading = false
     var errorMessage: String?
     var recentSearches: [String] = []
-    var showCopied = false
+    /// The id of the GIF most recently copied, for a brief "Copied!" overlay on
+    /// that thumbnail. Cleared after a short delay.
+    var copiedGifID: String?
 
     @ObservationIgnored private let client = GiphyClient()
     @ObservationIgnored private let maxRecentSearches = 5
@@ -92,20 +94,20 @@ final class SearchViewModel {
                 pasteboard.clearContents()
                 pasteboard.writeObjects([file as NSURL])
                 library.addRecent(gif)
-                self.flashCopied()
+                self.markCopied(gif.id)
             } catch {
                 self.errorMessage = "Couldn't copy that GIF."
             }
         }
     }
 
-    private func flashCopied() {
-        showCopied = true
+    private func markCopied(_ id: String) {
+        withAnimation { copiedGifID = id }
         copiedResetTask?.cancel()
         copiedResetTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(1.5))
             guard let self, !Task.isCancelled else { return }
-            withAnimation { self.showCopied = false }
+            withAnimation { if self.copiedGifID == id { self.copiedGifID = nil } }
         }
     }
 

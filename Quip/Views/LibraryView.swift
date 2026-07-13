@@ -5,6 +5,7 @@ struct LibraryView: View {
     @Environment(GifLibrary.self) private var library
     let columns: [GridItem]
     let isFavorite: (Gif) -> Bool
+    let justCopied: (Gif) -> Bool
     let onCopy: (Gif) -> Void
     let onToggleFavorite: (Gif) -> Void
 
@@ -41,6 +42,7 @@ struct LibraryView: View {
                 GifThumbnail(
                     gif: gif,
                     isFavorite: isFavorite(gif),
+                    justCopied: justCopied(gif),
                     onCopy: { onCopy(gif) },
                     onToggleFavorite: { onToggleFavorite(gif) }
                 )

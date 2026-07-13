@@ -43,7 +43,6 @@ struct MenuContentView: View {
         .padding(12)
         .frame(width: isCompact ? 640 : 320, height: isCompact ? 470 : 600)
         .background(Theme.surface)
-        .overlay(alignment: .bottom) { copiedToast }
         .onAppear { DispatchQueue.main.async { searchFocused = true } }
     }
 
@@ -78,6 +77,7 @@ struct MenuContentView: View {
             LibraryView(
                 columns: columns,
                 isFavorite: { library.isFavorite($0) },
+                justCopied: { vm.copiedGifID == $0.id },
                 onCopy: copy,
                 onToggleFavorite: { library.toggleFavorite($0) }
             )
@@ -86,6 +86,7 @@ struct MenuContentView: View {
                 gifs: vm.results,
                 columns: columns,
                 isFavorite: { library.isFavorite($0) },
+                justCopied: { vm.copiedGifID == $0.id },
                 onCopy: copy,
                 onToggleFavorite: { library.toggleFavorite($0) }
             )
@@ -125,19 +126,6 @@ struct MenuContentView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal)
-    }
-
-    @ViewBuilder private var copiedToast: some View {
-        if vm.showCopied {
-            Label("Copied!", systemImage: "checkmark.circle.fill")
-                .font(.caption)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 7)
-                .background(.ultraThinMaterial, in: Capsule())
-                .foregroundStyle(Theme.accent)
-                .padding(.bottom, 34)
-                .transition(.opacity)
-        }
     }
 
     private func copy(_ gif: Gif) {

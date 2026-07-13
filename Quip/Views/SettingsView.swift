@@ -40,6 +40,18 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+
+            Section {
+                HStack(spacing: 4) {
+                    Text("Built with")
+                    Image(systemName: "heart.fill")
+                        .foregroundStyle(.pink)
+                        .accessibilityHidden(true)
+                    Text("by")
+                    Link("Nico Jan", destination: URL(string: "https://nicojan.com/")!)
+                }
+                .accessibilityElement(children: .combine)
+            }
         }
         .formStyle(.grouped)
         .frame(width: 420, height: 480)

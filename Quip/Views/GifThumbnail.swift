@@ -6,6 +6,7 @@ import SDWebImageSwiftUI
 struct GifThumbnail: View {
     let gif: Gif
     let isFavorite: Bool
+    let justCopied: Bool
     let onCopy: () -> Void
     let onToggleFavorite: () -> Void
 
@@ -26,11 +27,31 @@ struct GifThumbnail: View {
                     .stroke(Theme.cardStroke, lineWidth: 1)
             )
             .overlay(alignment: .topTrailing) { star }
-            .overlay { if hovering { copyHint } }
+            .overlay {
+                if justCopied {
+                    copiedOverlay
+                } else if hovering {
+                    copyHint
+                }
+            }
             .contentShape(RoundedRectangle(cornerRadius: Theme.thumbCorner))
             .onTapGesture(perform: onCopy)
             .onHover { hovering = $0 }
             .help("Click to copy")
+    }
+
+    private var copiedOverlay: some View {
+        RoundedRectangle(cornerRadius: Theme.thumbCorner)
+            .fill(Theme.accent.opacity(0.82))
+            .overlay(
+                VStack(spacing: 3) {
+                    Image(systemName: "checkmark.circle.fill").font(.title3)
+                    Text("Copied!").font(.caption2.weight(.bold))
+                }
+                .foregroundStyle(.white)
+            )
+            .allowsHitTesting(false)
+            .transition(.opacity)
     }
 
     @ViewBuilder private var star: some View {
