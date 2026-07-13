@@ -1,0 +1,586 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		090BA255191D69993B6B55DB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ADAE926E78216EC67B516 /* SettingsView.swift */; };
+		1EF5424DE5E62D26C8B96FA1 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC7C5D217AAF7EECC5D318E /* LibraryView.swift */; };
+		2AFDCE010F9A7AADFD3F0C69 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 547D70D9AEC97B185F195D22 /* Sparkle */; };
+		2B6886FA998CD123C8B74ACC /* GiphyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFF15A2C60060D053FAEEE9 /* GiphyClient.swift */; };
+		302D12051D6472704DF9E36B /* Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9961B7E67492052A1F97CB3B /* Gif.swift */; };
+		36A042FE879EADCC29BA532C /* GifLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD662B3C125B123FE10FFC0D /* GifLibrary.swift */; };
+		3B38857BCF6329F14195ACFD /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D011C67D2E1CEA260F227F /* SearchViewModel.swift */; };
+		468D9C5C270E472712F22B69 /* UpdaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */; };
+		53857FCF1F6F4BA2DAA30C15 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C83A68E9C8860698D8C44B /* Theme.swift */; };
+		53FCF696BC6A5FEDAED4F851 /* LoginItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA19FE181D760F4BDA356692 /* LoginItem.swift */; };
+		5524DF7B4D9D90EDF0350376 /* GifThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20AEE5F8920C4B47860662B /* GifThumbnail.swift */; };
+		5996E590EF1C753135A17814 /* ResultsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */; };
+		5D26FAA4669502592670C855 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC6B3554A631E6327007F7 /* SearchBar.swift */; };
+		8598B7AA9372E5CE75637129 /* LayoutToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 561B68C798B101F8AA028472 /* LayoutToggle.swift */; };
+		8DCA84714CC1A9315EC32EC7 /* RecentSearchesRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE69FCADC29D43ACC52A748 /* RecentSearchesRow.swift */; };
+		A7C0802AE25F752F0BF1B6D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */; };
+		B6E3C205794BBDC0CAC012AF /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */; };
+		C05BA03FF020DFD373E12BF1 /* QuipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7D2ACB961493233251651D /* QuipApp.swift */; };
+		EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */; };
+		F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A601EAED4E5759F30A405D /* GifLibraryTests.swift */; };
+		F7CA9DF5B5FD1DF007D841D2 /* MenuContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329ED5656C8204B0D481217E /* MenuContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CC383D78205F4E9503126207 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9E5F61C71F8200E4921EC4C5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC4D28288BAA7A60C4251836;
+			remoteInfo = Quip;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		099696AE8697FED5C13E62CD /* QuipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QuipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D7D2ACB961493233251651D /* QuipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuipApp.swift; sourceTree = "<group>"; };
+		201ADAE926E78216EC67B516 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		329ED5656C8204B0D481217E /* MenuContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuContentView.swift; sourceTree = "<group>"; };
+		3B106C80CAE0ADFDA212A97C /* Quip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Quip.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		42A601EAED4E5759F30A405D /* GifLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifLibraryTests.swift; sourceTree = "<group>"; };
+		47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsGrid.swift; sourceTree = "<group>"; };
+		561B68C798B101F8AA028472 /* LayoutToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutToggle.swift; sourceTree = "<group>"; };
+		5AE024ADE68494F57F80E6F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		6BC7C5D217AAF7EECC5D318E /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		6EAC6B3554A631E6327007F7 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyClientTests.swift; sourceTree = "<group>"; };
+		9961B7E67492052A1F97CB3B /* Gif.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gif.swift; sourceTree = "<group>"; };
+		99C83A68E9C8860698D8C44B /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		9AC3724BAC12DBAE5CD9BBD9 /* Quip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Quip.entitlements; sourceTree = "<group>"; };
+		A20AEE5F8920C4B47860662B /* GifThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifThumbnail.swift; sourceTree = "<group>"; };
+		A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BA19FE181D760F4BDA356692 /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
+		DCE69FCADC29D43ACC52A748 /* RecentSearchesRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchesRow.swift; sourceTree = "<group>"; };
+		EBFF15A2C60060D053FAEEE9 /* GiphyClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyClient.swift; sourceTree = "<group>"; };
+		F6D011C67D2E1CEA260F227F /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
+		FD662B3C125B123FE10FFC0D /* GifLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifLibrary.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		071B3BA70553534F918F3517 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2AFDCE010F9A7AADFD3F0C69 /* Sparkle in Frameworks */,
+				B6E3C205794BBDC0CAC012AF /* SDWebImageSwiftUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08B0925EAEA796C100ADFD2C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				FD662B3C125B123FE10FFC0D /* GifLibrary.swift */,
+				EBFF15A2C60060D053FAEEE9 /* GiphyClient.swift */,
+				BA19FE181D760F4BDA356692 /* LoginItem.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		0F7DA73991DF812C1B70141E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A20AEE5F8920C4B47860662B /* GifThumbnail.swift */,
+				561B68C798B101F8AA028472 /* LayoutToggle.swift */,
+				6BC7C5D217AAF7EECC5D318E /* LibraryView.swift */,
+				329ED5656C8204B0D481217E /* MenuContentView.swift */,
+				DCE69FCADC29D43ACC52A748 /* RecentSearchesRow.swift */,
+				47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */,
+				6EAC6B3554A631E6327007F7 /* SearchBar.swift */,
+				201ADAE926E78216EC67B516 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		2247C22EE84177CEE2273460 = {
+			isa = PBXGroup;
+			children = (
+				E68F7B1CA23FDFFC81CDB4D9 /* Quip */,
+				43D25ED04D49AE171B3F6D45 /* QuipTests */,
+				2B492AA7EF1BF1021DABAF5D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2B492AA7EF1BF1021DABAF5D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3B106C80CAE0ADFDA212A97C /* Quip.app */,
+				099696AE8697FED5C13E62CD /* QuipTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2EEEDF8ABC6D8A485D658BC8 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				F6D011C67D2E1CEA260F227F /* SearchViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		43D25ED04D49AE171B3F6D45 /* QuipTests */ = {
+			isa = PBXGroup;
+			children = (
+				42A601EAED4E5759F30A405D /* GifLibraryTests.swift */,
+				8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */,
+			);
+			path = QuipTests;
+			sourceTree = "<group>";
+		};
+		BF91F4747EB939FD1A2B41FF /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				9961B7E67492052A1F97CB3B /* Gif.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CFEFADA4DD32930A60C79692 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				99C83A68E9C8860698D8C44B /* Theme.swift */,
+				FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		E68F7B1CA23FDFFC81CDB4D9 /* Quip */ = {
+			isa = PBXGroup;
+			children = (
+				A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */,
+				5AE024ADE68494F57F80E6F0 /* Info.plist */,
+				9AC3724BAC12DBAE5CD9BBD9 /* Quip.entitlements */,
+				F046E82FBD2D78630F892A92 /* App */,
+				BF91F4747EB939FD1A2B41FF /* Models */,
+				08B0925EAEA796C100ADFD2C /* Services */,
+				CFEFADA4DD32930A60C79692 /* Support */,
+				2EEEDF8ABC6D8A485D658BC8 /* ViewModels */,
+				0F7DA73991DF812C1B70141E /* Views */,
+			);
+			path = Quip;
+			sourceTree = "<group>";
+		};
+		F046E82FBD2D78630F892A92 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				1D7D2ACB961493233251651D /* QuipApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CC4D28288BAA7A60C4251836 /* Quip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DDCA2E25AB98F4D5AC61EC36 /* Build configuration list for PBXNativeTarget "Quip" */;
+			buildPhases = (
+				F8E85AC2C6E4CA2353DD4E75 /* Sources */,
+				7B8D07E1B9382764215096ED /* Resources */,
+				071B3BA70553534F918F3517 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Quip;
+			packageProductDependencies = (
+				547D70D9AEC97B185F195D22 /* Sparkle */,
+				DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */,
+			);
+			productName = Quip;
+			productReference = 3B106C80CAE0ADFDA212A97C /* Quip.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E4BAD13F87AF64F829321732 /* QuipTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2F3657236E597A07CCCD75EE /* Build configuration list for PBXNativeTarget "QuipTests" */;
+			buildPhases = (
+				BD52B2D17ADF9963E272A079 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				639AD81A1198B184577D7AFC /* PBXTargetDependency */,
+			);
+			name = QuipTests;
+			packageProductDependencies = (
+			);
+			productName = QuipTests;
+			productReference = 099696AE8697FED5C13E62CD /* QuipTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9E5F61C71F8200E4921EC4C5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = FE3FFF9BDBF493ACF6E067CF /* Build configuration list for PBXProject "Quip" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 2247C22EE84177CEE2273460;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9967324DB1CD8A4909BC87AF /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				6CD24DB3FBBD28E431F99319 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 2B492AA7EF1BF1021DABAF5D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CC4D28288BAA7A60C4251836 /* Quip */,
+				E4BAD13F87AF64F829321732 /* QuipTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7B8D07E1B9382764215096ED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A7C0802AE25F752F0BF1B6D0 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BD52B2D17ADF9963E272A079 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */,
+				EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8E85AC2C6E4CA2353DD4E75 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				302D12051D6472704DF9E36B /* Gif.swift in Sources */,
+				36A042FE879EADCC29BA532C /* GifLibrary.swift in Sources */,
+				5524DF7B4D9D90EDF0350376 /* GifThumbnail.swift in Sources */,
+				2B6886FA998CD123C8B74ACC /* GiphyClient.swift in Sources */,
+				8598B7AA9372E5CE75637129 /* LayoutToggle.swift in Sources */,
+				1EF5424DE5E62D26C8B96FA1 /* LibraryView.swift in Sources */,
+				53FCF696BC6A5FEDAED4F851 /* LoginItem.swift in Sources */,
+				F7CA9DF5B5FD1DF007D841D2 /* MenuContentView.swift in Sources */,
+				C05BA03FF020DFD373E12BF1 /* QuipApp.swift in Sources */,
+				8DCA84714CC1A9315EC32EC7 /* RecentSearchesRow.swift in Sources */,
+				5996E590EF1C753135A17814 /* ResultsGrid.swift in Sources */,
+				5D26FAA4669502592670C855 /* SearchBar.swift in Sources */,
+				3B38857BCF6329F14195ACFD /* SearchViewModel.swift in Sources */,
+				090BA255191D69993B6B55DB /* SettingsView.swift in Sources */,
+				53857FCF1F6F4BA2DAA30C15 /* Theme.swift in Sources */,
+				468D9C5C270E472712F22B69 /* UpdaterView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		639AD81A1198B184577D7AFC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC4D28288BAA7A60C4251836 /* Quip */;
+			targetProxy = CC383D78205F4E9503126207 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0D21146C79EAFB203EA747C7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Quip/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
+				PRODUCT_NAME = Quip;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		40FE5D43FA74534CFCB44598 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.QuipTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Quip.app/Contents/MacOS/Quip";
+			};
+			name = Debug;
+		};
+		42415C8E6E9FB38526AB6748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.QuipTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Quip.app/Contents/MacOS/Quip";
+			};
+			name = Release;
+		};
+		7DD03A9DE8C2ED92977A7821 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		906F9F7423DE64CE274A7E27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3CY4DX3K45;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Quip/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
+				PRODUCT_NAME = Quip;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		D4647D748923F70BA323231F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2F3657236E597A07CCCD75EE /* Build configuration list for PBXNativeTarget "QuipTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				40FE5D43FA74534CFCB44598 /* Debug */,
+				42415C8E6E9FB38526AB6748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DDCA2E25AB98F4D5AC61EC36 /* Build configuration list for PBXNativeTarget "Quip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D21146C79EAFB203EA747C7 /* Debug */,
+				906F9F7423DE64CE274A7E27 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FE3FFF9BDBF493ACF6E067CF /* Build configuration list for PBXProject "Quip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7DD03A9DE8C2ED92977A7821 /* Debug */,
+				D4647D748923F70BA323231F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6CD24DB3FBBD28E431F99319 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.0;
+			};
+		};
+		9967324DB1CD8A4909BC87AF /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		547D70D9AEC97B185F195D22 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6CD24DB3FBBD28E431F99319 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+		DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9967324DB1CD8A4909BC87AF /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 9E5F61C71F8200E4921EC4C5 /* Project object */;
+}

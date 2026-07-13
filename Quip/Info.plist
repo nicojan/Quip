@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Menu-bar-only agent: no Dock icon, no main window. -->
+    <key>LSUIElement</key>
+    <true/>
+
+    <!-- Sparkle auto-update (direct distribution). See release/DISTRIBUTION.md.
+         SUPublicEDKey is the shared EdDSA key (WatchMeType / Chorus) whose
+         private half lives in the login Keychain. SUFeedURL is served by
+         GitHub Pages from this repo's /docs folder (nicojan/Quip, public). -->
+    <key>SUFeedURL</key>
+    <string>https://nicojan.github.io/Quip/appcast.xml</string>
+    <key>SUPublicEDKey</key>
+    <string>6/h2Pfjbo39vHie8JIt/kY7h0wQvmQxj9Ea0W3gnH0w=</string>
+    <key>SUEnableAutomaticChecks</key>
+    <true/>
+    <key>SUScheduledCheckInterval</key>
+    <integer>86400</integer>
+</dict>
+</plist>

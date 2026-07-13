@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Quip</title>
+        <!--
+          One <item> per release, newest first. Add them by hand per
+          release/DISTRIBUTION.md: enclosure URL points at the GitHub release
+          asset, with sparkle:version (build number), sparkle:shortVersionString,
+          length, and edSignature from `sign_update`.
+        -->
+    </channel>
+</rss>

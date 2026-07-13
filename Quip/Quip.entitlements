@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      Direct distribution (Developer ID + notarization), NOT the App Sandbox,
+      matching Chorus. Hardened Runtime stays ON (ENABLE_HARDENED_RUNTIME = YES)
+      because notarization requires it. Outside the sandbox, outbound network
+      and clipboard access need no entitlement, so this file is intentionally
+      empty. See release/DISTRIBUTION.md.
+    -->
+</dict>
+</plist>
