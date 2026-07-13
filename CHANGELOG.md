@@ -3,10 +3,11 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [1.1.0] - 2026-07-13
 
 ### Added
 
+- **Right-click the menu-bar icon** for Settings and Quit.
 - **Global hotkey** to open Quip from anywhere (default ⌘⇧G). Change it or clear
   it to turn it off in Settings.
 - **Trending** GIFs fill the empty state, and **autocomplete** suggests terms as
