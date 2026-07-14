@@ -3,6 +3,21 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.2] - 2026-07-14
+
+### Fixed
+
+- Quip now displays correctly when macOS is set to Light appearance. The popover
+  kept its dark background but let text and controls follow the system theme, so
+  in Light mode they turned dark-on-dark and were unreadable.
+
+### Changed
+
+- Update reminders are gentler. When Quip finds an update in the background it
+  now marks the menu-bar icon with a small dot — with an "Install Update…" entry
+  in the right-click menu — instead of interrupting you with a window. Checking
+  from Settings still shows the update right away.
+
 ## [1.1.1] - 2026-07-13
 
 ### Fixed
