@@ -3,6 +3,17 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Fixed
+
+- The scroll indicator no longer appears over GIFs at the right edge of the grid.
+
+### Changed
+
+- The image cache now stops at 256 MB. When it fills, Quip drops the GIFs you
+  used least recently, and you can still check its size or clear it from Settings.
+
 ## [1.1.3] - 2026-07-14
 
 ### Fixed

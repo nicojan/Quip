@@ -66,8 +66,8 @@ struct LibraryView: View {
                 }
             }
             .padding(.vertical, 2)
-            .padding(.trailing, Theme.scrollerGutter)
         }
+        .scrollIndicators(.hidden)
         .onChange(of: library.favorites.count) { _, count in
             if count <= 6 { favoriteFilter = "" }   // drop stale filter text
         }
