@@ -46,8 +46,9 @@ users.
 2. **Signing** — set the Team on the Quip target and sign the Release build with
    **Developer ID Application**. The same Team ID is in
    `release/ExportOptions.plist`.
-3. **Notary credentials** (once): `xcrun notarytool store-credentials`, e.g. a
-   profile named `quip-notary`.
+3. **Notary credentials** (once): `xcrun notarytool store-credentials`. Quip
+   reuses the shared `chorus-notary` profile (same Apple account as Chorus), so
+   this is already set up.
 
 ---
 
@@ -95,7 +96,7 @@ Run from the repo root. Replace `X.Y.Z`. Regenerate the project first if
 
 5. **Notarize and staple:**
    ```sh
-   xcrun notarytool submit build/Quip-X.Y.Z.dmg --keychain-profile "quip-notary" --wait
+   xcrun notarytool submit build/Quip-X.Y.Z.dmg --keychain-profile "chorus-notary" --wait
    xcrun stapler staple build/Quip-X.Y.Z.dmg
    ```
 
