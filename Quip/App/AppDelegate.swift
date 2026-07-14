@@ -28,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         TempClips.prepare()   // clear last session's copy/drag temp files
+        GifImageCache.configure()   // cap the on-disk image cache
 
         // Start the updater (userDriverDelegate: self routes scheduled-update
         // alerts through our gentle-reminder methods instead of a stolen-focus modal).

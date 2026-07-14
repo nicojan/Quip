@@ -27,6 +27,7 @@ struct ResultsGrid: View {
                 }
             }
             .padding(.vertical, 2)
+            .padding(.trailing, Theme.scrollerGutter)
         }
     }
 }

@@ -17,4 +17,9 @@ enum Theme {
 
     static let corner: CGFloat = 10
     static let thumbCorner: CGFloat = 8
+
+    /// Right-hand lane reserved inside scrolling grids so the transient overlay
+    /// scroller floats in empty space instead of covering the rightmost column's
+    /// favorite star.
+    static let scrollerGutter: CGFloat = 10
 }
