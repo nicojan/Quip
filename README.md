@@ -8,7 +8,11 @@ Giphy key so it never sits behind someone else's rate limit.
 Quip is a sibling to [Chorus](https://github.com/nicojan/Chorus): a small native
 Mac app for Apple Silicon that's signed and notarized, with Sparkle updates.
 
-<!-- ![Quip in the menu bar](docs/screenshot.png) -->
+<p align="center">
+  <img src="Marketing/SCR-20260713-ozec.png" alt="Quip in the menu bar, two-per-row layout" width="360">
+  &nbsp;&nbsp;
+  <img src="Marketing/SCR-20260713-ozml.png" alt="Quip in the menu bar, five-per-row layout" width="620">
+</p>
 
 ## Features
 
