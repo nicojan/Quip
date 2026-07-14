@@ -17,14 +17,21 @@ struct GifThumbnail: View {
     @State private var hovering = false
 
     var body: some View {
-        AnimatedImage(url: URL(string: gif.gifURL))
-            .resizable()
-            .indicator(.activity)
-            .scaledToFill()
+        // A fixed column-width × 92 box holds the fill-scaled GIF. The box has no
+        // aspect ratio of its own, so — unlike applying `.scaledToFill()` directly
+        // to `AnimatedImage`, whose ideal size is the GIF's full pixel dimensions —
+        // its width can never exceed the grid column. Wide GIFs overflow *inside*
+        // the box and are clipped, instead of bleeding over the neighbouring cell
+        // and covering its favorite star.
+        Color.white.opacity(0.04)
             .frame(maxWidth: .infinity)
             .frame(height: 92)
-            .clipped()
-            .background(Color.white.opacity(0.04))
+            .overlay {
+                AnimatedImage(url: URL(string: gif.gifURL))
+                    .resizable()
+                    .indicator(.activity)
+                    .scaledToFill()
+            }
             .clipShape(RoundedRectangle(cornerRadius: Theme.thumbCorner))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.thumbCorner)
