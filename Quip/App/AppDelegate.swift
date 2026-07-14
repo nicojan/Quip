@@ -15,12 +15,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var settingsWindow: NSWindow?
 
     /// Owns the Sparkle updater for the app's lifetime: drives "Check for
-    /// Updates…" and the scheduled background checks (see Info.plist).
-    private let updaterController = SPUStandardUpdaterController(
-        startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+    /// Updates…" and the scheduled background checks (see Info.plist). Created in
+    /// `applicationDidFinishLaunching` so `self` can be the user-driver delegate
+    /// (for gentle reminders — see the SPUStandardUserDriverDelegate extension).
+    private var updaterController: SPUStandardUpdaterController!
+
+    /// A scheduled (background) update Sparkle asked us to present gently, if any.
+    /// Set while the status item is badged; drives the "Install Update…" menu item.
+    private var pendingUpdate: SUAppcastItem?
+    /// The violet dot overlaid on the status item when `pendingUpdate` is set.
+    private var updateBadge: NSView?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         TempClips.prepare()   // clear last session's copy/drag temp files
+
+        // Start the updater (userDriverDelegate: self routes scheduled-update
+        // alerts through our gentle-reminder methods instead of a stolen-focus modal).
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true, updaterDelegate: nil, userDriverDelegate: self)
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
@@ -31,6 +43,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         popover.behavior = .transient
+        // The popover is designed dark-only (fixed Theme.surface background); pin
+        // its appearance so semantic text/control colors don't flip to light and
+        // render dark-on-dark when the OS is in light mode.
+        popover.appearance = NSAppearance(named: .darkAqua)
         popover.contentSize = NSSize(width: 320, height: 600)
         popover.contentViewController = NSHostingController(
             rootView: MenuContentView(
@@ -68,6 +84,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if popover.isShown { popover.performClose(nil) }
 
         let menu = NSMenu()
+        // Surface a pending gentle-reminder update as an actionable menu item.
+        if pendingUpdate != nil {
+            let updateItem = NSMenuItem(title: "Install Update…", action: #selector(installPendingUpdate), keyEquivalent: "")
+            updateItem.target = self
+            menu.addItem(updateItem)
+            menu.addItem(.separator())
+        }
         let settingsItem = NSMenuItem(title: "Settings…", action: #selector(openSettingsFromMenu), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
@@ -85,7 +108,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func openSettingsFromMenu() { openSettings() }
 
+    /// Brings the deferred update into focus. Sparkle re-presents the update it
+    /// already found (checkForUpdates is the documented way to surface a pending
+    /// gentle reminder), then shows its standard install UI.
+    @objc private func installPendingUpdate() {
+        NSApp.activate(ignoringOtherApps: true)
+        updaterController.updater.checkForUpdates()
+    }
+
     @objc private func quit() { NSApp.terminate(nil) }
+
+    /// Overlays (or removes) a small violet dot on the status item to signal a
+    /// pending update without stealing focus. Kept as a subview so the template
+    /// menu-bar icon still adapts to light/dark and selection states.
+    private func setUpdateBadge(_ visible: Bool) {
+        guard let button = statusItem.button else { return }
+        if visible {
+            let dot = updateBadge ?? {
+                let view = NSView()
+                view.wantsLayer = true
+                view.layer?.backgroundColor = Theme.accentNSColor.cgColor
+                button.addSubview(view)
+                updateBadge = view
+                return view
+            }()
+            let size: CGFloat = 6
+            dot.frame = NSRect(x: button.bounds.maxX - size - 2,
+                               y: button.bounds.maxY - size - 3,
+                               width: size, height: size)
+            dot.layer?.cornerRadius = size / 2
+        } else {
+            updateBadge?.removeFromSuperview()
+            updateBadge = nil
+        }
+    }
 
     private func togglePopover() {
         if popover.isShown {
@@ -118,5 +174,44 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         settingsWindow?.makeKeyAndOrderFront(nil)
         NotificationCenter.default.post(name: .quipSettingsShown, object: nil)
+    }
+}
+
+// MARK: - Gentle update reminders
+
+/// Quip is a menu-bar (LSUIElement) app, so a background-scheduled update alert
+/// would otherwise appear in a stolen-focus modal the user is likely to miss.
+/// Instead we defer scheduled alerts, badge the status item, and let the user
+/// pull the update up from the right-click menu. User-initiated checks (the
+/// Settings button) are left to Sparkle's standard immediate UI.
+extension AppDelegate: @preconcurrency SPUStandardUserDriverDelegate {
+    var supportsGentleScheduledUpdateReminders: Bool { true }
+
+    func standardUserDriverShouldHandleShowingScheduledUpdate(
+        _ update: SUAppcastItem, andInImmediateFocus immediateFocus: Bool
+    ) -> Bool {
+        // Let Sparkle present immediately only when it's already in focus;
+        // otherwise we handle it gently (badge the status item).
+        immediateFocus
+    }
+
+    func standardUserDriverWillHandleShowingUpdate(
+        _ handleShowingUpdate: Bool, forUpdate update: SUAppcastItem, state: SPUUserUpdateState
+    ) {
+        guard !handleShowingUpdate else { return }   // Sparkle is showing it; nothing to do
+        pendingUpdate = update
+        setUpdateBadge(true)
+    }
+
+    func standardUserDriverDidReceiveUserAttention(forUpdate update: SUAppcastItem) {
+        // User engaged with the update alert — clear the gentle indicator.
+        pendingUpdate = nil
+        setUpdateBadge(false)
+    }
+
+    func standardUserDriverWillFinishUpdateSession() {
+        // Session ended (installed, skipped, or dismissed) — clear any indicator.
+        pendingUpdate = nil
+        setUpdateBadge(false)
     }
 }
