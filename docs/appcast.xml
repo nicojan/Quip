@@ -3,6 +3,24 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.4</title>
+            <pubDate>Tue, 14 Jul 2026 11:12:00 -0700</pubDate>
+            <sparkle:version>7</sparkle:version>
+            <sparkle:shortVersionString>1.1.4</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+<li>The scroll indicator no longer appears over GIFs at the right edge of the grid.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li>The image cache now stops at 256 MB. When it fills, Quip drops the GIFs you used least recently, and you can still check its size or clear it from Settings.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.4/Quip-1.1.4.dmg" length="2096246" type="application/octet-stream" sparkle:edSignature="auwLE+jjihXgcqXlrxryEMWwGr+w67AZ8n1C9zfEuwcmX3V0wHZoJtKLvjijkWcjLyfdpoKTh6wXsKKtLYnhCA=="/>
+        </item>
+        <item>
             <title>1.1.3</title>
             <pubDate>Tue, 14 Jul 2026 10:05:35 -0700</pubDate>
             <sparkle:version>6</sparkle:version>
