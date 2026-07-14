@@ -3,6 +3,13 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.3] - 2026-07-14
+
+### Fixed
+
+- Wide GIFs could spill past their column and cover the favorite star on the
+  next GIF. Each GIF now stays inside its own tile.
+
 ## [1.1.2] - 2026-07-14
 
 ### Fixed
