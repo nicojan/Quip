@@ -15,6 +15,7 @@ struct GifThumbnail: View {
     let onToggleFavorite: () -> Void
 
     @State private var hovering = false
+    @State private var loadFailed = false
 
     var body: some View {
         // A fixed column-width × 92 box holds the fill-scaled GIF. The box has no
@@ -27,10 +28,19 @@ struct GifThumbnail: View {
             .frame(maxWidth: .infinity)
             .frame(height: 92)
             .overlay {
-                AnimatedImage(url: URL(string: gif.gifURL))
-                    .resizable()
-                    .indicator(.activity)
-                    .scaledToFill()
+                if let url = URL(string: gif.gifURL), !loadFailed {
+                    AnimatedImage(url: url)
+                        .onFailure { _ in loadFailed = true }
+                        .resizable()
+                        .indicator(.activity)
+                        .scaledToFill()
+                } else {
+                    // Malformed URL or a failed load: a static placeholder instead
+                    // of a spinner that would otherwise turn forever.
+                    Image(systemName: "photo")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                }
             }
             .clipShape(RoundedRectangle(cornerRadius: Theme.thumbCorner))
             .overlay(
@@ -59,6 +69,16 @@ struct GifThumbnail: View {
             .onDrag(dragProvider)
             .onHover { hovering = $0 }
             .help("Click to copy · ⌥-click to copy link · drag to insert")
+            // The tap target is a plain view, so spell out the actions for
+            // VoiceOver — otherwise there's no way to copy a GIF without a mouse.
+            .accessibilityElement(children: .ignore)
+            .accessibilityAddTraits(.isButton)
+            .accessibilityLabel(gif.title.isEmpty ? "GIF" : gif.title)
+            .accessibilityValue(isFavorite ? "Favorite" : "")
+            .accessibilityHint("Copies the GIF")
+            .accessibilityAction { onCopy() }
+            .accessibilityAction(named: "Copy link") { onCopyLink() }
+            .accessibilityAction(named: isFavorite ? "Remove from favorites" : "Add to favorites") { onToggleFavorite() }
     }
 
     /// Drags the GIF out as a file, downloading on demand so it drops into
@@ -74,8 +94,13 @@ struct GifThumbnail: View {
                 completion(nil, false, nil)
                 return nil
             }
-            let task = URLSession.shared.dataTask(with: url) { data, _, error in
-                guard let data else { completion(nil, false, error); return }
+            let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                // Reject a non-2xx CDN response so a downloaded error page never
+                // drops into Messages/Finder as a broken .gif attachment.
+                guard let data,
+                      let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+                    completion(nil, false, error); return
+                }
                 let file = TempClips.newGifURL()
                 do {
                     try data.write(to: file)

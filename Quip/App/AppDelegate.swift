@@ -44,6 +44,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         popover.behavior = .transient
+        popover.delegate = self   // posts .quipPopoverClosed on every close path
         // The popover is designed dark-only (fixed Theme.surface background); pin
         // its appearance so semantic text/control colors don't flip to light and
         // render dark-on-dark when the OS is in light mode.
@@ -175,6 +176,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         settingsWindow?.makeKeyAndOrderFront(nil)
         NotificationCenter.default.post(name: .quipSettingsShown, object: nil)
+    }
+}
+
+// MARK: - Popover close events
+
+extension AppDelegate: @preconcurrency NSPopoverDelegate {
+    func popoverDidClose(_ notification: Notification) {
+        NotificationCenter.default.post(name: .quipPopoverClosed, object: nil)
     }
 }
 

@@ -11,12 +11,30 @@ struct SettingsView: View {
     @AppStorage("giphyRating") private var rating = GiphyClient.defaultRating
     @AppStorage("useStickers") private var useStickers = false
     @State private var startAtLogin = false
+    @State private var loginError: String?
+    @State private var revealKey = false
     @State private var cacheBytes: UInt64 = 0
 
     var body: some View {
         Form {
             Section("Giphy") {
-                TextField("Giphy API key", text: $apiKey)
+                HStack {
+                    Group {
+                        if revealKey {
+                            TextField("Giphy API key", text: $apiKey)
+                        } else {
+                            SecureField("Giphy API key", text: $apiKey)
+                        }
+                    }
+                    Button {
+                        revealKey.toggle()
+                    } label: {
+                        Image(systemName: revealKey ? "eye.slash" : "eye")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(revealKey ? "Hide API key" : "Show API key")
+                }
                 Link("Get a free Giphy API key (choose the API option, not SDK) ↗",
                      destination: URL(string: "https://developers.giphy.com/dashboard/")!)
                     .font(.caption)
@@ -32,11 +50,29 @@ struct SettingsView: View {
             Section("General") {
                 Toggle("Start at login", isOn: $startAtLogin)
                     .onChange(of: startAtLogin) { _, enabled in
-                        LoginItem.setEnabled(enabled)
+                        // Skip the programmatic re-sync below (guards against a loop).
+                        guard enabled != LoginItem.isEnabled else { return }
+                        do {
+                            try LoginItem.setEnabled(enabled)
+                            loginError = nil
+                        } catch {
+                            loginError = "macOS wouldn't change this. Set it in System Settings › General › Login Items."
+                        }
+                        startAtLogin = LoginItem.isEnabled   // reflect what actually happened
                     }
-                Picker("Default layout", selection: $isCompact) {
-                    Text("Narrow — 2 per row").tag(false)
-                    Text("Wide — 5 per row").tag(true)
+                if startAtLogin, LoginItem.needsApproval {
+                    Text("Approve Quip in System Settings › General › Login Items to finish turning this on.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                if let loginError {
+                    Text(loginError)
+                        .font(.caption)
+                        .foregroundStyle(Theme.accentText)
+                }
+                Picker("Layout", selection: $isCompact) {
+                    Text("Narrow (2 per row)").tag(false)
+                    Text("Wide (5 per row)").tag(true)
                 }
             }
 
@@ -58,8 +94,7 @@ struct SettingsView: View {
             Section("Cache") {
                 LabeledContent("Cached GIFs on disk", value: cacheSizeText)
                 Button("Clear image cache") {
-                    GifImageCache.clear()
-                    refreshCacheSize()
+                    GifImageCache.clear { refreshCacheSize() }
                 }
                 .disabled(cacheBytes == 0)
                 Text("Favorites and recent GIFs are cached here so Quip doesn't re-download them.")

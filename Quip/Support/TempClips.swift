@@ -16,6 +16,31 @@ enum TempClips {
     }
 
     static func newGifURL() -> URL {
-        directory.appendingPathComponent(UUID().uuidString).appendingPathExtension("gif")
+        trim()
+        return directory.appendingPathComponent(UUID().uuidString).appendingPathExtension("gif")
+    }
+
+    /// The most recent clips to keep. A menu-bar app can run for weeks, so
+    /// launch-only cleanup isn't enough; trim on each new clip instead.
+    private static let maxClips = 50
+
+    /// Keeps only the newest `maxClips` files. The just-copied clips — the ones
+    /// the pasteboard or an in-progress drag still point at — are the newest, so
+    /// they're never the ones removed.
+    private static func trim() {
+        let fm = FileManager.default
+        guard let urls = try? fm.contentsOfDirectory(
+            at: directory,
+            includingPropertiesForKeys: [.contentModificationDateKey],
+            options: [.skipsHiddenFiles]
+        ), urls.count > maxClips else { return }
+
+        func modified(_ url: URL) -> Date {
+            (try? url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+        }
+        let oldestFirst = urls.sorted { modified($0) < modified($1) }
+        for url in oldestFirst.dropLast(maxClips) {
+            try? fm.removeItem(at: url)
+        }
     }
 }

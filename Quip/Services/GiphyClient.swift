@@ -11,16 +11,24 @@ struct GiphyClient: Sendable {
 
     enum GiphyError: LocalizedError {
         case missingKey
-        case http(Int, String)
+        case http(Int)
         case badResponse
 
         var errorDescription: String? {
             switch self {
             case .missingKey:
                 return "Add your free Giphy API key in Settings to start searching."
-            case .http(let code, let body):
-                let detail = body.isEmpty ? "" : " \(body)"
-                return "Giphy request failed (HTTP \(code)).\(detail)"
+            case .http(let code):
+                switch code {
+                case 401, 403:
+                    return "Giphy turned down that API key. Check it in Settings."
+                case 429:
+                    return "Too many searches just now. Wait a moment, then try again."
+                case 500...599:
+                    return "Giphy is having trouble. Try again in a bit."
+                default:
+                    return "Giphy couldn't handle that search (HTTP \(code))."
+                }
             case .badResponse:
                 return "Couldn't read Giphy's response."
             }
@@ -67,7 +75,7 @@ struct GiphyClient: Sendable {
     private func fetchGifs(from url: URL) async throws -> [Gif] {
         let (data, response) = try await session.data(from: url)
         if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-            throw GiphyError.http(http.statusCode, String(data: data, encoding: .utf8) ?? "")
+            throw GiphyError.http(http.statusCode)
         }
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
               let items = json["data"] as? [[String: Any]] else {

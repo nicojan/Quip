@@ -35,6 +35,7 @@
 		E89291B978D8DE6B2D32119D /* TempClips.swift in Sources */ = {isa = PBXBuildFile; fileRef = E507AEEF4F8AF976662A154E /* TempClips.swift */; };
 		EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */; };
 		F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A601EAED4E5759F30A405D /* GifLibraryTests.swift */; };
+		AA01535641524348564D5453 /* SearchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB02535641524348564D5453 /* SearchViewModelTests.swift */; };
 		F7CA9DF5B5FD1DF007D841D2 /* MenuContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329ED5656C8204B0D481217E /* MenuContentView.swift */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +57,7 @@
 		329ED5656C8204B0D481217E /* MenuContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuContentView.swift; sourceTree = "<group>"; };
 		3B106C80CAE0ADFDA212A97C /* Quip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Quip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		42A601EAED4E5759F30A405D /* GifLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifLibraryTests.swift; sourceTree = "<group>"; };
+		BB02535641524348564D5453 /* SearchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelTests.swift; sourceTree = "<group>"; };
 		47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsGrid.swift; sourceTree = "<group>"; };
 		561B68C798B101F8AA028472 /* LayoutToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutToggle.swift; sourceTree = "<group>"; };
 		5AE024ADE68494F57F80E6F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 				F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */,
 				42A601EAED4E5759F30A405D /* GifLibraryTests.swift */,
 				8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */,
+				BB02535641524348564D5453 /* SearchViewModelTests.swift */,
 			);
 			path = QuipTests;
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 				DA0629DB3527EBAEACB0C6B9 /* GifCodableTests.swift in Sources */,
 				F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */,
 				EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */,
+				AA01535641524348564D5453 /* SearchViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

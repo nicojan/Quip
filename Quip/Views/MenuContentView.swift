@@ -50,6 +50,9 @@ struct MenuContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .quipPopoverShown)) { _ in
             refreshOnOpen()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .quipPopoverClosed)) { _ in
+            vm.handlePopoverClose()
+        }
         .onExitCommand(perform: closePopover)   // Esc closes the popover
     }
 
@@ -58,8 +61,12 @@ struct MenuContentView: View {
     /// field and refreshes trending — which also picks up a key added after first
     /// open and any rating/stickers change.
     private func refreshOnOpen() {
+        vm.handlePopoverOpen()   // reset to home if it's been idle a while
         focusSearchSoon()
         vm.loadTrending(apiKey: apiKey, content: content, rating: rating)
+        // Re-run the active query if stickers/rating changed while we were closed,
+        // so we don't show wrong-mode results.
+        vm.refreshForSettings(apiKey: apiKey, content: content, rating: rating)
     }
 
     // MARK: Header
@@ -77,6 +84,7 @@ struct MenuContentView: View {
             }
             .buttonStyle(.plain)
             .help("Settings")
+            .accessibilityLabel("Settings")
         }
     }
 
@@ -84,12 +92,11 @@ struct MenuContentView: View {
     @ViewBuilder private var suggestionsOrRecents: some View {
         if !vm.query.isEmpty, !vm.suggestions.isEmpty {
             RecentSearchesRow(searches: vm.suggestions) { term in
-                vm.query = term
-                runSearch()
+                vm.runPicked(term, apiKey: apiKey, content: content, rating: rating)
             }
         } else if vm.query.isEmpty, !vm.recentSearches.isEmpty {
             RecentSearchesRow(searches: vm.recentSearches) { term in
-                vm.runRecentSearch(term, apiKey: apiKey, content: content, rating: rating)
+                vm.runPicked(term, apiKey: apiKey, content: content, rating: rating)
             }
         }
     }
@@ -99,10 +106,14 @@ struct MenuContentView: View {
     @ViewBuilder private var contentBody: some View {
         if !hasKey {
             noKeyState
-        } else if vm.isLoading {
+        } else if vm.isLoading, vm.results.isEmpty {
+            // Full spinner only when there's nothing to show; a refine-load keeps
+            // the current results up (see the ResultsGrid branch below).
             Spacer(); ProgressView(); Spacer()
         } else if let error = vm.errorMessage {
             messageState(error, systemImage: "exclamationmark.triangle")
+        } else if vm.noResults {
+            messageState("No GIFs found. Try another word.", systemImage: "magnifyingglass")
         } else if vm.query.isEmpty {
             LibraryView(
                 columns: columns,
@@ -125,6 +136,17 @@ struct MenuContentView: View {
                 onCopyLink: { vm.copyLink($0) },
                 onToggleFavorite: { library.toggleFavorite($0) }
             )
+            .overlay(alignment: .top) {
+                // A refine keeps the old results up with a small badge, instead of
+                // blanking the grid to a full-screen spinner on every keystroke.
+                if vm.isLoading {
+                    ProgressView()
+                        .controlSize(.small)
+                        .padding(6)
+                        .background(.thinMaterial, in: Capsule())
+                        .padding(.top, 4)
+                }
+            }
         }
     }
 

@@ -13,6 +13,10 @@ final class SearchViewModel {
     var suggestions: [String] = []
     var isLoading = false
     var errorMessage: String?
+    /// True only after a completed search returned zero hits — a neutral empty
+    /// state, distinct from `errorMessage` (a failure) and from "haven't searched
+    /// yet" (so it never flashes mid-type).
+    var noResults = false
     var recentSearches: [String] = []
     /// The id of the GIF most recently copied, for a brief "Copied!" overlay on
     /// that thumbnail. Cleared after a short delay.
@@ -22,6 +26,11 @@ final class SearchViewModel {
     /// whole results/library view.
     var copyFailedGifID: String?
 
+    /// How long the popover can sit closed before reopening it drops the last
+    /// search and returns to the home page. Reopen sooner than this and your
+    /// results are still there.
+    static let inactivityResetInterval: TimeInterval = 120
+
     @ObservationIgnored private let client = GiphyClient()
     @ObservationIgnored private let maxRecentSearches = 5
     @ObservationIgnored private let recentSearchesKey = "recentSearches"
@@ -29,28 +38,102 @@ final class SearchViewModel {
     @ObservationIgnored private var suggestTask: Task<Void, Never>?
     @ObservationIgnored private var copiedResetTask: Task<Void, Never>?
     @ObservationIgnored private var copyFailedResetTask: Task<Void, Never>?
+    /// Set when the query is changed programmatically (a chip/suggestion tap), so
+    /// the `onChange`-driven live search that echoes the change is skipped instead
+    /// of cancelling the explicit search and re-running it after the debounce.
+    @ObservationIgnored private var suppressNextLiveSearch = false
+    /// Guards against overlapping trending fetches — notably the two that fire on
+    /// the very first open (onAppear plus the shown notification).
+    @ObservationIgnored private var isFetchingTrending = false
+    /// The clock, injectable so tests can drive the inactivity window.
+    @ObservationIgnored private let now: () -> Date
+    /// When the user last opened, closed, or acted on the popover; nil until the
+    /// first open. Drives the inactivity reset.
+    @ObservationIgnored private var lastActiveAt: Date?
+    /// The content type and rating the on-screen `results` were fetched under, so
+    /// a reopen after a Settings change can tell they've gone stale.
+    @ObservationIgnored private var resultsContent: GiphyClient.Content?
+    @ObservationIgnored private var resultsRating: String?
 
-    init() {
+    init(now: @escaping () -> Date = Date.init) {
+        self.now = now
         recentSearches = UserDefaults.standard.stringArray(forKey: recentSearchesKey) ?? []
     }
+
+    /// Called each time the popover opens. If it's been idle past the reset
+    /// window, clears the last search so we land on the home page; otherwise the
+    /// previous results stay. Always stamps the activity time.
+    func handlePopoverOpen() {
+        if let last = lastActiveAt, now().timeIntervalSince(last) > Self.inactivityResetInterval {
+            resetToHome()
+        }
+        markActive()
+    }
+
+    /// Called when the popover closes, so the inactivity window measures time
+    /// spent closed — not time since the last search or copy. Without this, a
+    /// long read with no copy would count as idle and drop results on a reopen a
+    /// second later.
+    func handlePopoverClose() {
+        markActive()
+    }
+
+    /// On popover open: if the content type or rating changed in Settings since
+    /// the on-screen results were fetched, re-run the active query so we don't
+    /// keep showing wrong-mode results. No-op on the home page (empty query).
+    func refreshForSettings(apiKey: String, content: GiphyClient.Content, rating: String) {
+        let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !term.isEmpty, !results.isEmpty else { return }
+        guard resultsContent != content || resultsRating != rating else { return }
+        run(query: term, apiKey: apiKey, content: content, rating: rating)
+    }
+
+    /// Clears the current search back to the home state (recents + trending).
+    /// Leaves recent searches and trending intact.
+    private func resetToHome() {
+        searchTask?.cancel()
+        suggestTask?.cancel()
+        query = ""
+        results = []
+        suggestions = []
+        errorMessage = nil
+        noResults = false
+        isLoading = false
+    }
+
+    private func markActive() { lastActiveAt = now() }
 
     /// Explicit search (Return / chip / suggestion tap): records the term, runs.
     func search(apiKey: String, content: GiphyClient.Content, rating: String) {
         let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !term.isEmpty else { return }
+        suggestTask?.cancel()   // don't let a stale autocomplete repaint chips
         suggestions = []
         addRecentSearch(term)
         run(query: term, apiKey: apiKey, content: content, rating: rating)
     }
 
+    /// Run a term picked from a recent or suggestion chip. Fills the field and
+    /// searches, suppressing the live-search echo that setting the field triggers.
+    func runPicked(_ term: String, apiKey: String, content: GiphyClient.Content, rating: String) {
+        suppressNextLiveSearch = (term != query)
+        query = term
+        search(apiKey: apiKey, content: content, rating: rating)
+    }
+
     /// Debounced as-you-type search plus autocomplete; does not record recents.
     func liveSearch(apiKey: String, content: GiphyClient.Content, rating: String) {
+        if suppressNextLiveSearch {
+            suppressNextLiveSearch = false
+            return
+        }
         let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
         searchTask?.cancel()
         updateSuggestions(apiKey: apiKey)
         guard !term.isEmpty else {
             results = []
             errorMessage = nil
+            noResults = false
             isLoading = false
             return
         }
@@ -62,16 +145,25 @@ final class SearchViewModel {
     }
 
     private func run(query term: String, apiKey: String, content: GiphyClient.Content, rating: String) {
+        markActive()
         searchTask?.cancel()
+        // Set loading synchronously — not inside the task — so a task cancelled
+        // before its body runs can't later flip isLoading back on and strand a
+        // spinner on an already-cleared field.
+        isLoading = true
+        errorMessage = nil
+        noResults = false
         searchTask = Task { [weak self] in
             guard let self else { return }
-            self.isLoading = true
-            self.errorMessage = nil
             do {
                 let gifs = try await self.client.search(term, apiKey: apiKey, content: content, rating: rating)
                 if Task.isCancelled { return }
-                self.results = gifs
-                self.errorMessage = gifs.isEmpty ? "No GIFs found." : nil
+                let deduped = gifs.dedupedByID()
+                self.results = deduped
+                self.errorMessage = nil          // empty is a state the view shows, not an error
+                self.noResults = deduped.isEmpty
+                self.resultsContent = content
+                self.resultsRating = rating
             } catch {
                 if Task.isCancelled { return }
                 self.results = []
@@ -82,18 +174,16 @@ final class SearchViewModel {
         }
     }
 
-    func runRecentSearch(_ term: String, apiKey: String, content: GiphyClient.Content, rating: String) {
-        query = term
-        search(apiKey: apiKey, content: content, rating: rating)
-    }
-
     /// Loads trending for the empty state. Silent on failure — it's a nicety.
     func loadTrending(apiKey: String, content: GiphyClient.Content, rating: String) {
         guard !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        guard !isFetchingTrending else { return }
+        isFetchingTrending = true
         Task { [weak self] in
             guard let self else { return }
+            defer { self.isFetchingTrending = false }
             let gifs = (try? await self.client.trending(apiKey: apiKey, content: content, rating: rating)) ?? []
-            if !gifs.isEmpty { self.trending = gifs }
+            if !gifs.isEmpty { self.trending = gifs.dedupedByID() }
         }
     }
 
@@ -106,7 +196,8 @@ final class SearchViewModel {
             guard let self, !Task.isCancelled else { return }
             let terms = (try? await self.client.autocomplete(term, apiKey: apiKey)) ?? []
             if Task.isCancelled { return }
-            self.suggestions = terms
+            var seen = Set<String>()
+            self.suggestions = terms.filter { seen.insert($0).inserted }   // no dup ForEach ids
         }
     }
 
@@ -114,11 +205,17 @@ final class SearchViewModel {
     /// into Messages, Slack, etc. as an animated attachment. Records it as recent
     /// on success.
     func copy(_ gif: Gif, into library: GifLibrary) {
-        guard let url = URL(string: gif.gifURL) else { return }
+        guard let url = URL(string: gif.gifURL) else { markCopyFailed(gif.id); return }
         Task { [weak self] in
             guard let self else { return }
             do {
-                let (data, _) = try await URLSession.shared.data(from: url)
+                let (data, response) = try await URLSession.shared.data(from: url)
+                // A CDN error page (403/404) still arrives as bytes; writing it as
+                // a .gif would put a corrupt file on the pasteboard and flash a
+                // false "Copied!". Treat any non-2xx as a failure.
+                guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+                    self.markCopyFailed(gif.id); return
+                }
                 let file = TempClips.newGifURL()
                 try data.write(to: file)
                 let pasteboard = NSPasteboard.general
@@ -144,6 +241,7 @@ final class SearchViewModel {
     }
 
     private func markCopied(_ id: String) {
+        markActive()
         withAnimation { copiedGifID = id }
         copiedResetTask?.cancel()
         copiedResetTask = Task { [weak self] in

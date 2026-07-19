@@ -45,3 +45,13 @@ struct Gif: Identifiable, Codable, Hashable, Sendable {
         self.title = (dict["title"] as? String) ?? ""
     }
 }
+
+extension Array where Element == Gif {
+    /// Drops later entries whose id already appeared. Giphy occasionally repeats
+    /// an id within one response, which would collide as a SwiftUI `ForEach` id
+    /// and drop or glitch cells.
+    func dedupedByID() -> [Gif] {
+        var seen = Set<String>()
+        return filter { seen.insert($0.id).inserted }
+    }
+}

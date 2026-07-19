@@ -32,8 +32,11 @@ enum GifImageCache {
         return total
     }
 
-    static func clear() {
+    /// Clears memory and disk caches. `completion` runs after the disk clear
+    /// finishes (on the main queue), so a size refresh reads the real post-clear
+    /// figure instead of racing the still-running clear.
+    static func clear(completion: (() -> Void)? = nil) {
         SDImageCache.shared.clearMemory()
-        SDImageCache.shared.clearDisk(onCompletion: nil)
+        SDImageCache.shared.clearDisk { completion?() }
     }
 }

@@ -12,6 +12,7 @@ struct SearchBar: View {
         HStack(spacing: 6) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
 
             TextField("Search GIFs", text: $text)
                 .textFieldStyle(.plain)
@@ -21,13 +22,13 @@ struct SearchBar: View {
 
             if !text.isEmpty {
                 Button {
-                    text = ""
-                    onChange()
+                    text = ""   // fires .onChange(of: text) once; no explicit call needed
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Clear search")
             }
         }
         .padding(8)
