@@ -3,6 +3,33 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.5] - 2026-07-18
+
+### Added
+
+- Quip returns to its home view (recent searches and trending) when you open it
+  after a couple of minutes away, instead of showing your last search. Reopen
+  sooner and your results are still there.
+
+### Changed
+
+- Results stay on screen while a new search loads, instead of blanking to a spinner.
+- The Giphy API key field is now hidden by default, with a button to reveal it.
+- VoiceOver can now copy a GIF and read the toolbar controls.
+
+### Fixed
+
+- A GIF that fails to download no longer shows a "Copied!" mark. Quip tells you
+  the copy didn't work, so you don't paste a broken file.
+- Switching stickers or the content rating now updates the results already on screen.
+- A search with no matches shows a plain "No GIFs found" message instead of
+  looking like an error.
+- "Start at login" now reflects whether it took effect, and points you to System
+  Settings when macOS needs to approve it.
+- A GIF that can't load shows a placeholder instead of spinning forever.
+- Tapping a suggestion or a recent search now runs a single search.
+- Clearer messages when Giphy turns down your key or is busy.
+
 ## [1.1.4] - 2026-07-14
 
 ### Fixed

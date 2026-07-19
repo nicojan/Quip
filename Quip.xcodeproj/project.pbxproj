@@ -10,6 +10,7 @@
 		090BA255191D69993B6B55DB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ADAE926E78216EC67B516 /* SettingsView.swift */; };
 		0A1DB03A7E4FE9E45940A226 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = BF9785AC963A6D0494EADB84 /* SDWebImage */; };
 		1EF5424DE5E62D26C8B96FA1 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC7C5D217AAF7EECC5D318E /* LibraryView.swift */; };
+		291B9AF7B3D5F439017FC21A /* SearchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A19CC2C3EF3219E3B802972E /* SearchViewModelTests.swift */; };
 		2AFDCE010F9A7AADFD3F0C69 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 547D70D9AEC97B185F195D22 /* Sparkle */; };
 		2B6886FA998CD123C8B74ACC /* GiphyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFF15A2C60060D053FAEEE9 /* GiphyClient.swift */; };
 		302D12051D6472704DF9E36B /* Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9961B7E67492052A1F97CB3B /* Gif.swift */; };
@@ -35,7 +36,6 @@
 		E89291B978D8DE6B2D32119D /* TempClips.swift in Sources */ = {isa = PBXBuildFile; fileRef = E507AEEF4F8AF976662A154E /* TempClips.swift */; };
 		EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */; };
 		F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A601EAED4E5759F30A405D /* GifLibraryTests.swift */; };
-		AA01535641524348564D5453 /* SearchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB02535641524348564D5453 /* SearchViewModelTests.swift */; };
 		F7CA9DF5B5FD1DF007D841D2 /* MenuContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329ED5656C8204B0D481217E /* MenuContentView.swift */; };
 /* End PBXBuildFile section */
 
@@ -57,7 +57,6 @@
 		329ED5656C8204B0D481217E /* MenuContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuContentView.swift; sourceTree = "<group>"; };
 		3B106C80CAE0ADFDA212A97C /* Quip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Quip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		42A601EAED4E5759F30A405D /* GifLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifLibraryTests.swift; sourceTree = "<group>"; };
-		BB02535641524348564D5453 /* SearchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelTests.swift; sourceTree = "<group>"; };
 		47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsGrid.swift; sourceTree = "<group>"; };
 		561B68C798B101F8AA028472 /* LayoutToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutToggle.swift; sourceTree = "<group>"; };
 		5AE024ADE68494F57F80E6F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -68,6 +67,7 @@
 		9961B7E67492052A1F97CB3B /* Gif.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gif.swift; sourceTree = "<group>"; };
 		99C83A68E9C8860698D8C44B /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		9AC3724BAC12DBAE5CD9BBD9 /* Quip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Quip.entitlements; sourceTree = "<group>"; };
+		A19CC2C3EF3219E3B802972E /* SearchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelTests.swift; sourceTree = "<group>"; };
 		A20AEE5F8920C4B47860662B /* GifThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifThumbnail.swift; sourceTree = "<group>"; };
 		A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BA19FE181D760F4BDA356692 /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
@@ -155,7 +155,7 @@
 				F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */,
 				42A601EAED4E5759F30A405D /* GifLibraryTests.swift */,
 				8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */,
-				BB02535641524348564D5453 /* SearchViewModelTests.swift */,
+				A19CC2C3EF3219E3B802972E /* SearchViewModelTests.swift */,
 			);
 			path = QuipTests;
 			sourceTree = "<group>";
@@ -305,7 +305,7 @@
 				DA0629DB3527EBAEACB0C6B9 /* GifCodableTests.swift in Sources */,
 				F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */,
 				EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */,
-				AA01535641524348564D5453 /* SearchViewModelTests.swift in Sources */,
+				291B9AF7B3D5F439017FC21A /* SearchViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,7 +354,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Quip/Info.plist;
@@ -364,7 +364,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.1.4;
+				MARKETING_VERSION = 1.1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;
@@ -479,7 +479,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 3CY4DX3K45;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -490,7 +490,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.1.4;
+				MARKETING_VERSION = 1.1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;
