@@ -3,6 +3,36 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.5</title>
+            <pubDate>Sat, 18 Jul 2026 19:14:57 -0700</pubDate>
+            <sparkle:version>8</sparkle:version>
+            <sparkle:shortVersionString>1.1.5</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Added</h3>
+<ul>
+<li>Quip returns to its home view (recent searches and trending) when you open it after a couple of minutes away, instead of showing your last search. Reopen sooner and your results are still there.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li>Results stay on screen while a new search loads, instead of blanking to a spinner.</li>
+<li>The Giphy API key field is now hidden by default, with a button to reveal it.</li>
+<li>VoiceOver can now copy a GIF and read the toolbar controls.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li>A GIF that fails to download no longer shows a "Copied!" mark. Quip tells you the copy didn't work, so you don't paste a broken file.</li>
+<li>Switching stickers or the content rating now updates the results already on screen.</li>
+<li>A search with no matches shows a plain "No GIFs found" message instead of looking like an error.</li>
+<li>"Start at login" now reflects whether it took effect, and points you to System Settings when macOS needs to approve it.</li>
+<li>A GIF that can't load shows a placeholder instead of spinning forever.</li>
+<li>Tapping a suggestion or a recent search now runs a single search.</li>
+<li>Clearer messages when Giphy turns down your key or is busy.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.5/Quip-1.1.5.dmg" length="2131224" type="application/octet-stream" sparkle:edSignature="b2JF+KIrTF5vbEsGc2nvGVCTqw+SPFEuFK6dHaljhbL4wC93IWelkQqLoBW4vqzCfJ/wozhM2g1GiJ6dRnykDQ=="/>
+        </item>
+        <item>
             <title>1.1.4</title>
             <pubDate>Tue, 14 Jul 2026 11:12:00 -0700</pubDate>
             <sparkle:version>7</sparkle:version>
