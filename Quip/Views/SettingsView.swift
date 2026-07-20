@@ -7,7 +7,7 @@ struct SettingsView: View {
 
     @Environment(GifLibrary.self) private var library
     @AppStorage("giphyApiKey") private var apiKey = ""
-    @AppStorage("isCompactLayout") private var isCompact = false
+    @AppStorage("layoutMode") private var layoutModeRaw = LayoutMode.narrow.rawValue
     @AppStorage("giphyRating") private var rating = GiphyClient.defaultRating
     @AppStorage("useStickers") private var useStickers = false
     @State private var startAtLogin = false
@@ -70,9 +70,13 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(Theme.accentText)
                 }
-                Picker("Layout", selection: $isCompact) {
-                    Text("Narrow (2 per row)").tag(false)
-                    Text("Wide (5 per row)").tag(true)
+                Picker("Layout", selection: Binding(
+                    get: { LayoutMode(rawValue: layoutModeRaw) ?? .narrow },
+                    set: { layoutModeRaw = $0.rawValue }
+                )) {
+                    Text("Narrow (2 per row)").tag(LayoutMode.narrow)
+                    Text("Tall (3 per row, full height)").tag(LayoutMode.tall)
+                    Text("Wide (5 per row)").tag(LayoutMode.wide)
                 }
             }
 

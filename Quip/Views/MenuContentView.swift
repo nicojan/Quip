@@ -4,8 +4,9 @@ import SwiftUI
 /// library, and the footer.
 struct MenuContentView: View {
     @Environment(GifLibrary.self) private var library
+    @Environment(LayoutMetrics.self) private var metrics
     @AppStorage("giphyApiKey") private var apiKey = ""
-    @AppStorage("isCompactLayout") private var isCompact = false
+    @AppStorage("layoutMode") private var layoutModeRaw = LayoutMode.narrow.rawValue
     @AppStorage("giphyRating") private var rating = GiphyClient.defaultRating
     @AppStorage("useStickers") private var useStickers = false
     @State private var vm = SearchViewModel()
@@ -22,8 +23,10 @@ struct MenuContentView: View {
         !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    private var layoutMode: LayoutMode { LayoutMode(rawValue: layoutModeRaw) ?? .narrow }
+
     private var columns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 8), count: isCompact ? 5 : 2)
+        Array(repeating: GridItem(.flexible(), spacing: 8), count: layoutMode.columns)
     }
 
     /// Filing inputs shared by every GIF cell, built from the one shared library.
@@ -57,7 +60,10 @@ struct MenuContentView: View {
             footer
         }
         .padding(12)
-        .frame(width: isCompact ? 640 : 320, height: isCompact ? 470 : 600)
+        .frame(
+            width: layoutMode.width,
+            height: layoutMode.height(forScreenHeight: metrics.launchScreenHeight)
+        )
         .background(Theme.surface)
         .onAppear { refreshOnOpen() }
         .onReceive(NotificationCenter.default.publisher(for: .quipPopoverShown)) { _ in
@@ -91,7 +97,10 @@ struct MenuContentView: View {
             Text("Quip")
                 .font(.headline)
             Spacer()
-            LayoutToggle(isCompact: $isCompact)
+            LayoutToggle(mode: Binding(
+                get: { layoutMode },
+                set: { layoutModeRaw = $0.rawValue }
+            ))
             Button { openSettings() } label: {
                 Image(systemName: "gearshape")
             }

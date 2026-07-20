@@ -14,6 +14,8 @@ struct GifThumbnail: View {
     let onCopyLink: () -> Void
     let onToggleFavorite: () -> Void
 
+    @Environment(DragContext.self) private var dragContext
+
     @State private var hovering = false
     @State private var loadFailed = false
 
@@ -66,7 +68,12 @@ struct GifThumbnail: View {
                 // ⌥-click copies the link instead of the file.
                 if NSEvent.modifierFlags.contains(.option) { onCopyLink() } else { onCopy() }
             }
-            .onDrag { QuipDragProvider.make(for: gif) }
+            .onDrag {
+                // Record the GIF for an in-app chip drop; the provider still carries
+                // the .gif file for external drag-to-insert. See DragContext.
+                dragContext.gif = gif
+                return QuipDragProvider.make(for: gif)
+            }
             .onHover { hovering = $0 }
             .help("Click to copy · ⌥-click to copy link · drag to insert, or onto a collection to file")
             // The tap target is a plain view, so spell out the actions for

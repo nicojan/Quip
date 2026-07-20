@@ -1,6 +1,8 @@
 # Drag a GIF onto a collection chip to file it
 
-**Status:** approved for build (2026-07-19)
+**Status:** shipped. Chip drop target + discoverability in 1.1.7; the actual
+filing was broken by the pasteboard-payload assumption and fixed via `DragContext`
+in 1.1.8 (see "Why it doesn't break drag-to-insert").
 **Scope:** single-GIF drag-to-file. Batch/multi-select is a separate future spec.
 
 ## Problem
@@ -26,29 +28,40 @@ auto-favorited first, identical to the right-click path.
 ## Why it doesn't break drag-to-insert
 
 Every GIF cell already has `.onDrag` that vends the downloadable `.gif` **file**
-— the "drag to insert into Messages/Finder/Slack" path (`GifThumbnail.dragProvider`).
-We must not disturb it.
+— the "drag to insert into Messages/Finder/Slack" path (`QuipDragProvider.make`).
+We must not disturb it. That file representation stays exactly as it was.
 
-The same `NSItemProvider` gets a **second** representation: the full `Gif`
-encoded as JSON, registered under a private exported UTI
-`com.nicojan.Quip.gif-ref` with **`.ownProcess` visibility**. Because the
-payload is own-process only, it never leaves Quip — external apps see only the
-`.gif` file, exactly as today. Collection chips are the only drop targets that
-understand the private type. One drag, the destination decides what it means.
+The cell's `NSItemProvider` also advertises a private type
+`com.nicojan.Quip.gif-ref` (`.ownProcess` visibility). Its only job is
+**acceptance gating**: a collection chip's `.onDrop(of: [.gifRef])` fires only for
+drags carrying that type, so external GIF drags (which don't) are never treated as
+filing. External apps still see only the `.gif` file.
 
-**The payload is the whole `Gif`, not just its id.** Auto-favoriting a GIF
-dragged from Trending needs the full `Gif` object to insert into `favorites`; an
-id alone can't reconstruct it. `Gif` is already `Codable`.
+**How the dragged GIF actually reaches the drop — the part that bit us.** The
+original design loaded the `Gif` back from a second JSON representation on the
+provider at drop time. That does **not** work: on macOS the drop handler receives
+an `NSItemProvider` **stripped of its representations** (empty
+`registeredTypeIdentifiers`) for an in-process, own-process custom type. The drop
+fires, `isTargeted` toggles, but there is no payload to read. A unit test using a
+provider built in the same call passed, which hid this — the real drag session
+reconstructs the provider.
+
+So the GIF is carried in a shared `DragContext` (`@MainActor @Observable`) instead
+of on the pasteboard: the cell sets `dragContext.gif` when its drag starts, and the
+chip reads it on drop. The `gif-ref` acceptance type still gates this to Quip's own
+drags, so `DragContext` is only ever read for a drag we started — no stale/foreign
+payload risk.
 
 ## Data flow
 
-Chip drop handler decodes the `Gif` from the payload and calls the existing
+Chip drop handler reads `dragContext.gif` and calls the existing
 `GifLibrary.setMembership(gif, inCollection: id, member: true)`, which already:
 auto-favorites if needed, appends the id (deduped/idempotent), and persists. No
 new library logic.
 
-`CollectionChipsRow` already holds `@Environment(GifLibrary.self)`, so it files
-directly — no new closure threaded through `CollectionFiling`.
+`CollectionChipsRow` holds `@Environment(GifLibrary.self)` and
+`@Environment(DragContext.self)`, so it files directly — no new closure threaded
+through `CollectionFiling`.
 
 ## Discoverability & feedback
 
@@ -92,10 +105,13 @@ always-there or in-the-moment cues:
 
 ## Files
 
-- `Quip/Support/QuipDragType.swift` (new) — the exported `UTType` + payload
-  encode/decode helpers.
-- `Quip/Info.plist` — `UTExportedTypeDeclarations` for the private UTI.
-- `Quip/Views/GifThumbnail.swift` — register the second representation; tooltip.
+- `Quip/Support/QuipDragType.swift` — the private `UTType` used to gate chip
+  drops (app-private identifier, not declared in Info.plist — see the file).
+- `Quip/Support/QuipDragProvider.swift` — builds the cell's drag provider (the
+  `.gif` file for drag-to-insert + the `gif-ref` acceptance type).
+- `Quip/Support/DragContext.swift` — shared `@Observable` carrying the dragged
+  GIF (the pasteboard can't; see above).
+- `Quip/Views/GifThumbnail.swift` — sets `dragContext.gif` on drag start; tooltip.
 - `Quip/Views/CollectionChipsRow.swift` — chip drop target, highlight, flash.
 - `Quip/Views/LibraryView.swift` — empty-collection hint copy.
-- `QuipTests/` — payload round-trip + idempotency tests.
+- `QuipTests/` — `GifLibrary.setMembership` filing/idempotency + drag-payload tests.

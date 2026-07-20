@@ -3,6 +3,21 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.8] - 2026-07-19
+
+### Added
+
+- A taller layout. The size toggle has a third setting that fills about 80% of
+  your screen's height, three GIFs to a row, so there's more to browse without
+  scrolling.
+- Check for updates from the menu-bar menu. Right-click the Quip icon and check
+  for a new version without opening Settings.
+
+### Fixed
+
+- Dragging a GIF onto a collection now files it. In 1.1.7 the drop looked like it
+  worked but the GIF was never added.
+
 ## [1.1.7] - 2026-07-19
 
 ### Changed

@@ -1,23 +1,33 @@
 import SwiftUI
 
-/// Compact 2-up / 5-up segmented control. Replaces InaGif's full-width
-/// "Toggle Layout" button.
+/// Three-way layout picker: narrow (2-up), tall (3-up, full-height), wide (5-up).
 struct LayoutToggle: View {
-    @Binding var isCompact: Bool
+    @Binding var mode: LayoutMode
 
     var body: some View {
-        Picker("Layout", selection: $isCompact) {
+        Picker("Layout", selection: $mode) {
             Image(systemName: "square.grid.2x2")
                 .accessibilityLabel("Narrow, 2 per row")
-                .tag(false)
+                .tag(LayoutMode.narrow)
             Image(systemName: "square.grid.3x3")
+                .accessibilityLabel("Tall, 3 per row")
+                .tag(LayoutMode.tall)
+            Image(systemName: "square.grid.4x3.fill")
                 .accessibilityLabel("Wide, 5 per row")
-                .tag(true)
+                .tag(LayoutMode.wide)
         }
         .pickerStyle(.segmented)
         .labelsHidden()
         .fixedSize()
         .accessibilityLabel("Layout")
-        .help(isCompact ? "Wide (5 per row)" : "Narrow (2 per row)")
+        .help(helpText)
+    }
+
+    private var helpText: String {
+        switch mode {
+        case .narrow: "Narrow (2 per row)"
+        case .tall: "Tall (3 per row, full height)"
+        case .wide: "Wide (5 per row)"
+        }
     }
 }

@@ -8,6 +8,7 @@ import UniformTypeIdentifiers
 /// dragging a GIF cell onto a chip (see the drop handling below).
 struct CollectionChipsRow: View {
     @Environment(GifLibrary.self) private var library
+    @Environment(DragContext.self) private var dragContext
     @Binding var selectedID: String?
 
     @State private var creating = false
@@ -35,17 +36,19 @@ struct CollectionChipsRow: View {
                         }
                         .overlay(
                             Capsule()
-                                .strokeBorder(Theme.accent, lineWidth: 2)
+                                .fill(Theme.accent.opacity(0.35))
+                                .overlay(Capsule().strokeBorder(Theme.accent, lineWidth: 2.5))
                                 .opacity(dropTargetID == collection.id || flashID == collection.id ? 1 : 0)
+                                .allowsHitTesting(false)
                         )
-                        .scaleEffect(dropTargetID == collection.id ? 1.1 : 1)
+                        .scaleEffect(dropTargetID == collection.id ? 1.15 : 1)
                         .animation(.easeOut(duration: 0.12), value: dropTargetID)
                         .animation(.easeOut(duration: 0.15), value: flashID)
                         .onDrop(
                             of: [QuipDragType.gifRef],
                             isTargeted: dropTargetBinding(collection.id)
-                        ) { providers in
-                            handleDrop(providers, into: collection.id)
+                        ) { _ in
+                            handleDrop(into: collection.id)
                         }
                         .contextMenu {
                             Button("Rename") { beginRename(collection) }
@@ -130,22 +133,15 @@ struct CollectionChipsRow: View {
         )
     }
 
-    /// Files a dropped GIF into a collection. The payload is the whole GIF (see
-    /// `QuipDragType`), so a not-yet-favourited GIF auto-favourites on the way in.
-    private func handleDrop(_ providers: [NSItemProvider], into id: String) -> Bool {
-        let typeID = QuipDragType.gifRef.identifier
-        guard let provider = providers.first(where: {
-            $0.hasItemConformingToTypeIdentifier(typeID)
-        }) else { return false }
-
-        provider.loadDataRepresentation(forTypeIdentifier: typeID) { data, _ in
-            guard let gif = QuipDragType.decode(data) else { return }
-            // The load completes off the main actor; hop back to mutate the store.
-            Task { @MainActor in
-                library.setMembership(gif, inCollection: id, member: true)
-                flash(id)
-            }
-        }
+    /// Files the currently-dragged GIF into a collection. The GIF comes from
+    /// `DragContext` (the drop provider arrives empty — see `DragContext`), and the
+    /// `gifRef` acceptance type already gated this to Quip's own drags. Filing a
+    /// not-yet-favourited GIF auto-favourites it on the way in.
+    @MainActor private func handleDrop(into id: String) -> Bool {
+        guard let gif = dragContext.gif else { return false }
+        library.setMembership(gif, inCollection: id, member: true)
+        dragContext.gif = nil
+        flash(id)
         return true
     }
 

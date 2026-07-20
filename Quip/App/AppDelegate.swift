@@ -14,6 +14,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let popover = NSPopover()
     private var settingsWindow: NSWindow?
 
+    /// Usable height of the display the popover opens on (`visibleFrame`, so it
+    /// never clips under the menu bar/Dock), injected into the content so the
+    /// `tall` layout can be 80% of it. Refreshed before each show (see `togglePopover`).
+    private let layoutMetrics = LayoutMetrics(launchScreenHeight: NSScreen.main?.visibleFrame.height ?? 800)
+
+    /// The GIF being dragged inside Quip, so a chip drop can file it (the drag
+    /// pasteboard can't carry it — see `DragContext`).
+    private let dragContext = DragContext()
+
     /// Owns the Sparkle updater for the app's lifetime: drives "Check for
     /// Updates…" and the scheduled background checks (see Info.plist). Created in
     /// `applicationDidFinishLaunching` so `self` can be the user-driver delegate
@@ -29,6 +38,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         TempClips.prepare()   // clear last session's copy/drag temp files
         GifImageCache.configure()   // cap the on-disk image cache
+
+        migrateLayoutPreference()
 
         // Start the updater (userDriverDelegate: self routes scheduled-update
         // alerts through our gentle-reminder methods instead of a stolen-focus modal).
@@ -56,6 +67,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 closePopover: { [weak self] in self?.popover.performClose(nil) }
             )
             .environment(GifLibrary.shared)
+            .environment(layoutMetrics)
+            .environment(dragContext)
         )
 
         // Seed the default shortcut exactly once, so a user who later clears it
@@ -86,6 +99,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if popover.isShown { popover.performClose(nil) }
 
         let menu = NSMenu()
+        menu.autoenablesItems = false
         // Surface a pending gentle-reminder update as an actionable menu item.
         if pendingUpdate != nil {
             let updateItem = NSMenuItem(title: "Install Update…", action: #selector(installPendingUpdate), keyEquivalent: "")
@@ -93,6 +107,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             menu.addItem(updateItem)
             menu.addItem(.separator())
         }
+        let checkItem = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdatesFromMenu), keyEquivalent: "")
+        checkItem.target = self
+        checkItem.isEnabled = updaterController.updater.canCheckForUpdates
+        menu.addItem(checkItem)
+        menu.addItem(.separator())
         let settingsItem = NSMenuItem(title: "Settings…", action: #selector(openSettingsFromMenu), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
@@ -109,6 +128,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openSettingsFromMenu() { openSettings() }
+
+    /// User-initiated update check from the menu-bar menu. Shows Sparkle's standard
+    /// UI (progress, then "up to date" or the update prompt) — only *scheduled*
+    /// checks are deferred to the gentle-reminder badge.
+    @objc private func checkForUpdatesFromMenu() {
+        NSApp.activate(ignoringOtherApps: true)
+        updaterController.updater.checkForUpdates()
+    }
 
     /// Brings the deferred update into focus. Sparkle re-presents the update it
     /// already found (checkForUpdates is the documented way to surface a pending
@@ -149,11 +176,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if popover.isShown {
             popover.performClose(nil)
         } else if let button = statusItem.button {
+            // Size to the display we're opening on before showing, so the `tall`
+            // layout (80% of usable height) opens at the right size with no flash.
+            let screenHeight = (button.window?.screen ?? NSScreen.main)?.visibleFrame.height ?? 800
+            layoutMetrics.launchScreenHeight = screenHeight
+            let mode = LayoutMode(rawValue: UserDefaults.standard.string(forKey: "layoutMode") ?? "") ?? .narrow
+            popover.contentSize = NSSize(width: mode.width, height: mode.height(forScreenHeight: screenHeight))
+
             NSApp.activate(ignoringOtherApps: true)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             popover.contentViewController?.view.window?.makeKey()
             NotificationCenter.default.post(name: .quipPopoverShown, object: nil)
         }
+    }
+
+    /// One-time migration from the old two-state `isCompactLayout` bool to the
+    /// three-way `layoutMode`, so an upgrading user keeps their layout choice.
+    private func migrateLayoutPreference() {
+        let defaults = UserDefaults.standard
+        guard defaults.object(forKey: "layoutMode") == nil,
+              defaults.object(forKey: "isCompactLayout") != nil else { return }
+        let mode = LayoutMode(legacyIsCompact: defaults.bool(forKey: "isCompactLayout"))
+        defaults.set(mode.rawValue, forKey: "layoutMode")
     }
 
     /// Shows our own Settings window (created lazily). Reliable in an agent app,
