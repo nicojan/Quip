@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+# Internal design notes served from the same folder; not part of the site.
+Disallow: /DESIGN.md
+Disallow: /PLAN-v1.1.md
+Disallow: /superpowers/
+
+Sitemap: https://quip.nicojan.com/sitemap.xml

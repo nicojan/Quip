@@ -1,0 +1,13 @@
+{
+  "name": "Quip",
+  "short_name": "Quip",
+  "description": "A macOS menu-bar app for finding a GIF and pasting it anywhere.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0B0F1A",
+  "theme_color": "#0B0F1A",
+  "icons": [
+    { "src": "/assets/img/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/assets/img/icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ]
+}

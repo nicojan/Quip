@@ -1,0 +1,31 @@
+# Quip
+
+> Quip is a free, open-source macOS menu-bar app for finding a GIF and pasting it into whatever you're typing. You search Giphy, click a result, and it copies to the clipboard as an animated file, ready to paste into Messages, Slack, or anywhere that takes an image. Quip runs on your own free Giphy API key, so you never share a rate limit, and the key stays on your Mac.
+
+## What it does
+
+- Search Giphy from the menu bar and click any result to copy it as an animated file.
+- Star a GIF to keep it in Favorites, one click away.
+- Recently copied keeps the GIFs you actually used within reach.
+- Recent searches let you re-run a past query with one click.
+- Collections group your favorites into named buckets, each with an emoji, which you can reorder and sort A to Z.
+- Three layout sizes show two, three, or five GIFs per row, all the same height.
+- Start at login, and updates arrive through Sparkle.
+
+## Requirements and setup
+
+- Requires macOS 14.6 or later.
+- Quip ships without an API key. You add your own free key from the Giphy developers dashboard (developers.giphy.com/dashboard). Choose the API option, not the SDK, then paste the key into Quip's Settings.
+- Quip stores the key on your Mac and has no server of its own.
+
+## Distribution
+
+- Free and open source under the MIT license.
+- Direct download: a Developer ID-signed, notarized app that updates itself through Sparkle. Not on the Mac App Store.
+
+## Links
+
+- Download: https://github.com/nicojan/Quip/releases/latest
+- Source: https://github.com/nicojan/Quip
+- Author: Nico Jan, https://nicojan.com
+- Sibling app: Chorus, https://github.com/nicojan/Chorus
