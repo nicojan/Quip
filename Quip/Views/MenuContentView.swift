@@ -26,6 +26,19 @@ struct MenuContentView: View {
         Array(repeating: GridItem(.flexible(), spacing: 8), count: isCompact ? 5 : 2)
     }
 
+    /// Filing inputs shared by every GIF cell, built from the one shared library.
+    private var filing: CollectionFiling {
+        CollectionFiling(
+            collections: library.collections,
+            memberIDs: { gif in
+                Set(library.collections.filter { $0.gifIDs.contains(gif.id) }.map(\.id))
+            },
+            toggle: { gif, id in
+                library.setMembership(gif, inCollection: id, member: !library.isMember(gif, ofCollection: id))
+            }
+        )
+    }
+
     var body: some View {
         VStack(spacing: 10) {
             header
@@ -118,6 +131,7 @@ struct MenuContentView: View {
             LibraryView(
                 columns: columns,
                 trending: vm.trending,
+                filing: filing,
                 isFavorite: { library.isFavorite($0) },
                 justCopied: { vm.copiedGifID == $0.id },
                 copyFailed: { vm.copyFailedGifID == $0.id },
@@ -129,6 +143,7 @@ struct MenuContentView: View {
             ResultsGrid(
                 gifs: vm.results,
                 columns: columns,
+                filing: filing,
                 isFavorite: { library.isFavorite($0) },
                 justCopied: { vm.copiedGifID == $0.id },
                 copyFailed: { vm.copyFailedGifID == $0.id },

@@ -10,6 +10,7 @@ struct GifThumbnail: View {
     let isFavorite: Bool
     let justCopied: Bool
     let copyFailed: Bool
+    let filing: CollectionFiling
     let onCopy: () -> Void
     let onCopyLink: () -> Void
     let onToggleFavorite: () -> Void
@@ -79,6 +80,30 @@ struct GifThumbnail: View {
             .accessibilityAction { onCopy() }
             .accessibilityAction(named: "Copy link") { onCopyLink() }
             .accessibilityAction(named: isFavorite ? "Remove from favorites" : "Add to favorites") { onToggleFavorite() }
+            .contextMenu { collectionMenu }
+    }
+
+    /// Right-click menu to file this GIF into a collection. Toggling one on for a
+    /// GIF that isn't a favorite yet auto-favorites it first (see `GifLibrary`).
+    /// This is also the VoiceOver-reachable filing path, so no per-collection
+    /// accessibility actions are stamped onto the cell.
+    @ViewBuilder private var collectionMenu: some View {
+        Menu("Add to Collection") {
+            if filing.collections.isEmpty {
+                Button("No collections yet") {}.disabled(true)
+            } else {
+                let members = filing.memberIDs(gif)
+                ForEach(filing.collections) { collection in
+                    Button { filing.toggle(gif, collection.id) } label: {
+                        if members.contains(collection.id) {
+                            Label(collection.name, systemImage: "checkmark")
+                        } else {
+                            Text(collection.name)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /// Drags the GIF out as a file, downloading on demand so it drops into

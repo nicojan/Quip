@@ -14,28 +14,39 @@ must not slow down the glance-and-grab path or steal vertical space.
 
 ## Interaction
 
-**Chip row.** A horizontally-scrollable pill row sits above the favourites grid:
-`All · Reactions · Work · … · +`. It appears only once at least one collection
-exists, so a user who never makes one sees today's UI unchanged. Tapping a chip
-filters the grid to that collection; `All` shows every favourite; `+` creates a
-collection. Selection is view-local `@State` and resets to `All` each time the
-popover opens — consistent with the app's existing "reset to home after idle"
-behaviour. The existing >6 text filter stays and narrows _within_ the selected
-chip.
+**No modals — decided by the popover.** The popover is `.transient` and the app
+is `LSUIElement` with a deliberately anti-modal design (its gentle-update system
+exists to avoid stolen-focus modals). A SwiftUI `.alert` / `.confirmationDialog`
+would steal key focus and dismiss the transient popover. So every collection
+action is **inline**, no modal anywhere. The split is: **home manages buckets,
+cells file into them.**
 
-**Filing.** Right-click any GIF cell → **Add to Collection ▸** submenu: a
-checklist of collections (checkmark = member, click toggles) plus **New
-Collection…**. The menu is on the shared `GifThumbnail`, so it appears on search
-and trending cells too — filing a non-favourite auto-favourites it first. This
-is the only VoiceOver-reachable filing path, so no per-collection accessibility
-actions are added to the cell (that would explode combinatorially).
+**Chip row (home).** A horizontally-scrollable pill row sits above the favourites
+grid: `All · Reactions · Work · … · +`. It shows whenever there is at least one
+favourite (so the `+` create path is always reachable once you have something to
+organize; a user with no favourites sees today's UI unchanged). Tapping a chip
+filters the grid to that collection; `All` shows every favourite. Selection is
+view-local `@State`: it persists across a quick reopen (matching how the app
+keeps your last search) and falls back to `All` whenever the selected collection
+no longer exists — so no explicit reset wiring is needed.
 
-**Managing.** Right-click a chip → **Rename** / **Delete**. Delete shows a
-`confirmationDialog` (it discards a curated grouping; the GIFs stay favourited).
-Creating prompts for a name via an alert `TextField`; blank/whitespace names are
-ignored. Fallback if a modal misbehaves inside the `NSPopover`: an inline field
-in the chip row (home entry point only) — decided at build time against real
-behaviour.
+**Filing (any cell).** Right-click any GIF cell → **Add to Collection ▸**
+submenu: a checklist of the existing collections (checkmark = member, click
+toggles). The menu is on the shared `GifThumbnail`, so it works on search and
+trending cells too — filing a non-favourite auto-favourites it first. With no
+collections yet, the submenu shows a disabled "No collections yet" hint pointing
+to the chip row. This is the VoiceOver-reachable filing path (VO can open a
+context menu), so no per-collection accessibility actions are stamped on each
+cell (that would explode combinatorially).
+
+**Managing (chip row, inline).**
+- **Create** — tap `+`; an inline `TextField` appears in the row. Return creates
+  (trimmed, blank ignored); Escape / empty cancels.
+- **Rename** — right-click a chip → **Rename**; that chip becomes an inline
+  `TextField` in place. Return commits; Escape cancels.
+- **Delete** — right-click a chip → **Delete** (destructive). Immediate: a
+  deliberate two-step right-click→Delete, and the GIFs stay favourited (only the
+  bucket is discarded), so no confirmation modal is warranted.
 
 ## Data model
 
@@ -76,8 +87,8 @@ and drops orphaned ids for free.
 - Orphaned ids (member but no longer favourited) never render — the grid is
   derived from `favorites ∩ gifIDs`.
 - Long collection names truncate with a max chip width.
-- Additive persistence: a new `collectionGroups` key; existing users' favourites
-  and recents are untouched, no migration.
+- Additive persistence: a new `favoriteCollections` key; existing users'
+  favourites and recents are untouched, no migration.
 
 ## Testing (model layer, TDD)
 

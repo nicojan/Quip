@@ -4,6 +4,7 @@ import SwiftUI
 struct ResultsGrid: View {
     let gifs: [Gif]
     let columns: [GridItem]
+    let filing: CollectionFiling
     let isFavorite: (Gif) -> Bool
     let justCopied: (Gif) -> Bool
     let copyFailed: (Gif) -> Bool
@@ -20,6 +21,7 @@ struct ResultsGrid: View {
                         isFavorite: isFavorite(gif),
                         justCopied: justCopied(gif),
                         copyFailed: copyFailed(gif),
+                        filing: filing,
                         onCopy: { onCopy(gif) },
                         onCopyLink: { onCopyLink(gif) },
                         onToggleFavorite: { onToggleFavorite(gif) }

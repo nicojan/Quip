@@ -3,6 +3,17 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.6] - 2026-07-19
+
+### Added
+
+- Collections. Group your favorite GIFs into named buckets like "Reactions" or
+  "Work". A row of chips above your favorites narrows them to one bucket at a
+  time, and you can add a bucket with the plus button. Right-click any GIF to
+  file it into a collection; if you hadn't saved it yet, that saves it too. One
+  GIF can live in several. Rename or delete a collection by right-clicking its
+  chip.
+
 ## [1.1.5] - 2026-07-18
 
 ### Added
