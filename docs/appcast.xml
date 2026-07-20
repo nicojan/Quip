@@ -3,6 +3,33 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.9</title>
+            <pubDate>Mon, 20 Jul 2026 10:18:40 -0700</pubDate>
+            <sparkle:version>12</sparkle:version>
+            <sparkle:shortVersionString>1.1.9</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Added</h3>
+<ul>
+<li>Give a collection an emoji. When you create or edit one, pick an emoji from the system picker to represent it, and you can hide the name so the chip shows only the emoji.</li>
+<li>Drag a collection's chip to reorder it.</li>
+<li>Sort your collections A to Z with the button in the collection row.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li>Favorites and Recently copied now scroll sideways. Each sits in its own box that grows to a few rows, then scrolls, so a long list no longer pushes Trending down the popover.</li>
+<li>The collection row now stays pinned at the top while you scroll your favorites.</li>
+<li>Every layout size is now the same height. Only the width and the number of columns per row change.</li>
+<li>The favorite star is now a filled yellow star, and a GIF you're dragging stays see-through so it doesn't cover the chips you drop it on.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li>The popover's arrow no longer detaches from the menu-bar icon when you change the layout size while it's open.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.9/Quip-1.1.9.dmg" length="2300142" type="application/octet-stream" sparkle:edSignature="T2Hgklr0a0lBZKS7kyY5H4gbhGOsMzWF0GCu7wxujcZpi4rHlE9MuYS3NnOmYdypCGp56eWZ8lm1JM+G0dQ+CQ=="/>
+        </item>
+        <item>
             <title>1.1.8</title>
             <pubDate>Mon, 20 Jul 2026 00:01:23 -0700</pubDate>
             <sparkle:version>11</sparkle:version>
