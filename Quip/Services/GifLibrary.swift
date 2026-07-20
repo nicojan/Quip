@@ -57,24 +57,68 @@ final class GifLibrary {
 
     // MARK: Collections
 
-    /// Creates a named collection at the front. Trims the name; returns nil for a
-    /// blank name or when the count ceiling is reached.
+    /// Creates a named collection at the front. Trims the name and emoji; returns
+    /// nil for a blank name, when the count ceiling is reached, or when the name is
+    /// hidden without an emoji (a chip that would render blank).
     @discardableResult
-    func createCollection(named name: String) -> GifCollection? {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, collections.count < Self.collectionsLimit else { return nil }
-        let collection = GifCollection(name: trimmed)
+    func createCollection(
+        named name: String,
+        emoji: String? = nil,
+        showsName: Bool = true
+    ) -> GifCollection? {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedEmoji = emoji?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanEmoji = (trimmedEmoji?.isEmpty ?? true) ? nil : trimmedEmoji
+        guard !trimmedName.isEmpty,
+              collections.count < Self.collectionsLimit,
+              showsName || cleanEmoji != nil else { return nil }
+        let collection = GifCollection(name: trimmedName, emoji: cleanEmoji, showsName: showsName)
         collections.insert(collection, at: 0)
         save(collections, collectionsKey)
         return collection
     }
 
-    /// Renames a collection. Trims the name; a blank name is ignored.
+    /// Renames a collection. Trims the name; a blank name is ignored. Thin wrapper
+    /// over `updateCollection` that leaves the emoji and name-visibility untouched.
     func renameCollection(_ id: String, to name: String) {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty,
+        guard let existing = collections.first(where: { $0.id == id }) else { return }
+        updateCollection(id, name: name, emoji: existing.emoji, showsName: existing.showsName)
+    }
+
+    /// Edits a collection's name, emoji, and name visibility together. Trims both;
+    /// ignores the edit for a blank name, or when the name is hidden with no emoji.
+    func updateCollection(_ id: String, name: String, emoji: String?, showsName: Bool) {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedEmoji = emoji?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanEmoji = (trimmedEmoji?.isEmpty ?? true) ? nil : trimmedEmoji
+        guard !trimmedName.isEmpty,
+              showsName || cleanEmoji != nil,
               let index = collections.firstIndex(where: { $0.id == id }) else { return }
-        collections[index].name = trimmed
+        collections[index].name = trimmedName
+        collections[index].emoji = cleanEmoji
+        collections[index].showsName = showsName
+        save(collections, collectionsKey)
+    }
+
+    /// Moves a collection to a new position (drag-to-reorder). Clamps the target
+    /// and no-ops if the id is unknown or the position is unchanged.
+    func moveCollection(_ id: String, toIndex target: Int) {
+        guard let from = collections.firstIndex(where: { $0.id == id }) else { return }
+        let clamped = max(0, min(target, collections.count - 1))
+        guard clamped != from else { return }
+        let moved = collections.remove(at: from)
+        collections.insert(moved, at: clamped)
+        save(collections, collectionsKey)
+    }
+
+    /// One-shot A→Z sort by name (case- and locale-insensitive). Manual reorder
+    /// still works afterward; this just rewrites the order once.
+    func sortCollectionsAlphabetically() {
+        let sorted = collections.sorted {
+            $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+        }
+        guard sorted.map(\.id) != collections.map(\.id) else { return }
+        collections = sorted
         save(collections, collectionsKey)
     }
 

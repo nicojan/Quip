@@ -80,6 +80,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         KeyboardShortcuts.onKeyUp(for: .summonQuip) { [weak self] in
             self?.togglePopover()
         }
+
+        // While the macOS emoji picker is open the popover must not auto-dismiss
+        // (see PopoverEvents). Flip to app-defined during picking, back to
+        // transient after.
+        NotificationCenter.default.addObserver(
+            forName: .quipSuspendPopoverAutoClose, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.popover.behavior = .applicationDefined
+        }
+        NotificationCenter.default.addObserver(
+            forName: .quipResumePopoverAutoClose, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.popover.behavior = .transient
+        }
+
+        // Resize through NSPopover when the layout mode changes while open, so the
+        // anchor arrow re-anchors instead of stranding at the previous width.
+        NotificationCenter.default.addObserver(
+            forName: .quipLayoutModeChanged, object: nil, queue: .main
+        ) { [weak self] _ in
+            guard let self, self.popover.isShown else { return }
+            let mode = LayoutMode(rawValue: UserDefaults.standard.string(forKey: "layoutMode") ?? "") ?? .narrow
+            self.popover.contentSize = NSSize(
+                width: mode.width,
+                height: mode.height(forScreenHeight: self.layoutMetrics.launchScreenHeight)
+            )
+        }
     }
 
     // Left-click toggles the popover; right-click (or control-click) shows a menu.
@@ -227,6 +254,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 extension AppDelegate: @preconcurrency NSPopoverDelegate {
     func popoverDidClose(_ notification: Notification) {
+        // Re-arm transient auto-close in case it was suspended for emoji picking
+        // and the popover closed by another path first.
+        popover.behavior = .transient
         NotificationCenter.default.post(name: .quipPopoverClosed, object: nil)
     }
 }

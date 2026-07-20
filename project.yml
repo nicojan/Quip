@@ -36,8 +36,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nicojan.Quip
         PRODUCT_NAME: Quip
-        MARKETING_VERSION: "1.1.8"
-        CURRENT_PROJECT_VERSION: "11"
+        MARKETING_VERSION: "1.1.9"
+        CURRENT_PROJECT_VERSION: "12"
         SWIFT_VERSION: "6.0"
         MACOSX_DEPLOYMENT_TARGET: "14.6"
         INFOPLIST_FILE: Quip/Info.plist

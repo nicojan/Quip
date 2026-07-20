@@ -17,6 +17,12 @@ enum QuipDragType {
     /// (Covered by `CollectionDropTests.testProviderConformsAndRoundTripsByIdentifier`.)
     static let gifRef = UTType(exportedAs: "com.nicojan.Quip.gif-ref")
 
+    /// App-private identifier for dragging a collection chip to reorder it. Like
+    /// `gifRef` it only gates *which* drags a chip accepts as a reorder (vs a GIF
+    /// being filed); the dragged collection's id is read from local view state,
+    /// not off the provider, since an own-process payload is stripped on drop.
+    static let collectionRef = UTType(exportedAs: "com.nicojan.Quip.collection-ref")
+
     /// Encodes a GIF for the drag pasteboard. Returns nil if the GIF can't encode,
     /// so the caller can skip registering an unusable representation.
     static func encode(_ gif: Gif) -> Data? {

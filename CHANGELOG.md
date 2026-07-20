@@ -3,6 +3,32 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.9] - 2026-07-20
+
+### Added
+
+- Give a collection an emoji. When you create or edit one, pick an emoji from
+  the system picker to represent it, and you can hide the name so the chip shows
+  only the emoji.
+- Drag a collection's chip to reorder it.
+- Sort your collections A to Z with the button in the collection row.
+
+### Changed
+
+- Favorites and Recently copied now scroll sideways. Each sits in its own box
+  that grows to a few rows, then scrolls, so a long list no longer pushes
+  Trending down the popover.
+- The collection row now stays pinned at the top while you scroll your favorites.
+- Every layout size is now the same height. Only the width and the number of
+  columns per row change.
+- The favorite star is now a filled yellow star, and a GIF you're dragging stays
+  see-through so it doesn't cover the chips you drop it on.
+
+### Fixed
+
+- The popover's arrow no longer detaches from the menu-bar icon when you change
+  the layout size while it's open.
+
 ## [1.1.8] - 2026-07-19
 
 ### Added

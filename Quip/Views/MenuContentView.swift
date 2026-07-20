@@ -29,6 +29,25 @@ struct MenuContentView: View {
         Array(repeating: GridItem(.flexible(), spacing: 8), count: layoutMode.columns)
     }
 
+    /// Width of one GIF cell in the horizontal Favorites / Recently-copied strips.
+    /// Sized to show a *quarter* of the next cell past the last full one, so the
+    /// content visibly "peeps" — a cue that the strip scrolls sideways. So a 2-up
+    /// layout shows 2.25 cells, 3-up shows 3.25, 5-up shows 5.25. `content` is the
+    /// popover width minus the 12pt outer padding on each side.
+    private var libraryCellWidth: CGFloat {
+        let cols = CGFloat(layoutMode.columns)
+        let visible = cols + 0.25
+        let content = layoutMode.width - 24
+        return ((content - 8 * cols) / visible).rounded(.down)
+    }
+
+    /// Rows in each horizontal strip, by popover height (all layouts are now the
+    /// same, tall height — so this is 3 on any normal display, 2 only on a short
+    /// screen where 80% leaves little room).
+    private var libraryRows: Int {
+        layoutMode.height(forScreenHeight: metrics.launchScreenHeight) >= 700 ? 3 : 2
+    }
+
     /// Filing inputs shared by every GIF cell, built from the one shared library.
     private var filing: CollectionFiling {
         CollectionFiling(
@@ -71,6 +90,11 @@ struct MenuContentView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .quipPopoverClosed)) { _ in
             vm.handlePopoverClose()
+        }
+        .onChange(of: layoutModeRaw) { _, _ in
+            // Let AppDelegate resize the popover so its arrow re-anchors — the
+            // SwiftUI frame change alone leaves the arrow at the old width.
+            NotificationCenter.default.post(name: .quipLayoutModeChanged, object: nil)
         }
         .onExitCommand(perform: closePopover)   // Esc closes the popover
     }
@@ -139,6 +163,8 @@ struct MenuContentView: View {
         } else if vm.query.isEmpty {
             LibraryView(
                 columns: columns,
+                cellWidth: libraryCellWidth,
+                libraryRows: libraryRows,
                 trending: vm.trending,
                 filing: filing,
                 isFavorite: { library.isFavorite($0) },

@@ -106,6 +106,63 @@ final class GifLibraryTests: XCTestCase {
         XCTAssertEqual(lib.collections.first?.name, "Work")
     }
 
+    func testCreateCollectionStoresEmojiAndNameVisibility() {
+        let lib = makeLibrary()
+        let c = lib.createCollection(named: "Work", emoji: "💼", showsName: false)
+        XCTAssertEqual(c?.emoji, "💼")
+        XCTAssertEqual(c?.showsName, false)
+    }
+
+    func testCreateCollectionRejectsHiddenNameWithoutEmoji() {
+        let lib = makeLibrary()
+        XCTAssertNil(lib.createCollection(named: "Work", emoji: nil, showsName: false))
+        XCTAssertNil(lib.createCollection(named: "Work", emoji: "   ", showsName: false))
+        XCTAssertTrue(lib.collections.isEmpty)
+    }
+
+    func testUpdateCollectionEditsAllFields() {
+        let lib = makeLibrary()
+        let c = lib.createCollection(named: "Work")!
+        lib.updateCollection(c.id, name: "Job", emoji: "🧰", showsName: false)
+        let updated = lib.collections.first
+        XCTAssertEqual(updated?.name, "Job")
+        XCTAssertEqual(updated?.emoji, "🧰")
+        XCTAssertEqual(updated?.showsName, false)
+    }
+
+    func testUpdateCollectionRejectsHiddenNameWithoutEmoji() {
+        let lib = makeLibrary()
+        let c = lib.createCollection(named: "Work", emoji: "💼")!
+        lib.updateCollection(c.id, name: "Work", emoji: "", showsName: false)
+        // Rejected: unchanged.
+        XCTAssertEqual(lib.collections.first?.emoji, "💼")
+        XCTAssertEqual(lib.collections.first?.showsName, true)
+    }
+
+    func testMoveCollectionReordersAndClamps() {
+        let lib = makeLibrary()
+        // createCollection inserts at the front, so order is C, B, A.
+        _ = lib.createCollection(named: "A")
+        _ = lib.createCollection(named: "B")
+        let c = lib.createCollection(named: "C")!
+        lib.moveCollection(c.id, toIndex: 2)
+        XCTAssertEqual(lib.collections.map(\.name), ["B", "A", "C"])
+        // Out-of-range target clamps to the ends.
+        lib.moveCollection(c.id, toIndex: 99)
+        XCTAssertEqual(lib.collections.last?.name, "C")
+        lib.moveCollection(c.id, toIndex: -5)
+        XCTAssertEqual(lib.collections.first?.name, "C")
+    }
+
+    func testSortCollectionsAlphabeticallyIsCaseInsensitive() {
+        let lib = makeLibrary()
+        _ = lib.createCollection(named: "banana")
+        _ = lib.createCollection(named: "Apple")
+        _ = lib.createCollection(named: "cherry")
+        lib.sortCollectionsAlphabetically()
+        XCTAssertEqual(lib.collections.map(\.name), ["Apple", "banana", "cherry"])
+    }
+
     func testDeleteCollection() {
         let lib = makeLibrary()
         let c = lib.createCollection(named: "Work")!
@@ -222,5 +279,18 @@ final class GifLibraryTests: XCTestCase {
 
         let lib = GifLibrary(defaults: defaults)
         XCTAssertEqual(lib.collections.map(\.id), ["c1", "c2"])  // bad record skipped
+    }
+
+    /// A pre-1.1.9 record has no `emoji`/`showsName`. It must still load, with
+    /// `showsName` defaulting to true (the old name-always-shown behaviour).
+    func testLoadDefaultsLegacyCollectionToShowName() {
+        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
+        let legacy: [String: Any] = ["id": "c1", "name": "A", "gifIDs": []]
+        let data = try! JSONSerialization.data(withJSONObject: [legacy])
+        defaults.set(data, forKey: "favoriteCollections")
+
+        let lib = GifLibrary(defaults: defaults)
+        XCTAssertEqual(lib.collections.first?.showsName, true)
+        XCTAssertNil(lib.collections.first?.emoji)
     }
 }

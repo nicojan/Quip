@@ -73,6 +73,8 @@ struct GifThumbnail: View {
                 // the .gif file for external drag-to-insert. See DragContext.
                 dragContext.gif = gif
                 return QuipDragProvider.make(for: gif)
+            } preview: {
+                dragPreview
             }
             .onHover { hovering = $0 }
             .help("Click to copy · ⌥-click to copy link · drag to insert, or onto a collection to file")
@@ -112,14 +114,44 @@ struct GifThumbnail: View {
         }
     }
 
+    /// A small, faint preview shown under the cursor while dragging — kept
+    /// see-through so it doesn't cover the collection pills it's being dropped onto.
+    private var dragPreview: some View {
+        Color.clear
+            .frame(width: 110, height: 74)
+            .overlay {
+                if let url = URL(string: gif.gifURL) {
+                    AnimatedImage(url: url)
+                        .resizable()
+                        .scaledToFill()
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: Theme.thumbCorner))
+            .opacity(0.3)
+    }
+
     @ViewBuilder private var star: some View {
         if hovering || isFavorite {
             Button(action: onToggleFavorite) {
-                Image(systemName: isFavorite ? "star.fill" : "star")
-                    .font(.caption2)
-                    .padding(5)
-                    .background(.black.opacity(0.5), in: Circle())
-                    .foregroundStyle(isFavorite ? Theme.accent : .white)
+                Group {
+                    if isFavorite {
+                        // Filled HIG-yellow star that lifts off the thumbnail with a
+                        // drop shadow — no backing circle.
+                        Image(systemName: "star.fill")
+                            .foregroundStyle(Color(nsColor: .systemYellow))
+                            .shadow(color: .black.opacity(0.5), radius: 2, y: 1)
+                    } else {
+                        // Empty star that reads as pressed-in: an inner shadow on the
+                        // outline, no backing circle.
+                        Image(systemName: "star")
+                            .foregroundStyle(
+                                .white.opacity(0.9)
+                                    .shadow(.inner(color: .black.opacity(0.8), radius: 1, y: 1))
+                            )
+                    }
+                }
+                .font(.callout)
+                .padding(4)
             }
             .buttonStyle(.plain)
             .padding(4)

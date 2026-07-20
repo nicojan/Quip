@@ -22,8 +22,10 @@ Mac app for Apple Silicon that's signed and notarized, with Sparkle updates.
 - **Favorites.** Star a GIF to keep it one click away.
 - **Recently copied.** Quip remembers the GIFs you actually used.
 - **Recent searches.** Click a past search to run it again.
-- **Two layouts.** Switch between a narrow two-per-row view and a wide
-  five-per-row view.
+- **Collections.** Group favorites into named buckets, give each one an emoji,
+  reorder them, and sort them A to Z.
+- **Three sizes.** Switch between two, three, and five GIFs per row, all the same
+  height, so pick the width you like.
 - **Start at login** and **in-app updates** through Sparkle.
 
 ## Bring your own Giphy key

@@ -8,14 +8,12 @@ final class LayoutModeTests: XCTestCase {
         XCTAssertEqual(LayoutMode.wide.columns, 5)
     }
 
-    func testFixedHeightsIgnoreScreen() {
-        XCTAssertEqual(LayoutMode.narrow.height(forScreenHeight: 1440), 600)
-        XCTAssertEqual(LayoutMode.wide.height(forScreenHeight: 1440), 470)
-    }
-
-    func testTallHeightIs80PercentOfScreen() {
-        XCTAssertEqual(LayoutMode.tall.height(forScreenHeight: 1000), 800)
-        XCTAssertEqual(LayoutMode.tall.height(forScreenHeight: 1440), 1152)
+    /// Every layout is the same (tallest) height: 80% of the usable screen.
+    func testAllHeightsAre80PercentOfScreen() {
+        for mode in LayoutMode.allCases {
+            XCTAssertEqual(mode.height(forScreenHeight: 1000), 800)
+            XCTAssertEqual(mode.height(forScreenHeight: 1440), 1152)
+        }
     }
 
     func testRawValueRoundTripForPersistence() {

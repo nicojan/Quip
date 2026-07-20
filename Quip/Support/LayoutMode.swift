@@ -7,7 +7,7 @@ import Observation
 enum LayoutMode: String, CaseIterable, Identifiable, Sendable {
     case narrow   // 2 per row, fixed height
     case tall     // 3 per row, 80% of the launching display's height
-    case wide     // 5 per row, fixed height
+    case wide     // 5 per row, 80% of the launching display's height
 
     var id: String { rawValue }
 
@@ -27,16 +27,14 @@ enum LayoutMode: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Popover height. `tall` fills 80% of the display it opens on; the others are
-    /// fixed. `screenHeight` is the *usable* height (`NSScreen.visibleFrame`, menu
-    /// bar and Dock excluded), because the popover opens downward from the menu bar
-    /// and would clip — not scroll — anything taller than that.
+    /// Popover height. Every layout fills 80% of the display it opens on, so all
+    /// three are the same (tallest) height — only the width and column count
+    /// change between them. `screenHeight` is the *usable* height
+    /// (`NSScreen.visibleFrame`, menu bar and Dock excluded), because the popover
+    /// opens downward from the menu bar and would clip — not scroll — anything
+    /// taller than that.
     func height(forScreenHeight screenHeight: CGFloat) -> CGFloat {
-        switch self {
-        case .narrow: 600
-        case .tall: (screenHeight * 0.8).rounded()
-        case .wide: 470
-        }
+        (screenHeight * 0.8).rounded()
     }
 
     /// Maps the pre-1.1.8 two-state `isCompactLayout` bool. Note the flag's name is
