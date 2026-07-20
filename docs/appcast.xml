@@ -3,6 +3,20 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.6</title>
+            <pubDate>Sun, 19 Jul 2026 17:39:52 -0700</pubDate>
+            <sparkle:version>9</sparkle:version>
+            <sparkle:shortVersionString>1.1.6</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Added</h3>
+<ul>
+<li>Collections. Group your favorite GIFs into named buckets like "Reactions" or "Work". A row of chips above your favorites narrows them to one bucket at a time, and you can add a bucket with the plus button. Right-click any GIF to file it into a collection; if you hadn't saved it yet, that saves it too. One GIF can live in several. Rename or delete a collection by right-clicking its chip.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.6/Quip-1.1.6.dmg" length="2196976" type="application/octet-stream" sparkle:edSignature="fJH30dTp+COiKBg61sD8Jmyx6DDHh3E/siHGHiU0ASJmm8rytSsgnYgwdj4eEz5uvDkoaqYGPxEXSzhIkdIRBQ=="/>
+        </item>
+        <item>
             <title>1.1.5</title>
             <pubDate>Sat, 18 Jul 2026 19:14:57 -0700</pubDate>
             <sparkle:version>8</sparkle:version>
