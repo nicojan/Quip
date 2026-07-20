@@ -57,7 +57,7 @@ struct LibraryView: View {
                             .controlSize(.small)
                     }
                     if favoritesInScope.isEmpty {
-                        hint("Nothing in this collection yet. Right-click a GIF to add it.")
+                        hint("Nothing here yet. Drag a GIF onto its chip above, or right-click one to add it.")
                     } else if filteredFavorites.isEmpty {
                         hint("No favorites match “\(favoriteFilter)”.")
                     } else {

@@ -1,6 +1,5 @@
 import SwiftUI
 import AppKit
-import UniformTypeIdentifiers
 import SDWebImageSwiftUI
 
 /// One GIF cell: the animated thumbnail, a hover-revealed favorite star, a
@@ -67,9 +66,9 @@ struct GifThumbnail: View {
                 // ⌥-click copies the link instead of the file.
                 if NSEvent.modifierFlags.contains(.option) { onCopyLink() } else { onCopy() }
             }
-            .onDrag(dragProvider)
+            .onDrag { QuipDragProvider.make(for: gif) }
             .onHover { hovering = $0 }
-            .help("Click to copy · ⌥-click to copy link · drag to insert")
+            .help("Click to copy · ⌥-click to copy link · drag to insert, or onto a collection to file")
             // The tap target is a plain view, so spell out the actions for
             // VoiceOver — otherwise there's no way to copy a GIF without a mouse.
             .accessibilityElement(children: .ignore)
@@ -104,40 +103,6 @@ struct GifThumbnail: View {
                 }
             }
         }
-    }
-
-    /// Drags the GIF out as a file, downloading on demand so it drops into
-    /// Messages, Finder, etc. as an animated attachment.
-    private func dragProvider() -> NSItemProvider {
-        let provider = NSItemProvider()
-        provider.suggestedName = "quip.gif"
-        let urlString = gif.gifURL
-        provider.registerFileRepresentation(
-            forTypeIdentifier: UTType.gif.identifier, fileOptions: [], visibility: .all
-        ) { completion in
-            guard let url = URL(string: urlString) else {
-                completion(nil, false, nil)
-                return nil
-            }
-            let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                // Reject a non-2xx CDN response so a downloaded error page never
-                // drops into Messages/Finder as a broken .gif attachment.
-                guard let data,
-                      let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
-                    completion(nil, false, error); return
-                }
-                let file = TempClips.newGifURL()
-                do {
-                    try data.write(to: file)
-                    completion(file, false, nil)
-                } catch {
-                    completion(nil, false, error)
-                }
-            }
-            task.resume()
-            return nil
-        }
-        return provider
     }
 
     @ViewBuilder private var star: some View {

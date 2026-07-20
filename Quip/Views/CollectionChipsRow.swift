@@ -1,9 +1,11 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// The collection row above the favourites grid: an `All` chip, one chip per
 /// collection, and a `+` to create one. Create and rename use inline text fields
-/// — never a modal, since the transient popover would dismiss under one. This
-/// row manages buckets; filing GIFs into them lives on the cell context menu.
+/// — never a modal, since the transient popover would dismiss under one. This row
+/// manages buckets; GIFs are filed into them by the cell context menu or by
+/// dragging a GIF cell onto a chip (see the drop handling below).
 struct CollectionChipsRow: View {
     @Environment(GifLibrary.self) private var library
     @Binding var selectedID: String?
@@ -12,6 +14,12 @@ struct CollectionChipsRow: View {
     @State private var editingID: String?
     @State private var draftName = ""
     @FocusState private var fieldFocused: Bool
+
+    /// The chip a dragged GIF is currently hovering (drop-target highlight).
+    @State private var dropTargetID: String?
+    /// The chip to pulse briefly after a successful drop (the "it worked" cue,
+    /// needed because dropping onto a non-selected collection changes nothing on screen).
+    @State private var flashID: String?
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -24,6 +32,20 @@ struct CollectionChipsRow: View {
                     } else {
                         chip(collection.name, selected: selectedID == collection.id) {
                             selectedID = collection.id
+                        }
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(Theme.accent, lineWidth: 2)
+                                .opacity(dropTargetID == collection.id || flashID == collection.id ? 1 : 0)
+                        )
+                        .scaleEffect(dropTargetID == collection.id ? 1.1 : 1)
+                        .animation(.easeOut(duration: 0.12), value: dropTargetID)
+                        .animation(.easeOut(duration: 0.15), value: flashID)
+                        .onDrop(
+                            of: [QuipDragType.gifRef],
+                            isTargeted: dropTargetBinding(collection.id)
+                        ) { providers in
+                            handleDrop(providers, into: collection.id)
                         }
                         .contextMenu {
                             Button("Rename") { beginRename(collection) }
@@ -90,6 +112,50 @@ struct CollectionChipsRow: View {
                 fieldFocused = false
                 DispatchQueue.main.async { fieldFocused = true }
             }
+    }
+
+    // MARK: Drop filing
+
+    /// Per-chip `isTargeted` binding: reading tells the chip whether a drag is over
+    /// it; writing records which chip that is, so only one highlights at a time.
+    /// The `false` write only clears the slot when this chip owns it — otherwise a
+    /// stray `exit(A)` arriving after `enter(B)` would wipe B's highlight.
+    private func dropTargetBinding(_ id: String) -> Binding<Bool> {
+        Binding(
+            get: { dropTargetID == id },
+            set: { isOver in
+                if isOver { dropTargetID = id }
+                else if dropTargetID == id { dropTargetID = nil }
+            }
+        )
+    }
+
+    /// Files a dropped GIF into a collection. The payload is the whole GIF (see
+    /// `QuipDragType`), so a not-yet-favourited GIF auto-favourites on the way in.
+    private func handleDrop(_ providers: [NSItemProvider], into id: String) -> Bool {
+        let typeID = QuipDragType.gifRef.identifier
+        guard let provider = providers.first(where: {
+            $0.hasItemConformingToTypeIdentifier(typeID)
+        }) else { return false }
+
+        provider.loadDataRepresentation(forTypeIdentifier: typeID) { data, _ in
+            guard let gif = QuipDragType.decode(data) else { return }
+            // The load completes off the main actor; hop back to mutate the store.
+            Task { @MainActor in
+                library.setMembership(gif, inCollection: id, member: true)
+                flash(id)
+            }
+        }
+        return true
+    }
+
+    /// Pulses a chip's border briefly to confirm a drop landed.
+    @MainActor private func flash(_ id: String) {
+        flashID = id
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(450))
+            if flashID == id { flashID = nil }
+        }
     }
 
     // MARK: Create

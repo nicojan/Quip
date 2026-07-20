@@ -3,6 +3,15 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.7] - 2026-07-19
+
+### Changed
+
+- Drag a GIF onto a collection's chip to file it there. Grab one from your
+  favorites, recents, or trending, drop it on a chip, and it's filed; if you
+  hadn't saved it yet, that happens too. Right-click still works. It's also how
+  you take a GIF back out of a collection.
+
 ## [1.1.6] - 2026-07-19
 
 ### Added
