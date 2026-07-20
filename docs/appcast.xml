@@ -3,6 +3,25 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.8</title>
+            <pubDate>Mon, 20 Jul 2026 00:01:23 -0700</pubDate>
+            <sparkle:version>11</sparkle:version>
+            <sparkle:shortVersionString>1.1.8</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Added</h3>
+<ul>
+<li>A taller layout. The size toggle has a third setting that fills about 80% of your screen's height, three GIFs to a row, so there's more to browse without scrolling.</li>
+<li>Check for updates from the menu-bar menu. Right-click the Quip icon and check for a new version without opening Settings.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li>Dragging a GIF onto a collection now files it. In 1.1.7 the drop looked like it worked but the GIF was never added.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.8/Quip-1.1.8.dmg" length="2221934" type="application/octet-stream" sparkle:edSignature="gKFRVir/HYHeeXpSPOfXytjL6pK1e53HmeLtnECdaql0KZdeHb9u3DbkWAgVRaOTbeGKvjxE3s4rG13oXiAWCQ=="/>
+        </item>
+        <item>
             <title>1.1.7</title>
             <pubDate>Sun, 19 Jul 2026 19:25:23 -0700</pubDate>
             <sparkle:version>10</sparkle:version>
