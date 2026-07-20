@@ -5,7 +5,7 @@ whatever you're typing in. It is a clean-room reimplementation of the idea
 behind InaGif — none of InaGif's code, assets, or name carry over — built as a
 sibling to Chorus (`~/dev/Chorus`).
 
-> **Current status (shipping 1.1.5).** This is the original v1 spec; a few
+> **Current status (shipping 1.1.6).** This is the original v1 spec; a few
 > decisions below have moved on. The menu-bar surface uses the AppKit
 > `NSStatusItem` + `NSPopover` fallback (driven by `AppDelegate`), not
 > `MenuBarExtra`, so the global hotkey can open it. Trending, autocomplete,
@@ -13,7 +13,11 @@ sibling to Chorus (`~/dev/Chorus`).
 > gentle Sparkle update reminders shipped in v1.1. Since then: an inactivity
 > reset back to the home view, a masked (reveal-on-tap) API-key field, launch-at-
 > login error handling, VoiceOver support for the grid and controls, and a batch
-> of copy/reliability fixes (see the 1.1.1–1.1.5 entries in `CHANGELOG.md`). The
+> of copy/reliability fixes (see the 1.1.1–1.1.5 entries in `CHANGELOG.md`).
+> **1.1.6 adds Collections** — named buckets (tags) for favourites, with a chip
+> filter row on the home view and right-click filing on any GIF cell. Its design,
+> code map, and a fine-tuning backlog live in
+> `docs/superpowers/specs/2026-07-19-favourite-collections-design.md`. The
 > "Open items" at the bottom are resolved. `docs/PLAN-v1.1.md` holds the v1.1
 > plan; `release/DISTRIBUTION.md` is the live release runbook.
 
