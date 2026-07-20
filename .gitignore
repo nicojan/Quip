@@ -17,3 +17,11 @@ xcuserdata/
 *.app
 *.app.zip
 *.dmg
+
+# Demo harness: third-party Giphy content + large generated clips (regenerable —
+# see Demo/README.md). Scripts and source are tracked; these outputs are not.
+Demo/assets/
+Demo/clips/
+
+# Stray temp files
+*.tmp

@@ -9,13 +9,23 @@ struct MenuContentView: View {
     @AppStorage("layoutMode") private var layoutModeRaw = LayoutMode.narrow.rawValue
     @AppStorage("giphyRating") private var rating = GiphyClient.defaultRating
     @AppStorage("useStickers") private var useStickers = false
-    @State private var vm = SearchViewModel()
+    @State private var vm: SearchViewModel
     @FocusState private var searchFocused: Bool
 
     /// Supplied by AppDelegate — the popover is hosted outside the SwiftUI scene
     /// tree, so SettingsLink and the dismiss environment aren't available.
     let openSettings: () -> Void
     let closePopover: () -> Void
+
+    /// `viewModel` defaults to a network-backed one; the DEBUG demo harness passes
+    /// one wired to an offline backend so it runs with no key or connection.
+    init(openSettings: @escaping () -> Void,
+         closePopover: @escaping () -> Void,
+         viewModel: SearchViewModel = SearchViewModel()) {
+        self.openSettings = openSettings
+        self.closePopover = closePopover
+        _vm = State(initialValue: viewModel)
+    }
 
     private var content: GiphyClient.Content { useStickers ? .stickers : .gifs }
 

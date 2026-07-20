@@ -95,6 +95,15 @@ struct LibraryView: View {
         .onChange(of: selectedCollectionID) { _, _ in
             favoriteFilter = ""   // a fresh scope starts with a clear filter
         }
+        #if DEBUG
+        // Lets the demo director drive chip selection (private view state) so a
+        // recorded clip can show collection filtering. No effect in Release.
+        .onReceive(NotificationCenter.default.publisher(for: .quipDemoSelectCollection)) { note in
+            withAnimation(.easeInOut(duration: 0.25)) {
+                selectedCollectionID = note.object as? String
+            }
+        }
+        #endif
     }
 
     /// The pinned Favorites header: title, collection pills, and (past 6 favourites)

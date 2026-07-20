@@ -42,6 +42,7 @@
 		D2ABFEB87C0C04C2935F0556 /* CollectionFiling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85847C7B3D4B89D42C149EEF /* CollectionFiling.swift */; };
 		DA0629DB3527EBAEACB0C6B9 /* GifCodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */; };
 		E89291B978D8DE6B2D32119D /* TempClips.swift in Sources */ = {isa = PBXBuildFile; fileRef = E507AEEF4F8AF976662A154E /* TempClips.swift */; };
+		9670665CF65049362343287D /* DemoHarness.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA341127F982C819B59653 /* DemoHarness.swift */; };
 		EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */; };
 		EC69053C5C90CD55639835A1 /* DragContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FDFEE258111A2313E42762 /* DragContext.swift */; };
 		F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A601EAED4E5759F30A405D /* GifLibraryTests.swift */; };
@@ -91,6 +92,7 @@
 		D0BE62A05D9034C02F6634FD /* QuipDragType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuipDragType.swift; sourceTree = "<group>"; };
 		DCE69FCADC29D43ACC52A748 /* RecentSearchesRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchesRow.swift; sourceTree = "<group>"; };
 		E507AEEF4F8AF976662A154E /* TempClips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempClips.swift; sourceTree = "<group>"; };
+		E1EA341127F982C819B59653 /* DemoHarness.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoHarness.swift; sourceTree = "<group>"; };
 		E92886217B91D982AF428951 /* CollectionDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDropTests.swift; sourceTree = "<group>"; };
 		E9FDFEE258111A2313E42762 /* DragContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragContext.swift; sourceTree = "<group>"; };
 		EAC43E38D0883846EE510BAE /* PopoverEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverEvents.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				D0BE62A05D9034C02F6634FD /* QuipDragType.swift */,
 				86BAEA701E5EE511509170FB /* Shortcuts.swift */,
 				E507AEEF4F8AF976662A154E /* TempClips.swift */,
+				E1EA341127F982C819B59653 /* DemoHarness.swift */,
 				99C83A68E9C8860698D8C44B /* Theme.swift */,
 				FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */,
 			);
@@ -372,6 +375,7 @@
 				090BA255191D69993B6B55DB /* SettingsView.swift in Sources */,
 				647F5462C4DC73977CD4AF50 /* Shortcuts.swift in Sources */,
 				E89291B978D8DE6B2D32119D /* TempClips.swift in Sources */,
+				9670665CF65049362343287D /* DemoHarness.swift in Sources */,
 				53857FCF1F6F4BA2DAA30C15 /* Theme.swift in Sources */,
 				468D9C5C270E472712F22B69 /* UpdaterView.swift in Sources */,
 			);

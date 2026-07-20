@@ -1,5 +1,19 @@
 import Foundation
 
+/// The GIF data source `SearchViewModel` depends on. Production is `GiphyClient`
+/// (talks to the network); the DEBUG demo harness swaps in an offline source
+/// that serves bundled GIFs, so the demo needs no API key or connection.
+protocol GifBackend: Sendable {
+    func search(_ query: String, apiKey: String,
+                content: GiphyClient.Content, rating: String) async throws -> [Gif]
+    func trending(apiKey: String, content: GiphyClient.Content,
+                  rating: String) async throws -> [Gif]
+    func autocomplete(_ query: String, apiKey: String) async throws -> [String]
+    /// Raw bytes of the GIF, for putting a file on the clipboard. Throws on any
+    /// failure (including a non-2xx response) so the caller can flag a bad copy.
+    func fetchData(for gif: Gif) async throws -> Data
+}
+
 /// Talks to the Giphy API. Stateless and `Sendable`; the API key is passed in
 /// per call (Quip never bundles one).
 struct GiphyClient: Sendable {
@@ -119,5 +133,18 @@ struct GiphyClient: Sendable {
         components?.percentEncodedQuery = encoded
         guard let url = components?.url else { throw GiphyError.badResponse }
         return url
+    }
+}
+
+extension GiphyClient: GifBackend {
+    /// Downloads the GIF file. A CDN error page (403/404) still arrives as bytes,
+    /// so treat any non-2xx as a failure rather than copying a corrupt file.
+    func fetchData(for gif: Gif) async throws -> Data {
+        guard let url = URL(string: gif.gifURL) else { throw GiphyError.badResponse }
+        let (data, response) = try await session.data(from: url)
+        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+            throw GiphyError.http((response as? HTTPURLResponse)?.statusCode ?? 0)
+        }
+        return data
     }
 }

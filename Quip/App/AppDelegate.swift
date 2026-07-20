@@ -36,6 +36,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var updateBadge: NSView?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        #if DEBUG
+        // Debug-only: `QUIP_DEMO=1` opens the demo window (for recording feature
+        // clips) instead of the menu-bar popover. Never present in Release.
+        if ProcessInfo.processInfo.environment["QUIP_DEMO"] == "1" {
+            DemoHarness.launch()
+            return
+        }
+        #endif
+
         TempClips.prepare()   // clear last session's copy/drag temp files
         GifImageCache.configure()   // cap the on-disk image cache
 

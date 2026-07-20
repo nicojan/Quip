@@ -31,7 +31,10 @@ final class SearchViewModel {
     /// results are still there.
     static let inactivityResetInterval: TimeInterval = 120
 
-    @ObservationIgnored private let client = GiphyClient()
+    @ObservationIgnored private let backend: GifBackend
+    /// Store for the recent-search terms. Injectable (like `GifLibrary`'s) so the
+    /// demo harness keeps its throwaway terms out of the real defaults.
+    @ObservationIgnored private let recentDefaults: UserDefaults
     @ObservationIgnored private let maxRecentSearches = 5
     @ObservationIgnored private let recentSearchesKey = "recentSearches"
     @ObservationIgnored private var searchTask: Task<Void, Never>?
@@ -55,9 +58,13 @@ final class SearchViewModel {
     @ObservationIgnored private var resultsContent: GiphyClient.Content?
     @ObservationIgnored private var resultsRating: String?
 
-    init(now: @escaping () -> Date = Date.init) {
+    init(backend: GifBackend = GiphyClient(),
+         recentSearchDefaults: UserDefaults = .standard,
+         now: @escaping () -> Date = Date.init) {
+        self.backend = backend
+        self.recentDefaults = recentSearchDefaults
         self.now = now
-        recentSearches = UserDefaults.standard.stringArray(forKey: recentSearchesKey) ?? []
+        recentSearches = recentSearchDefaults.stringArray(forKey: recentSearchesKey) ?? []
     }
 
     /// Called each time the popover opens. If it's been idle past the reset
@@ -156,7 +163,7 @@ final class SearchViewModel {
         searchTask = Task { [weak self] in
             guard let self else { return }
             do {
-                let gifs = try await self.client.search(term, apiKey: apiKey, content: content, rating: rating)
+                let gifs = try await self.backend.search(term, apiKey: apiKey, content: content, rating: rating)
                 if Task.isCancelled { return }
                 let deduped = gifs.dedupedByID()
                 self.results = deduped
@@ -182,7 +189,7 @@ final class SearchViewModel {
         Task { [weak self] in
             guard let self else { return }
             defer { self.isFetchingTrending = false }
-            let gifs = (try? await self.client.trending(apiKey: apiKey, content: content, rating: rating)) ?? []
+            let gifs = (try? await self.backend.trending(apiKey: apiKey, content: content, rating: rating)) ?? []
             if !gifs.isEmpty { self.trending = gifs.dedupedByID() }
         }
     }
@@ -194,7 +201,7 @@ final class SearchViewModel {
         suggestTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(250))
             guard let self, !Task.isCancelled else { return }
-            let terms = (try? await self.client.autocomplete(term, apiKey: apiKey)) ?? []
+            let terms = (try? await self.backend.autocomplete(term, apiKey: apiKey)) ?? []
             if Task.isCancelled { return }
             var seen = Set<String>()
             self.suggestions = terms.filter { seen.insert($0).inserted }   // no dup ForEach ids
@@ -205,17 +212,12 @@ final class SearchViewModel {
     /// into Messages, Slack, etc. as an animated attachment. Records it as recent
     /// on success.
     func copy(_ gif: Gif, into library: GifLibrary) {
-        guard let url = URL(string: gif.gifURL) else { markCopyFailed(gif.id); return }
         Task { [weak self] in
             guard let self else { return }
             do {
-                let (data, response) = try await URLSession.shared.data(from: url)
-                // A CDN error page (403/404) still arrives as bytes; writing it as
-                // a .gif would put a corrupt file on the pasteboard and flash a
-                // false "Copied!". Treat any non-2xx as a failure.
-                guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
-                    self.markCopyFailed(gif.id); return
-                }
+                // The backend rejects a non-2xx (a CDN error page still arrives as
+                // bytes), so we never write a corrupt file or flash a false "Copied!".
+                let data = try await self.backend.fetchData(for: gif)
                 let file = TempClips.newGifURL()
                 try data.write(to: file)
                 let pasteboard = NSPasteboard.general
@@ -267,6 +269,6 @@ final class SearchViewModel {
         if recentSearches.count > maxRecentSearches {
             recentSearches = Array(recentSearches.prefix(maxRecentSearches))
         }
-        UserDefaults.standard.set(recentSearches, forKey: recentSearchesKey)
+        recentDefaults.set(recentSearches, forKey: recentSearchesKey)
     }
 }
