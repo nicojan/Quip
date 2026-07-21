@@ -3,6 +3,21 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.10</title>
+            <pubDate>Tue, 21 Jul 2026 00:18:01 -0700</pubDate>
+            <sparkle:version>13</sparkle:version>
+            <sparkle:shortVersionString>1.1.10</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Changed</h3>
+<ul>
+<li>Collection tags now wrap onto a second and third row when they don't all fit, instead of scrolling sideways. The All chip and the sort and plus buttons stay on the top row.</li>
+<li>The vertical scroll bar is gone. Scroll with your trackpad or wheel, and a half-shown row at the bottom shows there's more below.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.10/Quip-1.1.10.dmg" length="2311580" type="application/octet-stream" sparkle:edSignature="UFOaDQ6g4UV8Nr36RSte6NpZU5KUBDmVTYj9o0M7YqB4c9JF3pEueNzEUsaaHU3Nyedp/SQisdfRDvG8O7xHAA=="/>
+        </item>
+        <item>
             <title>1.1.9</title>
             <pubDate>Mon, 20 Jul 2026 10:18:40 -0700</pubDate>
             <sparkle:version>12</sparkle:version>
