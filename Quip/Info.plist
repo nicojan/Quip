@@ -9,9 +9,12 @@
     <!-- Sparkle auto-update (direct distribution). See release/DISTRIBUTION.md.
          SUPublicEDKey is the shared EdDSA key (WatchMeType / Chorus) whose
          private half lives in the login Keychain. SUFeedURL is served by
-         GitHub Pages from this repo's /docs folder (nicojan/Quip, public). -->
+         GitHub Pages from this repo's /docs folder (nicojan/Quip, public), and
+         points straight at the custom domain so it doesn't ride the
+         nicojan.github.io redirect (which once flipped to insecure http and
+         broke update checks — see release/DISTRIBUTION.md). -->
     <key>SUFeedURL</key>
-    <string>https://nicojan.github.io/Quip/appcast.xml</string>
+    <string>https://quip.nicojan.com/appcast.xml</string>
     <key>SUPublicEDKey</key>
     <string>6/h2Pfjbo39vHie8JIt/kY7h0wQvmQxj9Ea0W3gnH0w=</string>
     <key>SUEnableAutomaticChecks</key>

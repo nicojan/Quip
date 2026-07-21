@@ -16,17 +16,30 @@ intentionally **off** — see `Quip/Quip.entitlements`.
 |---|---|---|
 | `SUPublicEDKey` | `Quip/Info.plist` | `6/h2Pfjbo39vHie8JIt/kY7h0wQvmQxj9Ea0W3gnH0w=` — the shared EdDSA key whose private half is in the login Keychain |
 | `teamID` | `release/ExportOptions.plist` | `3CY4DX3K45` |
-| `SUFeedURL` | `Quip/Info.plist` | `https://nicojan.github.io/Quip/appcast.xml` |
+| `SUFeedURL` | `Quip/Info.plist` | `https://quip.nicojan.com/appcast.xml` |
 
 ### Hosting (GitHub)
 
 The `nicojan/Quip` repo is **public**. Updates are hosted from it:
 
 - **Appcast** — `docs/appcast.xml`, served by **GitHub Pages** (source: `main`
-  branch, `/docs` folder) at `https://nicojan.github.io/Quip/appcast.xml`. This
-  is the stable `SUFeedURL`.
+  branch, `/docs` folder). The custom domain `quip.nicojan.com` (see
+  `docs/CNAME`) serves it at `https://quip.nicojan.com/appcast.xml`, which is the
+  `SUFeedURL`. Builds up to and including **1.1.10** used
+  `https://nicojan.github.io/Quip/appcast.xml`; that still works, but only
+  because Pages redirects it to the custom domain.
 - **DMGs** — attached as **GitHub Release assets** (one release per version, tag
   `vX.Y.Z`). The appcast's `<enclosure>` URLs point at the release download URLs.
+
+> **Gotcha — HTTPS enforcement.** Once the `quip.nicojan.com` custom domain was
+> set, `https://nicojan.github.io/Quip/appcast.xml` began **301-redirecting** to
+> the custom domain. With Pages' **Enforce HTTPS off**, that redirect went to
+> **`http://`**, and Sparkle refuses an https→http downgrade — so every installed
+> app's update check failed with "An error occurred in retrieving update
+> information." Fix: keep **Enforce HTTPS on** for the Pages site
+> (`gh api -X PUT repos/nicojan/Quip/pages -F https_enforced=true`; needs the cert
+> `approved` first). From 1.1.11 on, `SUFeedURL` points straight at the custom
+> domain, so new builds don't ride that redirect at all.
 
 ### Signing key note
 
