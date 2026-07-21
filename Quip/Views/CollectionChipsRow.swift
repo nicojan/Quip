@@ -50,31 +50,27 @@ struct CollectionChipsRow: View {
     }
 
     private var chipRow: some View {
-        // Sort and add stay pinned to the top-right; the All chip and the tag chips
-        // wrap left-to-right beside them, spilling onto a second and third line once
-        // they fill the width — no sideways scrolling.
-        HStack(alignment: .top, spacing: 6) {
-            FlowLayout(spacing: 6, lineSpacing: 6) {
+        // Top row: the All chip on the left, sort and add on the right. The tag
+        // chips wrap onto their own line(s) below, spilling to a second and third
+        // row once they fill the width — no sideways scrolling.
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
                 chip("All", selected: selectedID == nil) { selectedID = nil }
-
-                if !library.collections.isEmpty {
-                    // A fixed-size rule instead of `Divider`, whose orientation is
-                    // ambiguous outside a stack.
-                    Rectangle()
-                        .fill(Color.secondary.opacity(0.35))
-                        .frame(width: 1, height: 16)
-                }
-
-                ForEach(library.collections) { collection in
-                    collectionChip(collection)
-                }
+                Spacer(minLength: 6)
+                if library.collections.count >= 2 { sortButton }
+                addButton
             }
-            .padding(.horizontal, 1)
-            .padding(.vertical, 2)   // room for the drop scale-up
-            .frame(maxWidth: .infinity, alignment: .leading)
 
-            if library.collections.count >= 2 { sortButton }
-            addButton
+            if !library.collections.isEmpty {
+                FlowLayout(spacing: 6, lineSpacing: 6) {
+                    ForEach(library.collections) { collection in
+                        collectionChip(collection)
+                    }
+                }
+                .padding(.horizontal, 1)
+                .padding(.vertical, 2)   // room for the drop scale-up
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
     }
 
