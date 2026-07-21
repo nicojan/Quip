@@ -272,6 +272,14 @@ section { position: relative; }
   width: 100%; border-radius: 18px; border: 1px solid var(--stroke);
   box-shadow: 0 30px 60px -28px rgba(0,0,0,.7); background: var(--bg);
 }
+/* The layout clip is padded to a common canvas, so it can't sit in a frame the
+   way the tightly-cropped popovers do. Drop the frame and lighten-blend its
+   near-black padding into the page so only the popover shows. */
+.feature-media.bare video {
+  border: none; box-shadow: none; border-radius: 0; background: transparent;
+  mix-blend-mode: lighten; max-width: 420px;
+}
+.feature-media.bare { max-width: 420px; }
 .feature-text .tag { color: var(--violet-400); font-weight: 600; font-size: 14px; margin-bottom: 12px; display: block; }
 @media (max-width: 820px) {
   .feature { grid-template-columns: 1fr; gap: 28px; padding: 34px 0; text-align: center; }
@@ -504,7 +512,7 @@ footer { border-top: 1px solid var(--stroke); padding: 54px 0 40px; margin-top: 
           <h3>As wide as you want, no jumping around</h3>
           <p>Switch between two, three, and five GIFs per row. Every size is the same height, so only the width changes and the popover stays put.</p>
         </div>
-        <div class="feature-media">
+        <div class="feature-media bare">
           <video muted loop playsinline preload="none" poster="/assets/clips/layout.jpg"
                  aria-label="Quip cycling through its narrow, medium, and wide layouts.">
             <source data-src="/assets/clips/layout.mp4" type="video/mp4">
