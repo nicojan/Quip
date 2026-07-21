@@ -50,22 +50,27 @@ struct CollectionChipsRow: View {
     }
 
     private var chipRow: some View {
-        HStack(spacing: 6) {
-            chip("All", selected: selectedID == nil) { selectedID = nil }
+        // Sort and add stay pinned to the top-right; the All chip and the tag chips
+        // wrap left-to-right beside them, spilling onto a second and third line once
+        // they fill the width — no sideways scrolling.
+        HStack(alignment: .top, spacing: 6) {
+            FlowLayout(spacing: 6, lineSpacing: 6) {
+                chip("All", selected: selectedID == nil) { selectedID = nil }
 
-            if !library.collections.isEmpty {
-                Divider().frame(height: 16)
-            }
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    ForEach(library.collections) { collection in
-                        collectionChip(collection)
-                    }
+                if !library.collections.isEmpty {
+                    // A fixed-size rule instead of `Divider`, whose orientation is
+                    // ambiguous outside a stack.
+                    Rectangle()
+                        .fill(Color.secondary.opacity(0.35))
+                        .frame(width: 1, height: 16)
                 }
-                .padding(.horizontal, 1)
-                .padding(.vertical, 2)   // room for the drop scale-up
+
+                ForEach(library.collections) { collection in
+                    collectionChip(collection)
+                }
             }
+            .padding(.horizontal, 1)
+            .padding(.vertical, 2)   // room for the drop scale-up
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if library.collections.count >= 2 { sortButton }

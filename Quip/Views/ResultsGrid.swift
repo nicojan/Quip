@@ -29,6 +29,9 @@ struct ResultsGrid: View {
                 }
             }
             .padding(.vertical, 2)
+            // Kill the vertical scroller from inside the document view — matches
+            // the library so "Always show scroll bars" can't force one back.
+            .hideVerticalScroller()
         }
         .scrollIndicators(.hidden)
     }

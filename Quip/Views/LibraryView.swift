@@ -87,6 +87,9 @@ struct LibraryView: View {
                 }
             }
             .padding(.vertical, 2)
+            // Kill the vertical scroller from inside the document view — the
+            // half-shown next row is the only "more below" cue we want.
+            .hideVerticalScroller()
         }
         .scrollIndicators(.hidden)
         .onChange(of: favoritesInScope.count) { _, count in

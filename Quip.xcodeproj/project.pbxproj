@@ -19,6 +19,8 @@
 		3B38857BCF6329F14195ACFD /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D011C67D2E1CEA260F227F /* SearchViewModel.swift */; };
 		468D9C5C270E472712F22B69 /* UpdaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */; };
 		4CD43D15E9A9323F63EBC7B2 /* EmojiField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F97FB6D8431120DE9BF151 /* EmojiField.swift */; };
+		FAFA0001FAFA0001FAFA0001 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFB0001FBFB0001FBFB0001 /* FlowLayout.swift */; };
+		FAFA0002FAFA0002FAFA0002 /* HideVerticalScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFB0002FBFB0002FBFB0002 /* HideVerticalScroller.swift */; };
 		53857FCF1F6F4BA2DAA30C15 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C83A68E9C8860698D8C44B /* Theme.swift */; };
 		53FCF696BC6A5FEDAED4F851 /* LoginItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA19FE181D760F4BDA356692 /* LoginItem.swift */; };
 		5524DF7B4D9D90EDF0350376 /* GifThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20AEE5F8920C4B47860662B /* GifThumbnail.swift */; };
@@ -100,6 +102,8 @@
 		F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCodableTests.swift; sourceTree = "<group>"; };
 		F6D011C67D2E1CEA260F227F /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		F8F97FB6D8431120DE9BF151 /* EmojiField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiField.swift; sourceTree = "<group>"; };
+		FBFB0001FBFB0001FBFB0001 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		FBFB0002FBFB0002FBFB0002 /* HideVerticalScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideVerticalScroller.swift; sourceTree = "<group>"; };
 		FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
 		FD662B3C125B123FE10FFC0D /* GifLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifLibrary.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -200,6 +204,8 @@
 			isa = PBXGroup;
 			children = (
 				E9FDFEE258111A2313E42762 /* DragContext.swift */,
+				FBFB0001FBFB0001FBFB0001 /* FlowLayout.swift */,
+				FBFB0002FBFB0002FBFB0002 /* HideVerticalScroller.swift */,
 				07CB116E966C3BDA29250791 /* LayoutMode.swift */,
 				EAC43E38D0883846EE510BAE /* PopoverEvents.swift */,
 				4B84AB8C6650894643A55E21 /* QuipDragProvider.swift */,
@@ -353,6 +359,8 @@
 				D2ABFEB87C0C04C2935F0556 /* CollectionFiling.swift in Sources */,
 				EC69053C5C90CD55639835A1 /* DragContext.swift in Sources */,
 				4CD43D15E9A9323F63EBC7B2 /* EmojiField.swift in Sources */,
+				FAFA0001FAFA0001FAFA0001 /* FlowLayout.swift in Sources */,
+				FAFA0002FAFA0002FAFA0002 /* HideVerticalScroller.swift in Sources */,
 				302D12051D6472704DF9E36B /* Gif.swift in Sources */,
 				A43F7877C2E6690D3CDA2F4B /* GifCollection.swift in Sources */,
 				91E68197A4440754F55C63AC /* GifImageCache.swift in Sources */,
