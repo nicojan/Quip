@@ -3,6 +3,16 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.10] - 2026-07-21
+
+### Changed
+
+- Collection tags now wrap onto a second and third row when they don't all fit,
+  instead of scrolling sideways. The All chip and the sort and plus buttons stay
+  on the top row.
+- The vertical scroll bar is gone. Scroll with your trackpad or wheel, and a
+  half-shown row at the bottom shows there's more below.
+
 ## [1.1.9] - 2026-07-20
 
 ### Added
