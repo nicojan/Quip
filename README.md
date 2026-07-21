@@ -9,9 +9,9 @@ Quip is a sibling to [Chorus](https://github.com/nicojan/Chorus): a small native
 Mac app for Apple Silicon that's signed and notarized, with Sparkle updates.
 
 <p align="center">
-  <img src="Marketing/SCR-20260713-ozec.png" alt="Quip in the menu bar, two-per-row layout" width="360">
+  <img src="Marketing/SCR-20260720-oxff.png" alt="Quip in the menu bar, three GIFs per row" width="360">
   &nbsp;&nbsp;
-  <img src="Marketing/SCR-20260713-ozml.png" alt="Quip in the menu bar, five-per-row layout" width="620">
+  <img src="Marketing/SCR-20260720-oxpe.png" alt="Quip in the menu bar, five GIFs per row" width="520">
 </p>
 
 ## Features
