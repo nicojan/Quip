@@ -56,7 +56,7 @@ CANVAS=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height 
 W="${CANVAS%,*}"; H="${CANVAS#*,}"
 pad() {
   ffmpeg -y -loglevel error -i "$TMP/$1.mp4" \
-    -vf "pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2:color=black,setsar=1,fps=30" \
+    -vf "pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2:color=0x0B0F1A,setsar=1,fps=30" \
     -c:v libx264 -pix_fmt yuv420p "$TMP/${1}_p.mp4"
 }
 pad narrow; pad tall; pad wide
