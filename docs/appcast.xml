@@ -11,7 +11,7 @@
             <description><![CDATA[
 <h3>Changed</h3>
 <ul>
-<li>Collection tags now wrap onto a second and third row when they don't all fit, instead of scrolling sideways. The All chip and the sort and plus buttons stay on the top row.</li>
+<li>The collection chips now wrap onto a second and third row when they don't all fit, instead of scrolling sideways. The All chip and the sort and plus buttons stay on the top row.</li>
 <li>The vertical scroll bar is gone. Scroll with your trackpad or wheel, and a half-shown row at the bottom shows there's more below.</li>
 </ul>
 ]]></description>

@@ -7,9 +7,9 @@ All notable changes to Quip are documented here. The format loosely follows
 
 ### Changed
 
-- Collection tags now wrap onto a second and third row when they don't all fit,
-  instead of scrolling sideways. The All chip and the sort and plus buttons stay
-  on the top row.
+- The collection chips now wrap onto a second and third row when they don't all
+  fit, instead of scrolling sideways. The All chip and the sort and plus buttons
+  stay on the top row.
 - The vertical scroll bar is gone. Scroll with your trackpad or wheel, and a
   half-shown row at the bottom shows there's more below.
 
