@@ -141,13 +141,14 @@ struct GifThumbnail: View {
                             .foregroundStyle(Color(nsColor: .systemYellow))
                             .shadow(color: .black.opacity(0.5), radius: 2, y: 1)
                     } else {
-                        // Empty star that reads as pressed-in: an inner shadow on the
-                        // outline, no backing circle.
+                        // Empty star, kept legible on busy thumbnails: a full-white
+                        // outline with a drop shadow so it separates from bright GIFs,
+                        // rather than a faint inner-shadow outline that washes out
+                        // against light content. No backing circle.
                         Image(systemName: "star")
-                            .foregroundStyle(
-                                .white.opacity(0.9)
-                                    .shadow(.inner(color: .black.opacity(0.8), radius: 1, y: 1))
-                            )
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.6), radius: 2, y: 1)
                     }
                 }
                 .font(.callout)
