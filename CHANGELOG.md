@@ -3,6 +3,26 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.12] - 2026-07-22
+
+### Changed
+
+- The collection chips are bigger and easier to read. A collection you've set to
+  show only its emoji now appears as the bare emoji, sized up, rather than tucked
+  inside a pill.
+- Point at a collection chip and it lifts with an accent glow and grows a little,
+  so you can tell which one you're about to pick.
+- The Favorites and Recently copied rows no longer sit inside a boxed panel. The
+  GIFs line up with everything else in the window.
+- The copy icon that shows when you point at a GIF now has a dark outline, so it
+  stays clear on bright GIFs.
+
+### Fixed
+
+- The scroll bars in the Favorites and Recently copied rows are gone, so no part
+  of the window shows one now. A half-shown GIF at the end of a row tells you it
+  scrolls sideways for more.
+
 ## [1.1.11] - 2026-07-22
 
 ### Added
