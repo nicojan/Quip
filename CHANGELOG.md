@@ -3,6 +3,31 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.11] - 2026-07-22
+
+### Added
+
+- A Clear button on the recent-searches row, so you can wipe your search history
+  the same way you clear recently copied GIFs.
+
+### Changed
+
+- Your Giphy API key now lives in the macOS Keychain instead of the app's plain
+  preferences. Your existing key moves over on first launch, so you don't need to
+  re-enter it.
+- ⌥-click now copies a GIF's giphy.com link, which shows a preview when you paste
+  it into apps that unfurl links.
+- The star on a GIF you haven't saved is easier to see against bright GIFs.
+
+### Fixed
+
+- Changing the content rating, or switching between GIFs and stickers, now
+  updates an on-screen search even when it had failed or found nothing.
+- Trending no longer briefly shows the old kind of result after you switch
+  between GIFs and stickers.
+- Dragging a collection chip to reorder it now drops it where you aimed, in both
+  directions.
+
 ## [1.1.10] - 2026-07-21
 
 ### Changed

@@ -18,7 +18,7 @@ Mac app for Apple Silicon that's signed and notarized, with Sparkle updates.
 
 - **Search and copy.** Search Giphy from the menu bar and click any result to
   copy it to the clipboard as an animated file. Paste it into Messages, Slack,
-  or anywhere that takes an image.
+  or anywhere that takes an image. Hold ⌥ and click to copy a link instead.
 - **Favorites.** Star a GIF to keep it one click away.
 - **Recently copied.** Quip remembers the GIFs you actually used.
 - **Recent searches.** Click a past search to run it again.
@@ -39,7 +39,7 @@ rate limit:
    toward it, but Quip needs a plain API key), then copy the key.
 3. Open Quip's **Settings** and paste the key into the **Giphy API Key** field.
 
-The key stays on your Mac. Until you add one, search asks you for it.
+The key stays on your Mac, in the Keychain. Until you add one, search asks you for it.
 
 ## Requirements
 
