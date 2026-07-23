@@ -27,8 +27,24 @@ struct CollectionChipsRow: View {
     /// The chip to pulse briefly after a successful GIF drop — the "it worked" cue,
     /// needed because filing into a non-selected tag changes nothing on screen.
     @State private var flashID: String?
+    /// The category chip under the pointer, for the accent hover glow. Tracked here
+    /// (not per-chip) because the chips are built by helper funcs, not their own
+    /// views. `allID` stands in for the "All" chip, which has no collection id.
+    @State private var hoveredID: String?
+    private let allID = "__all__"
+
+    /// One height for every chip — labelled pills, the "All" pill, and the
+    /// sort/add buttons — so they line up with the taller emoji-only chips.
+    private let chipHeight: CGFloat = 30
 
     private var isEditing: Bool { creating || editingID != nil }
+
+    /// Records which chip the pointer is over, clearing the slot only when this chip
+    /// owns it — so a stray exit after another chip's enter can't wipe the new one.
+    private func setHover(_ id: String, _ hovering: Bool) {
+        if hovering { hoveredID = id }
+        else if hoveredID == id { hoveredID = nil }
+    }
 
     private var isDraftValid: Bool {
         let name = draftName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -62,16 +78,18 @@ struct CollectionChipsRow: View {
             }
 
             if !library.collections.isEmpty {
-                FlowLayout(spacing: 6, lineSpacing: 6) {
+                FlowLayout(spacing: 12, lineSpacing: 10) {
                     ForEach(library.collections) { collection in
                         collectionChip(collection)
                     }
                 }
-                .padding(.horizontal, 1)
-                .padding(.vertical, 2)   // room for the drop scale-up
+                .padding(.vertical, 6)   // room for the hover magnify + glow
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+        // Inset the whole chip group so a hovered edge chip's magnify and glow have
+        // room before the enclosing scroll view clips them.
+        .padding(.horizontal, 8)
     }
 
     // MARK: Chips
@@ -83,11 +101,13 @@ struct CollectionChipsRow: View {
                 .fixedSize()   // hug the label ("All") — don't stretch to fill the row
         }
         .buttonStyle(.plain)
-        .font(.caption)
-        .padding(.horizontal, 9)
-        .padding(.vertical, 4)
-        .background(selected ? Theme.accent : Color.white.opacity(0.08), in: Capsule())
+        .font(.footnote.weight(.medium))
+        .padding(.horizontal, 12)
+        .frame(height: chipHeight)
+        .background(selected ? Theme.accent : Color.white.opacity(0.12), in: Capsule())
         .foregroundStyle(selected ? Color.white : Color.primary)
+        .hoverEffect(hoveredID == allID)
+        .onHover { hovering in setHover(allID, hovering) }
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
     }
 
@@ -110,6 +130,8 @@ struct CollectionChipsRow: View {
                     .allowsHitTesting(false)
             )
             .scaleEffect(isFiling ? 1.15 : 1)
+            .hoverEffect(hoveredID == id)
+            .onHover { hovering in setHover(id, hovering) }
             .animation(.easeOut(duration: 0.12), value: activeTargetID)
             .animation(.easeOut(duration: 0.15), value: flashID)
             .onDrag {
@@ -139,23 +161,39 @@ struct CollectionChipsRow: View {
         // Guarantee a non-empty chip even for an odd record: fall back to the name
         // when there's no emoji, whatever `showsName` says.
         let showName = collection.showsName || !hasEmoji
+        // No label to carry a pill — the emoji stands alone as an icon.
+        let emojiOnly = hasEmoji && !showName
         let selected = selectedID == collection.id
         return Button { selectedID = collection.id } label: {
             HStack(spacing: 4) {
-                if hasEmoji { Text(collection.emoji ?? "") }
+                if hasEmoji {
+                    // With no name beside it the emoji is the whole chip, so let it
+                    // grow past the label text size instead of sitting tiny.
+                    Text(collection.emoji ?? "")
+                        .font(emojiOnly ? .title2 : .footnote.weight(.medium))
+                        // No pill to mark it selected, so dim the inactive ones — but
+                        // only once a collection is active. Under "All" nothing is
+                        // singled out, so every emoji shows at full strength.
+                        .opacity(emojiOnly && selectedID != nil && !selected ? 0.5 : 1)
+                }
                 if showName {
                     Text(collection.name)
                         .lineLimit(1)
                         .truncationMode(.tail)
-                        .frame(maxWidth: 120)
+                        .frame(maxWidth: 130)
                 }
             }
         }
         .buttonStyle(.plain)
-        .font(.caption)
-        .padding(.horizontal, 9)
-        .padding(.vertical, 4)
-        .background(selected ? Theme.accent : Color.white.opacity(0.08), in: Capsule())
+        .font(.footnote.weight(.medium))
+        .padding(.horizontal, emojiOnly ? 5 : 12)
+        .frame(height: chipHeight)
+        .background {
+            // A bare emoji wears no pill; only a labelled chip gets the capsule.
+            if !emojiOnly {
+                Capsule().fill(selected ? Theme.accent : Color.white.opacity(0.12))
+            }
+        }
         .foregroundStyle(selected ? Color.white : Color.primary)
         .accessibilityLabel(collection.name)
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
@@ -168,10 +206,10 @@ struct CollectionChipsRow: View {
             }
         } label: {
             Image(systemName: "arrow.up.arrow.down")
-                .font(.caption)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.white.opacity(0.08), in: Capsule())
+                .font(.footnote.weight(.medium))
+                .padding(.horizontal, 10)
+                .frame(height: chipHeight)
+                .background(Color.white.opacity(0.12), in: Capsule())
         }
         .buttonStyle(.plain)
         .help("Sort collections A→Z")
@@ -181,10 +219,10 @@ struct CollectionChipsRow: View {
     private var addButton: some View {
         Button(action: beginCreate) {
             Image(systemName: "plus")
-                .font(.caption)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.white.opacity(0.08), in: Capsule())
+                .font(.footnote.weight(.medium))
+                .padding(.horizontal, 10)
+                .frame(height: chipHeight)
+                .background(Color.white.opacity(0.12), in: Capsule())
         }
         .buttonStyle(.plain)
         .disabled(isEditing)
@@ -362,5 +400,20 @@ struct CollectionChipsRow: View {
         draftName = ""
         draftEmoji = ""
         draftShowsName = true
+    }
+}
+
+private extension View {
+    /// Dock-style hover cue for a category chip: a gentle magnify plus a clear
+    /// accent halo. Two stacked shadows make the glow read on the dark surface — a
+    /// tight bright core and a wider soft bloom — and the chip is lifted above its
+    /// neighbours so their capsules don't clip the halo. Everything collapses to
+    /// nothing when the chip isn't hovered.
+    func hoverEffect(_ active: Bool) -> some View {
+        scaleEffect(active ? 1.1 : 1)
+            .shadow(color: Theme.accent.opacity(active ? 1 : 0), radius: active ? 4 : 0)
+            .shadow(color: Theme.accent.opacity(active ? 0.6 : 0), radius: active ? 7 : 0)
+            .zIndex(active ? 1 : 0)
+            .animation(.easeOut(duration: 0.16), value: active)
     }
 }

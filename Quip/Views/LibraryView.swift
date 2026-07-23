@@ -87,9 +87,9 @@ struct LibraryView: View {
                 }
             }
             .padding(.vertical, 2)
-            // Kill the vertical scroller from inside the document view — the
-            // half-shown next row is the only "more below" cue we want.
-            .hideVerticalScroller()
+            // Kill the scrollers from inside the document view — the half-shown
+            // next row is the only "more below" cue we want.
+            .hideScrollers()
         }
         .scrollIndicators(.hidden)
         .onChange(of: favoritesInScope.count) { _, count in
@@ -157,38 +157,36 @@ struct LibraryView: View {
 
     /// Favorites / Recently copied: a fixed-height strip of `libraryRows` rows that
     /// scrolls sideways, so a long list stays capped instead of pushing Trending
-    /// off the bottom.
-    ///
-    /// The box background sits *inside* the scroller, sized to the full row, so its
-    /// right edge stays off-screen until you reach the end — it reads as one long
-    /// box, not a closed panel. No scroll indicator: the peeking next cell (see
-    /// `libraryCellWidth`) is the scroll cue.
+    /// off the bottom. No enclosing box — the cells sit directly, left-aligned with
+    /// the section header and the Trending grid; the half-shown next cell (see
+    /// `libraryCellWidth`) is the only scroll cue.
     ///
     /// Rows grow with the content: one row until it fills the width, a second once
     /// the first is full, a third once the second is full, then it scrolls sideways
-    /// — so a handful of favourites never sits in a tall, mostly-empty box.
+    /// — so a handful of favourites never sits in a tall, mostly-empty strip.
     /// (`LazyHGrid` fills column-major, so capping the row count does exactly this.)
     private func horizontalGrid(_ gifs: [Gif]) -> some View {
         let perRow = max(1, columns.count)
         let needed = (gifs.count + perRow - 1) / perRow   // ceil(count / perRow)
         let rowCount = max(1, min(libraryRows, needed))
         let rows = Array(repeating: GridItem(.fixed(92), spacing: 8), count: rowCount)
+        // The rows plus a little vertical padding for the hover magnify. Pinned so
+        // the scroller (which reserves no gutter, see `hideScrollers`) can't stretch
+        // it down the popover.
+        let panelHeight = CGFloat(rowCount) * 92 + CGFloat(rowCount - 1) * 8 + 12
         return ScrollView(.horizontal, showsIndicators: false) {
             LazyHGrid(rows: rows, alignment: .top, spacing: 8) {
                 ForEach(gifs) { gif in
                     cell(gif).frame(width: cellWidth)
                 }
             }
-            .padding(8)
-            .background(
-                RoundedRectangle(cornerRadius: Theme.corner)
-                    .fill(Color.white.opacity(0.06))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: Theme.corner)
-                            .strokeBorder(Color.white.opacity(0.16))
-                    )
-            )
+            .padding(.vertical, 6)   // breathing room for the hover magnify
+            // Kill the horizontal scroller too — "Always show scroll bars"
+            // overrides showsIndicators. The peeking next cell is the scroll cue.
+            .hideScrollers()
         }
+        .frame(height: panelHeight)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func cell(_ gif: Gif) -> some View {

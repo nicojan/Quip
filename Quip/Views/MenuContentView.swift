@@ -44,13 +44,13 @@ struct MenuContentView: View {
     }
 
     /// Width of one GIF cell in the horizontal Favorites / Recently-copied strips.
-    /// Sized to show a *quarter* of the next cell past the last full one, so the
-    /// content visibly "peeps" — a cue that the strip scrolls sideways. So a 2-up
-    /// layout shows 2.25 cells, 3-up shows 3.25, 5-up shows 5.25. `content` is the
-    /// popover width minus the 12pt outer padding on each side.
+    /// Sized so *half* of the next cell shows past the last full one — an obvious
+    /// "peep" that the strip scrolls sideways. So a 2-up layout shows 1.5 cells,
+    /// 3-up shows 2.5, 5-up shows 4.5. `content` is the popover width minus the
+    /// 12pt outer padding on each side.
     private var libraryCellWidth: CGFloat {
         let cols = CGFloat(layoutMode.columns)
-        let visible = cols + 0.25
+        let visible = cols - 0.5
         let content = layoutMode.width - 24
         return ((content - 8 * cols) / visible).rounded(.down)
     }

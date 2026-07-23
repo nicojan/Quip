@@ -166,6 +166,9 @@ struct GifThumbnail: View {
                 Image(systemName: "doc.on.clipboard")
                     .font(.callout)
                     .foregroundStyle(.white)
+                    // A dark halo behind the glyph so it reads on bright thumbnails.
+                    .shadow(color: .black.opacity(0.8), radius: 3, y: 1)
+                    .shadow(color: .black.opacity(0.5), radius: 6)
             )
             .allowsHitTesting(false)
     }

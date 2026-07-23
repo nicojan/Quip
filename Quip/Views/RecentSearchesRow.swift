@@ -12,13 +12,16 @@ struct RecentSearchesRow: View {
                 ForEach(searches, id: \.self) { term in
                     Button(term) { onSelect(term) }
                         .buttonStyle(.plain)
-                        .font(.caption)
-                        .padding(.horizontal, 9)
-                        .padding(.vertical, 4)
-                        .background(Color.white.opacity(0.08), in: Capsule())
+                        .font(.footnote.weight(.medium))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.12), in: Capsule())
                 }
             }
             .padding(.horizontal, 1)
+            // Kill the horizontal scroller — "Always show scroll bars" overrides
+            // showsIndicators. A clipped chip at the edge is the scroll cue.
+            .hideScrollers()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
