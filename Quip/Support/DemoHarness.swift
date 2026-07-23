@@ -55,8 +55,12 @@ enum DemoHarness {
             rawValue: ProcessInfo.processInfo.environment["QUIP_DEMO_LAYOUT"] ?? ""
         ) ?? .tall
 
+        // The API key now lives in the Keychain-backed Credentials store; seed an
+        // in-memory one so the demo runs with a non-empty key (search enabled) and
+        // never touches the real Keychain.
+        let credentials = Credentials(store: InMemorySecretStore([Credentials.account: "demo-key"]))
+
         // Prefs the real app keeps in @AppStorage, seeded in the isolated suite.
-        suite.set("demo-key", forKey: "giphyApiKey")   // non-empty ⇒ search is enabled
         suite.set(initialMode.rawValue, forKey: "layoutMode")
         suite.set(GiphyClient.defaultRating, forKey: "giphyRating")
         suite.set(false, forKey: "useStickers")
@@ -73,6 +77,7 @@ enum DemoHarness {
             .environment(library)
             .environment(metrics)
             .environment(dragContext)
+            .environment(credentials)
             .defaultAppStorage(suite)
 
         let contentSize = NSSize(width: initialMode.width,

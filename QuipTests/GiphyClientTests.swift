@@ -42,6 +42,23 @@ final class GiphyClientTests: XCTestCase {
         XCTAssertEqual(gif?.previewURL, "https://media.giphy.com/x/200w.gif")
     }
 
+    func testGifCapturesGiphyPageURL() {
+        let dict: [String: Any] = [
+            "id": "abc",
+            "url": "https://giphy.com/gifs/abc",
+            "images": ["fixed_width": ["url": "https://media.giphy.com/abc/200w.gif"]],
+        ]
+        XCTAssertEqual(Gif(giphy: dict)?.pageURL, "https://giphy.com/gifs/abc")
+    }
+
+    func testGifPageURLFallsBackToMediaURLWhenAbsent() {
+        let dict: [String: Any] = [
+            "id": "abc",
+            "images": ["fixed_width": ["url": "https://media.giphy.com/abc/200w.gif"]],
+        ]
+        XCTAssertEqual(Gif(giphy: dict)?.pageURL, "https://media.giphy.com/abc/200w.gif")
+    }
+
     func testGifParsingRejectsMalformed() {
         XCTAssertNil(Gif(giphy: ["id": "x"]))                 // no images
         XCTAssertNil(Gif(giphy: ["images": [:]]))             // no id

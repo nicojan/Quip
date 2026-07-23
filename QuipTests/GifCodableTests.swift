@@ -10,6 +10,22 @@ final class GifCodableTests: XCTestCase {
         XCTAssertEqual(gif.title, "")
     }
 
+    func testDecodeToleratesMissingPageURL() throws {
+        // A pre-pageURL persisted record must still load, with pageURL falling back
+        // to the media URL rather than failing the decode.
+        let json = Data(#"{"id":"a","gifURL":"https://x/a.gif","previewURL":"https://x/s.gif"}"#.utf8)
+        let gif = try JSONDecoder().decode(Gif.self, from: json)
+        XCTAssertEqual(gif.pageURL, "https://x/a.gif")
+    }
+
+    func testRoundTripPreservesPageURL() throws {
+        let gif = Gif(id: "a", gifURL: "https://x/a.gif", previewURL: "https://x/s.gif",
+                      pageURL: "https://giphy.com/gifs/a", title: "cat")
+        let back = try JSONDecoder().decode(Gif.self, from: try JSONEncoder().encode(gif))
+        XCTAssertEqual(back.pageURL, "https://giphy.com/gifs/a")
+        XCTAssertEqual(gif, back)
+    }
+
     func testDecodeRequiresIdAndGifURL() {
         XCTAssertThrowsError(try JSONDecoder().decode(Gif.self, from: Data(#"{"id":"a"}"#.utf8)))
         XCTAssertThrowsError(try JSONDecoder().decode(Gif.self, from: Data(#"{"gifURL":"https://x"}"#.utf8)))

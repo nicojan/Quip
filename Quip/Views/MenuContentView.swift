@@ -5,7 +5,7 @@ import SwiftUI
 struct MenuContentView: View {
     @Environment(GifLibrary.self) private var library
     @Environment(LayoutMetrics.self) private var metrics
-    @AppStorage("giphyApiKey") private var apiKey = ""
+    @Environment(Credentials.self) private var credentials
     @AppStorage("layoutMode") private var layoutModeRaw = LayoutMode.narrow.rawValue
     @AppStorage("giphyRating") private var rating = GiphyClient.defaultRating
     @AppStorage("useStickers") private var useStickers = false
@@ -26,6 +26,10 @@ struct MenuContentView: View {
         self.closePopover = closePopover
         _vm = State(initialValue: viewModel)
     }
+
+    /// The Giphy key, from the shared Keychain-backed store. Kept as a computed
+    /// property so the rest of the view reads `apiKey` unchanged.
+    private var apiKey: String { credentials.apiKey }
 
     private var content: GiphyClient.Content { useStickers ? .stickers : .gifs }
 
@@ -151,8 +155,16 @@ struct MenuContentView: View {
                 vm.runPicked(term, apiKey: apiKey, content: content, rating: rating)
             }
         } else if vm.query.isEmpty, !vm.recentSearches.isEmpty {
-            RecentSearchesRow(searches: vm.recentSearches) { term in
-                vm.runPicked(term, apiKey: apiKey, content: content, rating: rating)
+            HStack(spacing: 8) {
+                RecentSearchesRow(searches: vm.recentSearches) { term in
+                    vm.runPicked(term, apiKey: apiKey, content: content, rating: rating)
+                }
+                Button("Clear") { withAnimation { vm.clearRecentSearches() } }
+                    .buttonStyle(.plain)
+                    .font(.caption)
+                    .foregroundStyle(Theme.accentText)
+                    .help("Clear recent searches")
+                    .accessibilityLabel("Clear recent searches")
             }
         }
     }

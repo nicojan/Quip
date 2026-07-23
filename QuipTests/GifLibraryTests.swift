@@ -313,3 +313,45 @@ final class GifLibraryTests: XCTestCase {
         XCTAssertNil(lib.collections.first?.emoji)
     }
 }
+
+@MainActor
+final class CredentialsTests: XCTestCase {
+    private func freshDefaults() -> UserDefaults {
+        UserDefaults(suiteName: "test-\(UUID().uuidString)")!
+    }
+
+    func testMigratesLegacyPlaintextKeyIntoStoreAndClearsIt() {
+        let store = InMemorySecretStore()
+        let defaults = freshDefaults()
+        defaults.set("LEGACY123", forKey: Credentials.account)
+
+        let creds = Credentials(store: store, legacyDefaults: defaults)
+        XCTAssertEqual(creds.apiKey, "LEGACY123")
+        XCTAssertEqual(store.string(for: Credentials.account), "LEGACY123")
+        XCTAssertNil(defaults.string(forKey: Credentials.account), "plaintext copy is dropped")
+    }
+
+    func testPrefersStoredKeyOverLegacyAndLeavesLegacyUntouched() {
+        let store = InMemorySecretStore([Credentials.account: "KEYCHAIN"])
+        let defaults = freshDefaults()
+        defaults.set("LEGACY", forKey: Credentials.account)
+
+        let creds = Credentials(store: store, legacyDefaults: defaults)
+        XCTAssertEqual(creds.apiKey, "KEYCHAIN")
+        XCTAssertEqual(defaults.string(forKey: Credentials.account), "LEGACY",
+                       "no migration runs when the store already has a key")
+    }
+
+    func testSetKeyPersistsAndClearsOnEmpty() {
+        let store = InMemorySecretStore()
+        let creds = Credentials(store: store, legacyDefaults: freshDefaults())
+
+        creds.setKey("NEW")
+        XCTAssertEqual(creds.apiKey, "NEW")
+        XCTAssertEqual(store.string(for: Credentials.account), "NEW")
+
+        creds.setKey("")
+        XCTAssertTrue(creds.apiKey.isEmpty)
+        XCTAssertNil(store.string(for: Credentials.account), "an empty key clears the stored secret")
+    }
+}

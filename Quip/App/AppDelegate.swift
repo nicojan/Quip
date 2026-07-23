@@ -78,6 +78,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .environment(GifLibrary.shared)
             .environment(layoutMetrics)
             .environment(dragContext)
+            .environment(Credentials.shared)
         )
 
         // Seed the default shortcut exactly once, so a user who later clears it
@@ -246,6 +247,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let hosting = NSHostingController(
                 rootView: SettingsView(updater: updaterController.updater)
                     .environment(GifLibrary.shared)
+                    .environment(Credentials.shared)
             )
             let window = NSWindow(contentViewController: hosting)
             window.title = "Quip Settings"

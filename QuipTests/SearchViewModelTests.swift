@@ -168,4 +168,20 @@ final class SearchViewModelTests: XCTestCase {
         vm.handlePopoverOpen()          // no prior activity — nothing to reset
         XCTAssertEqual(vm.query, "preset")
     }
+
+    // MARK: Clear recent searches
+
+    func testClearRecentSearchesEmptiesAndPersists() {
+        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
+        let vm = SearchViewModel(backend: MockBackend(), recentSearchDefaults: defaults)
+        vm.query = "cats"; vm.search(apiKey: "K", content: .gifs, rating: "pg-13")
+        vm.query = "dogs"; vm.search(apiKey: "K", content: .gifs, rating: "pg-13")
+        XCTAssertEqual(vm.recentSearches, ["dogs", "cats"])
+
+        vm.clearRecentSearches()
+        XCTAssertTrue(vm.recentSearches.isEmpty)
+        // The cleared state survives a reload from the same defaults.
+        let reloaded = SearchViewModel(backend: MockBackend(), recentSearchDefaults: defaults)
+        XCTAssertTrue(reloaded.recentSearches.isEmpty)
+    }
 }

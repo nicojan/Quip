@@ -6,7 +6,7 @@ struct SettingsView: View {
     let updater: SPUUpdater
 
     @Environment(GifLibrary.self) private var library
-    @AppStorage("giphyApiKey") private var apiKey = ""
+    @Environment(Credentials.self) private var credentials
     @AppStorage("layoutMode") private var layoutModeRaw = LayoutMode.narrow.rawValue
     @AppStorage("giphyRating") private var rating = GiphyClient.defaultRating
     @AppStorage("useStickers") private var useStickers = false
@@ -21,9 +21,9 @@ struct SettingsView: View {
                 HStack {
                     Group {
                         if revealKey {
-                            TextField("Giphy API key", text: $apiKey)
+                            TextField("Giphy API key", text: apiKeyBinding)
                         } else {
-                            SecureField("Giphy API key", text: $apiKey)
+                            SecureField("Giphy API key", text: apiKeyBinding)
                         }
                     }
                     Button {
@@ -131,6 +131,12 @@ struct SettingsView: View {
         .onReceive(NotificationCenter.default.publisher(for: .quipSettingsShown)) { _ in
             refreshWindowState()
         }
+    }
+
+    /// Reads the key from the shared store and writes edits straight back through
+    /// it, so the key persists to the Keychain on every keystroke.
+    private var apiKeyBinding: Binding<String> {
+        Binding(get: { credentials.apiKey }, set: { credentials.setKey($0) })
     }
 
     private func refreshWindowState() {

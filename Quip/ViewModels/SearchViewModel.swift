@@ -254,12 +254,13 @@ final class SearchViewModel {
         }
     }
 
-    /// Copies the GIF's Giphy page/asset URL as text (⌥-click), for apps that
-    /// prefer a link over a file.
+    /// Copies the GIF's canonical giphy.com page URL as text (⌥-click), for apps
+    /// that prefer a link over a file — it unfurls to a preview in most of them.
+    /// Falls back to the media URL for older records with no page URL.
     func copyLink(_ gif: Gif) {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
-        pasteboard.setString(gif.gifURL, forType: .string)
+        pasteboard.setString(gif.pageURL, forType: .string)
         markCopied(gif.id)
     }
 
@@ -282,6 +283,13 @@ final class SearchViewModel {
             guard let self, !Task.isCancelled else { return }
             withAnimation { if self.copyFailedGifID == id { self.copyFailedGifID = nil } }
         }
+    }
+
+    /// Clears the recent-search terms (the chip row on the home page). Leaves
+    /// trending and the library untouched.
+    func clearRecentSearches() {
+        recentSearches = []
+        recentDefaults.removeObject(forKey: recentSearchesKey)
     }
 
     private func addRecentSearch(_ term: String) {
