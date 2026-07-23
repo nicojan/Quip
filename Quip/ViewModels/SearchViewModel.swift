@@ -54,9 +54,16 @@ final class SearchViewModel {
     /// first open. Drives the inactivity reset.
     @ObservationIgnored private var lastActiveAt: Date?
     /// The content type and rating the on-screen `results` were fetched under, so
-    /// a reopen after a Settings change can tell they've gone stale.
+    /// a reopen after a Settings change can tell they've gone stale. Stamped on
+    /// both a completed search and a failed one, so a settings change re-runs even
+    /// when the last search errored or found nothing.
     @ObservationIgnored private var resultsContent: GiphyClient.Content?
     @ObservationIgnored private var resultsRating: String?
+    /// The content type and rating the on-screen `trending` was fetched under, so a
+    /// reopen after a Settings change can drop the stale, wrong-mode grid instead of
+    /// showing it until the refetch lands.
+    @ObservationIgnored private var trendingContent: GiphyClient.Content?
+    @ObservationIgnored private var trendingRating: String?
 
     init(backend: GifBackend = GiphyClient(),
          recentSearchDefaults: UserDefaults = .standard,
@@ -86,11 +93,12 @@ final class SearchViewModel {
     }
 
     /// On popover open: if the content type or rating changed in Settings since
-    /// the on-screen results were fetched, re-run the active query so we don't
-    /// keep showing wrong-mode results. No-op on the home page (empty query).
+    /// the on-screen state was produced, re-run the active query so we don't keep
+    /// showing wrong-mode results — or a stale "No GIFs found" / error from the old
+    /// mode. No-op on the home page (empty query).
     func refreshForSettings(apiKey: String, content: GiphyClient.Content, rating: String) {
         let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !term.isEmpty, !results.isEmpty else { return }
+        guard !term.isEmpty else { return }
         guard resultsContent != content || resultsRating != rating else { return }
         run(query: term, apiKey: apiKey, content: content, rating: rating)
     }
@@ -176,6 +184,10 @@ final class SearchViewModel {
                 self.results = []
                 self.errorMessage = (error as? GiphyClient.GiphyError)?.errorDescription
                     ?? error.localizedDescription
+                // Stamp the failed mode too, so a later Settings change re-runs the
+                // query instead of leaving a stale error from the old mode up.
+                self.resultsContent = content
+                self.resultsRating = rating
             }
             self.isLoading = false
         }
@@ -184,13 +196,22 @@ final class SearchViewModel {
     /// Loads trending for the empty state. Silent on failure — it's a nicety.
     func loadTrending(apiKey: String, content: GiphyClient.Content, rating: String) {
         guard !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        // Content or rating changed since the shown trending was fetched: drop the
+        // stale, wrong-mode grid now instead of flashing it until the refetch lands.
+        if trendingContent != content || trendingRating != rating {
+            trending = []
+        }
         guard !isFetchingTrending else { return }
         isFetchingTrending = true
         Task { [weak self] in
             guard let self else { return }
             defer { self.isFetchingTrending = false }
             let gifs = (try? await self.backend.trending(apiKey: apiKey, content: content, rating: rating)) ?? []
-            if !gifs.isEmpty { self.trending = gifs.dedupedByID() }
+            if !gifs.isEmpty {
+                self.trending = gifs.dedupedByID()
+                self.trendingContent = content
+                self.trendingRating = rating
+            }
         }
     }
 

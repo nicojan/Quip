@@ -139,19 +139,38 @@ final class GifLibraryTests: XCTestCase {
         XCTAssertEqual(lib.collections.first?.showsName, true)
     }
 
-    func testMoveCollectionReordersAndClamps() {
+    // createCollection inserts at the front, so creating A, B, C yields [C, B, A].
+
+    func testMoveCollectionLandsAfterTargetWhenMovingLater() {
         let lib = makeLibrary()
-        // createCollection inserts at the front, so order is C, B, A.
-        _ = lib.createCollection(named: "A")
+        let a = lib.createCollection(named: "A")!
         _ = lib.createCollection(named: "B")
-        let c = lib.createCollection(named: "C")!
-        lib.moveCollection(c.id, toIndex: 2)
+        let c = lib.createCollection(named: "C")!      // [C, B, A]
+        // Drag C (first) onto A (last): moving to a later slot, so C lands *after* A
+        // — and a drag to the far end reaches the far end.
+        lib.moveCollection(c.id, adjacentTo: a.id)
         XCTAssertEqual(lib.collections.map(\.name), ["B", "A", "C"])
-        // Out-of-range target clamps to the ends.
-        lib.moveCollection(c.id, toIndex: 99)
-        XCTAssertEqual(lib.collections.last?.name, "C")
-        lib.moveCollection(c.id, toIndex: -5)
-        XCTAssertEqual(lib.collections.first?.name, "C")
+    }
+
+    func testMoveCollectionLandsBeforeTargetWhenMovingEarlier() {
+        let lib = makeLibrary()
+        let a = lib.createCollection(named: "A")!
+        _ = lib.createCollection(named: "B")
+        let c = lib.createCollection(named: "C")!      // [C, B, A]
+        // Drag A (last) onto C (first): moving earlier, so A lands *before* C.
+        lib.moveCollection(a.id, adjacentTo: c.id)
+        XCTAssertEqual(lib.collections.map(\.name), ["A", "C", "B"])
+    }
+
+    func testMoveCollectionIgnoresSelfAndUnknownIDs() {
+        let lib = makeLibrary()
+        _ = lib.createCollection(named: "A")
+        let b = lib.createCollection(named: "B")!      // [B, A]
+        let before = lib.collections.map(\.name)
+        lib.moveCollection(b.id, adjacentTo: b.id)     // self-drop
+        lib.moveCollection("nope", adjacentTo: b.id)   // unknown source
+        lib.moveCollection(b.id, adjacentTo: "nope")   // unknown target
+        XCTAssertEqual(lib.collections.map(\.name), before)
     }
 
     func testSortCollectionsAlphabeticallyIsCaseInsensitive() {

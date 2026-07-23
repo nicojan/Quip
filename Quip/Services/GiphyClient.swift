@@ -117,6 +117,10 @@ struct GiphyClient: Sendable {
         ])
     }
 
+    /// Term suggestions. Giphy's autocomplete endpoint is gifs-only — there is no
+    /// `/v1/stickers/search/tags`, and the results are plain tag *words* that apply
+    /// to both GIF and sticker searches — so this stays on the gifs path in either
+    /// mode by design, not by oversight.
     static func autocompleteURL(query: String, apiKey: String) throws -> URL {
         try url(path: "/v1/gifs/search/tags", apiKey: apiKey, items: [
             URLQueryItem(name: "q", value: query),

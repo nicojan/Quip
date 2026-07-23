@@ -285,11 +285,11 @@ struct CollectionChipsRow: View {
     @MainActor private func performReorder(onto targetID: String) -> Bool {
         defer { draggingID = nil; activeTargetID = nil }
         guard let dragging = draggingID, dragging != targetID,
-              let targetIndex = library.collections.firstIndex(where: { $0.id == targetID }) else {
+              library.collections.contains(where: { $0.id == targetID }) else {
             return false
         }
         withAnimation(.easeInOut(duration: 0.18)) {
-            library.moveCollection(dragging, toIndex: targetIndex)
+            library.moveCollection(dragging, adjacentTo: targetID)
         }
         return true
     }

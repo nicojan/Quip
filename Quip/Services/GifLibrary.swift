@@ -100,14 +100,26 @@ final class GifLibrary {
         save(collections, collectionsKey)
     }
 
-    /// Moves a collection to a new position (drag-to-reorder). Clamps the target
-    /// and no-ops if the id is unknown or the position is unchanged.
-    func moveCollection(_ id: String, toIndex target: Int) {
-        guard let from = collections.firstIndex(where: { $0.id == id }) else { return }
-        let clamped = max(0, min(target, collections.count - 1))
-        guard clamped != from else { return }
-        let moved = collections.remove(at: from)
-        collections.insert(moved, at: clamped)
+    /// Reorders the collection with `id` to sit next to `targetID` — the chip a
+    /// drag was dropped onto. It lands on the side it was dragged *toward*: after
+    /// the target when moving to a later slot, before it when moving earlier. That
+    /// keeps the two drag directions symmetric (an earlier version inserted at the
+    /// target's raw index, which shifted by one when the moved chip sat before it)
+    /// and lets a drag to either end land the chip at that end. No-op for an unknown
+    /// id, a self-drop, or a move that changes nothing.
+    func moveCollection(_ id: String, adjacentTo targetID: String) {
+        guard id != targetID,
+              let from = collections.firstIndex(where: { $0.id == id }),
+              let targetIndex = collections.firstIndex(where: { $0.id == targetID }) else { return }
+        let movingLater = from < targetIndex
+        var reordered = collections
+        let moved = reordered.remove(at: from)
+        // The target's index shifts down by one when the moved chip sat before it,
+        // so recompute it in the post-removal array before inserting.
+        guard let targetAfterRemoval = reordered.firstIndex(where: { $0.id == targetID }) else { return }
+        reordered.insert(moved, at: movingLater ? targetAfterRemoval + 1 : targetAfterRemoval)
+        guard reordered.map(\.id) != collections.map(\.id) else { return }
+        collections = reordered
         save(collections, collectionsKey)
     }
 

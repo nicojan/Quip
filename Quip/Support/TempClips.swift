@@ -8,21 +8,31 @@ enum TempClips {
     static let directory = FileManager.default.temporaryDirectory
         .appendingPathComponent("Quip-clips", isDirectory: true)
 
+    /// Serializes directory mutations. `newGifURL` is called both on the main actor
+    /// (a copy) and on a background URLSession callback (a drag-out), so the trim's
+    /// enumerate-then-remove could otherwise race a concurrent one.
+    private static let queue = DispatchQueue(label: "com.nicojan.Quip.tempclips")
+
     /// Clears last session's clips and recreates the directory. Safe on launch:
     /// a fresh launch means nothing still references the previous files.
     static func prepare() {
-        try? FileManager.default.removeItem(at: directory)
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        queue.sync {
+            try? FileManager.default.removeItem(at: directory)
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        }
     }
 
     static func newGifURL() -> URL {
-        trim()
-        return directory.appendingPathComponent(UUID().uuidString).appendingPathExtension("gif")
+        queue.sync {
+            trim()
+            return directory.appendingPathComponent(UUID().uuidString).appendingPathExtension("gif")
+        }
     }
 
     /// The most recent clips to keep. A menu-bar app can run for weeks, so
-    /// launch-only cleanup isn't enough; trim on each new clip instead.
-    private static let maxClips = 50
+    /// launch-only cleanup isn't enough; trim on each new clip instead. Internal so
+    /// the trim behaviour is testable.
+    static let maxClips = 50
 
     /// Keeps only the newest `maxClips` files. The just-copied clips — the ones
     /// the pasteboard or an in-progress drag still point at — are the newest, so

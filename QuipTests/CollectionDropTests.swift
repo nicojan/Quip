@@ -108,3 +108,36 @@ final class CollectionDropTests: XCTestCase {
         XCTAssertEqual(lib.collections.first { $0.id == c.id }?.gifIDs.count, 1)
     }
 }
+
+/// Covers `TempClips`: the trim keeps the clip list bounded, and the serialized
+/// `newGifURL` stays correct under the concurrent access it sees in production (a
+/// clipboard copy on the main actor overlapping a drag-out on a URLSession thread).
+final class TempClipsTests: XCTestCase {
+    /// Trim runs before each new clip is minted, so the directory settles at the
+    /// cap plus the one just-created clip — bounded, and never dropping the newest.
+    func testTrimKeepsClipCountBounded() throws {
+        TempClips.prepare()
+        let fm = FileManager.default
+        var urls: [URL] = []
+        for _ in 0..<(TempClips.maxClips + 10) {
+            let url = TempClips.newGifURL()
+            try Data([0x47]).write(to: url)   // one byte is enough to make it a real file
+            urls.append(url)
+        }
+        let remaining = try fm.contentsOfDirectory(at: TempClips.directory, includingPropertiesForKeys: nil)
+        XCTAssertLessThanOrEqual(remaining.count, TempClips.maxClips + 1)
+        XCTAssertTrue(fm.fileExists(atPath: urls.last!.path), "the newest clip is never trimmed")
+    }
+
+    func testConcurrentNewGifURLsAreUnique() async {
+        TempClips.prepare()
+        let count = 100
+        let urls = await withTaskGroup(of: URL.self) { group -> [URL] in
+            for _ in 0..<count { group.addTask { TempClips.newGifURL() } }
+            var collected: [URL] = []
+            for await url in group { collected.append(url) }
+            return collected
+        }
+        XCTAssertEqual(Set(urls.map(\.lastPathComponent)).count, count)
+    }
+}
