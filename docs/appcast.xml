@@ -3,6 +3,32 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.11</title>
+            <pubDate>Wed, 22 Jul 2026 20:33:45 -0700</pubDate>
+            <sparkle:version>14</sparkle:version>
+            <sparkle:shortVersionString>1.1.11</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Added</h3>
+<ul>
+<li>A Clear button on the recent-searches row, so you can wipe your search history the same way you clear recently copied GIFs.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li>Your Giphy API key now lives in the macOS Keychain instead of the app's plain preferences. Your existing key moves over on first launch, so you don't need to re-enter it.</li>
+<li>⌥-click now copies a GIF's giphy.com link, which shows a preview when you paste it into apps that unfurl links.</li>
+<li>The star on a GIF you haven't saved is easier to see against bright GIFs.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li>Changing the content rating, or switching between GIFs and stickers, now updates an on-screen search even when it had failed or found nothing.</li>
+<li>Trending no longer briefly shows the old kind of result after you switch between GIFs and stickers.</li>
+<li>Dragging a collection chip to reorder it now drops it where you aimed, in both directions.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.11/Quip-1.1.11.dmg" length="2334743" type="application/octet-stream" sparkle:edSignature="2ucUl1Vx49XpcobuN1Ecsahm11t7LQM+MmKLd87PRKBDv9NowtVJb58MjFVQJbDs09PtvTemAkBIvPWqq+ZzAw=="/>
+        </item>
+        <item>
             <title>1.1.10</title>
             <pubDate>Tue, 21 Jul 2026 00:18:01 -0700</pubDate>
             <sparkle:version>13</sparkle:version>
