@@ -3,6 +3,27 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.12</title>
+            <pubDate>Wed, 22 Jul 2026 22:51:04 -0700</pubDate>
+            <sparkle:version>15</sparkle:version>
+            <sparkle:shortVersionString>1.1.12</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Changed</h3>
+<ul>
+<li>The collection chips are bigger and easier to read. A collection you've set to show only its emoji now appears as the bare emoji, sized up, rather than tucked inside a pill.</li>
+<li>Point at a collection chip and it lifts with an accent glow and grows a little, so you can tell which one you're about to pick.</li>
+<li>The Favorites and Recently copied rows no longer sit inside a boxed panel. The GIFs line up with everything else in the window.</li>
+<li>The copy icon that shows when you point at a GIF now has a dark outline, so it stays clear on bright GIFs.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li>The scroll bars in the Favorites and Recently copied rows are gone, so no part of the window shows one now. A half-shown GIF at the end of a row tells you it scrolls sideways for more.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.12/Quip-1.1.12.dmg" length="2343807" type="application/octet-stream" sparkle:edSignature="rLZgs+Unkg7tGaYUXPh8NHJqNCM6/nG2DFqzotQA1zMy4Wf54/gfySTo++MD+dNHBLTO/ofHGYZbwmx4TG06Dg=="/>
+        </item>
+        <item>
             <title>1.1.11</title>
             <pubDate>Wed, 22 Jul 2026 20:33:45 -0700</pubDate>
             <sparkle:version>14</sparkle:version>
