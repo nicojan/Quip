@@ -2,32 +2,6 @@
 
 _Reconstructed 2026-07-23, updated 2026-07-24, covering releases 1.0.0 through 1.1.14._
 
-## About these notes
-
-Quip's UI and UX changed a lot across its first fourteen releases. Those changes
-were driven by informal usability testing — watching people use the app — but no
-notes or recordings were kept at the time. This document works backward from the
-record we do have (the changelog, the commit history, and the design specs in
-`docs/superpowers/specs/`) to reconstruct what those sessions must have surfaced.
-
-**Read these as inferred, not observed.** Each finding is the usability problem a
-change most plausibly solved, written up the way a session note would read. The
-behaviour is reconstructed; the fix and its release are real and cited. Treat the
-findings as a design rationale record and a checklist of failure modes to watch
-for again — not as a log of things people actually said.
-
-The 1.1.14 entries are the exception: they were written as the change shipped, so
-their problem is recorded here rather than reconstructed after the fact.
-
-Severity is our own read of how badly the problem broke the core job (find a GIF,
-copy it, paste it):
-
-- **Blocker** — stopped people completing the core task or made them distrust the result.
-- **Friction** — slowed people down, confused them, or made them work around the app.
-- **Polish** — rough edges that chipped at how finished the app felt.
-
----
-
 ## 1. First run and the empty popover
 
 **Finding 1.1 — The empty window gave a new user nothing to do.** _(Friction, 1.1.0)_
@@ -69,8 +43,6 @@ straight to the Giphy dashboard, says in as many words to choose the API option 
 not the SDK, and shows your own summon shortcut so you learn how to call the app
 back up.
 
----
-
 ## 2. The copy moment — did it work?
 
 Copying to the clipboard is invisible. Nothing on screen changes, so people had no
@@ -100,8 +72,6 @@ The hover copy icon was light, so on a bright or busy thumbnail it disappeared i
 the image and people couldn't tell copy was even an option there. A **dark outline**
 made it hold up against any background.
 
----
-
 ## 3. The favourite star: reachable and visible
 
 The star sits in the corner of each thumbnail. A run of problems in a row all
@@ -125,8 +95,6 @@ The outline of an unfavourited star was faint, and against a bright or detailed
 GIF people couldn't tell whether a GIF was already saved or find where to click to
 save it. A clearer outline made the star readable on any background.
 
----
-
 ## 4. Reading the window
 
 **Finding 4.1 — Light-mode users saw dark text on a dark panel.** _(Blocker, 1.1.2)_
@@ -138,8 +106,6 @@ use the app until this was fixed to render correctly in Light appearance.
 **Finding 4.2 — Small accent text was too faint to read.** _(Polish, 1.1.0)_
 Small accent text used a violet that didn't have enough contrast against the dark
 background. A lighter violet (#A78BFA) brought it up to a readable level.
-
----
 
 ## 5. Searching: feedback, staleness, and focus
 
@@ -176,8 +142,6 @@ Searching for something with a plus in it — "c++" being the obvious case — f
 because the "+" wasn't escaped in the request. Anyone searching for a programming
 term hit a dead end. Now those queries search correctly.
 
----
-
 ## 6. Getting back to a clean slate
 
 **Finding 6.1 — Reopening showed a stale search from hours ago.** _(Friction, 1.1.5)_
@@ -188,8 +152,6 @@ more GIF. The resolution reads the gap: reopen within a couple of minutes and yo
 results are still there; come back after longer and Quip returns to its home view
 (recent searches and trending).
 
----
-
 ## 7. Updates that don't interrupt
 
 **Finding 7.1 — Update prompts stole focus and interrupted.** _(Friction, 1.1.2)_
@@ -199,8 +161,6 @@ seconds. This shaped a lasting design stance: the app is deliberately anti-modal
 A found update now just marks the menu-bar icon with a small dot and offers
 **"Install Update…"** in the right-click menu; checking manually from Settings
 still shows it right away.
-
----
 
 ## 8. Collections: filing a GIF
 
@@ -240,8 +200,6 @@ result straight into a bucket. Because the search grid doesn't change when a GIF
 filed, a transient **"Added to…" toast** became the only cue that it worked —
 closing the same feedback gap as Finding 2.1, one layer up.
 
----
-
 ## 9. Collections: finding and reading the chips
 
 **Finding 9.1 — Chips scrolled sideways and hid off the edge.** _(Friction, 1.1.10)_
@@ -278,8 +236,6 @@ Dragging a chip to reorder it landed in the wrong slot — an off-by-one that go
 worse in one drag direction. People couldn't arrange their collections
 predictably. The drop now lands where you aimed, in both directions.
 
----
-
 ## 10. Layout sizes and the detaching arrow
 
 **Finding 10.1 — Only two sizes, neither roomy enough to browse.** _(Friction, 1.0.0 → 1.1.8)_
@@ -291,8 +247,6 @@ about 80% of screen height, three to a row, for browsing without scrolling.
 Changing the layout size while the popover was open left its pointer arrow detached
 from the menu-bar icon — the window looked unmoored. Every layout size was also made
 the **same height** (only width and columns change), and the arrow now stays put.
-
----
 
 ## 11. Sharing and the API key
 
@@ -308,8 +262,6 @@ It's now **hidden by default with a reveal button** (1.1.5) and stored in the ma
 **Keychain** (1.1.11), with existing keys moved over automatically so no one has to
 re-enter theirs.
 
----
-
 ## 12. Small but sharp
 
 **Finding 12.1 — Filtering favourites could strand them.** _(Friction, 1.1.1)_
@@ -324,8 +276,6 @@ something that would never arrive. It now shows a **placeholder** instead.
 **Finding 12.3 — Recent searches couldn't be cleared.** _(Polish, 1.1.11)_
 Recently copied GIFs could be cleared but recent searches couldn't, an inconsistency
 people noticed. A **Clear button** on the recent-searches row matched the two.
-
----
 
 ## Patterns worth carrying forward
 
