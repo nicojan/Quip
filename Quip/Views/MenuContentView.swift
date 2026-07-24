@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// The menu-bar popover: header, search, suggestions/recents, results or
 /// library, and the footer.
@@ -6,11 +7,23 @@ struct MenuContentView: View {
     @Environment(GifLibrary.self) private var library
     @Environment(LayoutMetrics.self) private var metrics
     @Environment(Credentials.self) private var credentials
+    @Environment(DragContext.self) private var dragContext
     @AppStorage("layoutMode") private var layoutModeRaw = LayoutMode.narrow.rawValue
     @AppStorage("giphyRating") private var rating = GiphyClient.defaultRating
     @AppStorage("useStickers") private var useStickers = false
     @State private var vm: SearchViewModel
     @FocusState private var searchFocused: Bool
+    /// Selected collection chip; nil is "All". Owned here (not in LibraryView) so the
+    /// one filing drawer above the content can drive it in both the library and the
+    /// search grid.
+    @State private var selectedCollectionID: String?
+    /// True while the library's favourites section is scrolled into view — drives the
+    /// drawer between full pill rows (at top) and the compact row (scrolled down).
+    @State private var favoritesInView = true
+    /// The transient "Added to …" confirmation after a drop, and a token so an older
+    /// timer can't clear a newer toast.
+    @State private var filedToast: String?
+    @State private var toastGeneration = 0
 
     /// Supplied by AppDelegate — the popover is hosted outside the SwiftUI scene
     /// tree, so SettingsLink and the dismiss environment aren't available.
@@ -88,7 +101,28 @@ struct MenuContentView: View {
 
             suggestionsOrRecents
 
-            contentBody
+            // Zero spacing so the drawer sits directly above the grid (its own
+            // divider separates them), and an empty drawer — search idle, or home
+            // with no favourites — adds no phantom gap above the grid.
+            VStack(spacing: 0) {
+                if showsGrid {
+                    FilingDrawer(
+                        selectedID: $selectedCollectionID,
+                        role: vm.query.isEmpty ? .home : .search,
+                        onFiled: showFiledToast,
+                        favoritesInView: favoritesInView
+                    )
+                }
+
+                contentBody
+                    // Catch a GIF dropped on empty grid space (not on a chip): file
+                    // nothing, but clear the drag so the drawer collapses. Returns
+                    // false so the drop reads as "not filed", not a successful drop.
+                    .onDrop(of: [QuipDragType.gifRef], isTargeted: nil) { _ in
+                        dragContext.gif = nil
+                        return false
+                    }
+            }
 
             footer
         }
@@ -98,13 +132,27 @@ struct MenuContentView: View {
             height: layoutMode.height(forScreenHeight: metrics.launchScreenHeight)
         )
         .background(Theme.surface)
+        .overlay(alignment: .top) { filedConfirmation }
         .onAppear { refreshOnOpen() }
         .onReceive(NotificationCenter.default.publisher(for: .quipPopoverShown)) { _ in
             refreshOnOpen()
         }
         .onReceive(NotificationCenter.default.publisher(for: .quipPopoverClosed)) { _ in
             vm.handlePopoverClose()
+            // A drag that ended by leaving the popover (drag-out to another app)
+            // never hit a chip, so clear it here — otherwise the drawer would reopen
+            // still expanded.
+            dragContext.gif = nil
         }
+        #if DEBUG
+        // Lets the demo director drive chip selection (private view state) so a
+        // recorded clip can show collection filtering. No effect in Release.
+        .onReceive(NotificationCenter.default.publisher(for: .quipDemoSelectCollection)) { note in
+            withAnimation(.easeInOut(duration: 0.25)) {
+                selectedCollectionID = note.object as? String
+            }
+        }
+        #endif
         .onChange(of: layoutModeRaw) { _, _ in
             // Let AppDelegate resize the popover so its arrow re-anchors — the
             // SwiftUI frame change alone leaves the arrow at the old width.
@@ -189,6 +237,8 @@ struct MenuContentView: View {
                 libraryRows: libraryRows,
                 trending: vm.trending,
                 filing: filing,
+                selectedCollectionID: $selectedCollectionID,
+                favoritesInView: $favoritesInView,
                 isFavorite: { library.isFavorite($0) },
                 justCopied: { vm.copiedGifID == $0.id },
                 copyFailed: { vm.copyFailedGifID == $0.id },
@@ -279,6 +329,45 @@ struct MenuContentView: View {
         .font(.caption2)
         .foregroundStyle(.secondary)
         .lineLimit(1)
+    }
+
+    /// Whether a GIF grid (library or results) is on screen — the states where the
+    /// filing drawer belongs. Hidden for the no-key, error, empty, and
+    /// full-spinner states, which show a message instead of a grid.
+    private var showsGrid: Bool {
+        hasKey
+            && vm.errorMessage == nil
+            && !vm.noResults
+            && !(vm.isLoading && vm.results.isEmpty)
+    }
+
+    /// The transient "Added to …" confirmation shown after a drop — the only "it
+    /// worked" cue in search, where the grid doesn't change when a GIF is filed.
+    @ViewBuilder private var filedConfirmation: some View {
+        if let filedToast {
+            Label("Added to \(filedToast)", systemImage: "checkmark.circle.fill")
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .background(Theme.accent, in: Capsule())
+                .shadow(color: .black.opacity(0.3), radius: 6, y: 2)
+                .padding(.top, 8)
+                .transition(.move(edge: .top).combined(with: .opacity))
+        }
+    }
+
+    private func showFiledToast(_ name: String) {
+        toastGeneration += 1
+        let generation = toastGeneration
+        withAnimation(.easeOut(duration: 0.2)) { filedToast = name }
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(1600))
+            // Only clear if a newer toast hasn't replaced this one.
+            if toastGeneration == generation {
+                withAnimation(.easeOut(duration: 0.2)) { filedToast = nil }
+            }
+        }
     }
 
     private func runSearch() {

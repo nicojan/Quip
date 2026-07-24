@@ -107,6 +107,67 @@ final class CollectionDropTests: XCTestCase {
         lib.setMembership(g, inCollection: c.id, member: true)
         XCTAssertEqual(lib.collections.first { $0.id == c.id }?.gifIDs.count, 1)
     }
+
+    /// Dropping a search result onto the "All" chip favourites it without filing it
+    /// into any collection — the drawer's "just save it" drop.
+    func testDroppingOnAllFavouritesWithoutFiling() {
+        let lib = makeLibrary()
+        let c = lib.createCollection(named: "Reactions")!
+        let dropped = QuipDragType.decode(QuipDragType.encode(gif("t")))!
+        XCTAssertFalse(lib.isFavorite(dropped))
+
+        // The "All" drop path: favourite only, never touch a collection.
+        if !lib.isFavorite(dropped) { lib.toggleFavorite(dropped) }
+
+        XCTAssertTrue(lib.isFavorite(dropped))
+        XCTAssertFalse(lib.isMember(dropped, ofCollection: c.id))
+    }
+
+    /// Dropping a GIF on "All" when it's already a favourite is a no-op — it stays
+    /// favourited and isn't duplicated.
+    func testDroppingAlreadyFavouriteOnAllIsNoOp() {
+        let lib = makeLibrary()
+        let g = gif("a")
+        lib.toggleFavorite(g)
+        XCTAssertEqual(lib.favorites.count, 1)
+
+        if !lib.isFavorite(g) { lib.toggleFavorite(g) }   // the All-drop guard
+
+        XCTAssertTrue(lib.isFavorite(g))
+        XCTAssertEqual(lib.favorites.count, 1)
+    }
+
+    /// Dropping a GIF on "＋" creates a collection and files the GIF into it,
+    /// auto-favouriting on the way — the drawer's create-from-GIF drop.
+    func testCreateCollectionFromDroppedGifFilesAndFavourites() {
+        let lib = makeLibrary()
+        let dropped = QuipDragType.decode(QuipDragType.encode(gif("t")))!
+        XCTAssertFalse(lib.isFavorite(dropped))
+
+        // The "＋" commit path: create, then file the pending GIF into the result.
+        let created = lib.createCollection(named: "New Tag", emoji: "🔥", showsName: true)!
+        lib.setMembership(dropped, inCollection: created.id, member: true)
+
+        XCTAssertTrue(lib.isFavorite(dropped))
+        XCTAssertTrue(lib.isMember(dropped, ofCollection: created.id))
+    }
+
+    /// At the collection cap, a ＋-drop can't create a new collection — but the GIF is
+    /// favourited before the create is attempted, so it's saved rather than lost.
+    func testCreateFromDropAtCollectionCapKeepsGifFavourited() {
+        let lib = makeLibrary()
+        for i in 0..<GifLibrary.collectionsLimit {
+            XCTAssertNotNil(lib.createCollection(named: "C\(i)"))
+        }
+        let dropped = gif("t")
+        // The ＋-drop favourites immediately (beginCreateFromDrag), before creating.
+        lib.toggleFavorite(dropped)
+        // Creating past the cap fails, so no collection is added…
+        XCTAssertNil(lib.createCollection(named: "Overflow"))
+        XCTAssertEqual(lib.collections.count, GifLibrary.collectionsLimit)
+        // …but the dragged GIF is still saved.
+        XCTAssertTrue(lib.isFavorite(dropped))
+    }
 }
 
 /// Covers `TempClips`: the trim keeps the clip list bounded, and the serialized

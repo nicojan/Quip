@@ -12,6 +12,12 @@ struct LibraryView: View {
     let libraryRows: Int
     let trending: [Gif]
     let filing: CollectionFiling
+    /// Selected collection chip; nil is "All". Owned by MenuContentView so the filing
+    /// drawer above the grid drives it; LibraryView reads it to scope the favourites.
+    @Binding var selectedCollectionID: String?
+    /// Reports whether the favourites section is scrolled into view, so the drawer
+    /// above can show full pill rows at the top and the compact row once past it.
+    @Binding var favoritesInView: Bool
     let isFavorite: (Gif) -> Bool
     let justCopied: (Gif) -> Bool
     let copyFailed: (Gif) -> Bool
@@ -20,9 +26,6 @@ struct LibraryView: View {
     let onToggleFavorite: (Gif) -> Void
 
     @State private var favoriteFilter = ""
-    /// Selected collection chip; nil is "All". Persists across a quick reopen and
-    /// falls back to All whenever the collection no longer exists (see `favoritesInScope`).
-    @State private var selectedCollectionID: String?
 
     /// Favourites narrowed to the selected collection (or all of them for "All").
     /// Derived from `favorites`, so it keeps favourites order and drops orphaned
@@ -61,6 +64,18 @@ struct LibraryView: View {
                     favoritesHeader
                 }
 
+                // Zero-height marker at the end of the favourites section. Its position
+                // in the scroll viewport tells the drawer whether favourites is still
+                // in view (full pill rows) or scrolled past (compact row).
+                Color.clear
+                    .frame(height: 0)
+                    .background(GeometryReader { geo in
+                        Color.clear.preference(
+                            key: FavoritesBoundaryKey.self,
+                            value: geo.frame(in: .named("libScroll")).minY
+                        )
+                    })
+
                 if !library.recents.isEmpty {
                     Section {
                         horizontalGrid(library.recents)
@@ -91,37 +106,34 @@ struct LibraryView: View {
             // next row is the only "more below" cue we want.
             .hideScrollers()
         }
+        .coordinateSpace(.named("libScroll"))
         .scrollIndicators(.hidden)
+        .onPreferenceChange(FavoritesBoundaryKey.self) { minY in
+            // Favourites is "in view" while the end of its section still sits below a
+            // small margin from the top; once it scrolls above that, switch to compact.
+            let inView = minY > 40
+            if inView != favoritesInView { favoritesInView = inView }
+        }
         .onChange(of: favoritesInScope.count) { _, count in
             if count <= 6 { favoriteFilter = "" }   // drop stale filter text
         }
         .onChange(of: selectedCollectionID) { _, _ in
             favoriteFilter = ""   // a fresh scope starts with a clear filter
         }
-        #if DEBUG
-        // Lets the demo director drive chip selection (private view state) so a
-        // recorded clip can show collection filtering. No effect in Release.
-        .onReceive(NotificationCenter.default.publisher(for: .quipDemoSelectCollection)) { note in
-            withAnimation(.easeInOut(duration: 0.25)) {
-                selectedCollectionID = note.object as? String
-            }
-        }
-        #endif
     }
 
-    /// The pinned Favorites header: title, collection pills, and (past 6 favourites)
-    /// the filter field — everything that should stay put while the grid scrolls.
+    /// The pinned Favorites header: the title and (past 6 favourites) the filter
+    /// field, kept put while the grid scrolls. The collection pills that used to live
+    /// here now sit in the `FilingDrawer` above the whole grid, so they're reachable
+    /// while scrolling and can catch a dropped GIF from anywhere.
     private var favoritesHeader: some View {
         pinnedHeader {
             VStack(alignment: .leading, spacing: 8) {
                 sectionHeader("Favorites")
-                if !library.favorites.isEmpty {
-                    CollectionChipsRow(selectedID: $selectedCollectionID)
-                    if showFilterField {
-                        TextField("Filter favorites", text: $favoriteFilter)
-                            .textFieldStyle(.roundedBorder)
-                            .controlSize(.small)
-                    }
+                if !library.favorites.isEmpty, showFilterField {
+                    TextField("Filter favorites", text: $favoriteFilter)
+                        .textFieldStyle(.roundedBorder)
+                        .controlSize(.small)
                 }
             }
         }
@@ -214,5 +226,15 @@ struct LibraryView: View {
             .foregroundStyle(.secondary)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.vertical, 10)
+    }
+}
+
+/// Carries the favourites-section boundary's Y position (in the scroll viewport) up
+/// to `LibraryView`. The default is far off-screen so, before any measurement,
+/// favourites reads as in view. `reduce` keeps the topmost (smallest) reading.
+private struct FavoritesBoundaryKey: PreferenceKey {
+    static var defaultValue: CGFloat { .greatestFiniteMagnitude }
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = min(value, nextValue())
     }
 }

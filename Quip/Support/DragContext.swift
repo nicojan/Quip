@@ -13,4 +13,9 @@ import Observation
 @Observable
 final class DragContext {
     var gif: Gif?
+
+    /// True while a GIF is being dragged inside Quip. The filing drawer reads this
+    /// to expand on drag and collapse when it clears. A chip *reorder* deliberately
+    /// nils `gif` (see `FilingDrawer`), so reordering never trips this.
+    var isDragging: Bool { gif != nil }
 }

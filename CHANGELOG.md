@@ -3,6 +3,23 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.13] - 2026-07-23
+
+### Added
+
+- Drag a GIF straight onto a collection chip to save and file it in one motion,
+  whether it came from search, trending, or your favorites. Drop it on "All" to
+  just save it. Drop it on "+" to start a new collection from the GIF you're
+  dragging.
+
+### Changed
+
+- The collection chips now sit in a strip above the grid, so they stay in reach
+  no matter how far you've scrolled down into your GIFs. At the top, they spread
+  across as many rows as it takes. Nothing hides off the edge. Scroll down and
+  they shrink to a single row that slides sideways; pick up a GIF and the strip
+  opens back up to give you room to drop.
+
 ## [1.1.12] - 2026-07-22
 
 ### Changed
