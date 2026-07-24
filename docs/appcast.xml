@@ -3,6 +3,24 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.14</title>
+            <pubDate>Fri, 24 Jul 2026 10:18:52 -0700</pubDate>
+            <sparkle:version>17</sparkle:version>
+            <sparkle:shortVersionString>1.1.14</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Added</h3>
+<ul>
+<li>The first time you open Quip, it opens on its own and points at its spot in the menu bar, so you can see where it lives and what to do next instead of hunting for a new icon.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li>Before you add an API key, Quip now shows a link that takes you straight to where you get a free one, and it reminds you which key to pick, since the wrong type looks fine but never works. It also shows the shortcut for summoning Quip, so you learn how to call it up again.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.14/Quip-1.1.14.dmg" length="2397951" type="application/octet-stream" sparkle:edSignature="FbPffHol6vfCpnlPp2xo5r9TQuLH+QnZTtdBqKEH62ozblRD/jLskiF2lDUtaQGdBQRuDkv4xxmhdyNvHDkVDA=="/>
+        </item>
+        <item>
             <title>1.1.13</title>
             <pubDate>Thu, 23 Jul 2026 22:53:30 -0700</pubDate>
             <sparkle:version>16</sparkle:version>
