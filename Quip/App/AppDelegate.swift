@@ -91,6 +91,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.togglePopover()
         }
 
+        // First launch only: open the popover once so a new user sees where Quip
+        // lives — anchored to its menu-bar icon — and the prompt to add a key,
+        // instead of a lone menu-bar icon with no sign the app started. Deferred a
+        // runloop tick so the status item has laid out and the popover anchors to
+        // it. The flag mirrors didInitSummonShortcut, so it fires exactly once.
+        if !UserDefaults.standard.bool(forKey: "didShowFirstRun") {
+            UserDefaults.standard.set(true, forKey: "didShowFirstRun")
+            Task { @MainActor in self.togglePopover() }
+        }
+
         // While the macOS emoji picker is open the popover must not auto-dismiss
         // (see PopoverEvents). Flip to app-defined during picking, back to
         // transient after.

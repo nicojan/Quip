@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import KeyboardShortcuts
 
 /// The menu-bar popover: header, search, suggestions/recents, results or
 /// library, and the footer.
@@ -282,13 +283,27 @@ struct MenuContentView: View {
                 .font(.callout)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
-            Text("Create a key at developers.giphy.com, then paste it in Settings.")
-                .font(.caption2)
+            // A real link, matching Settings, so the user can click straight
+            // through — and it carries the "API, not SDK" hint, because an SDK
+            // key looks valid but never works with Quip's requests.
+            Link("Get a free Giphy API key (choose the API option, not SDK) ↗",
+                 destination: URL(string: "https://developers.giphy.com/dashboard/")!)
+                .font(.caption)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .tint(Theme.accentText)
             Button("Open Settings") { openSettings() }
                 .buttonStyle(.borderedProminent)
                 .tint(Theme.accent)
+            // Teach the summon shortcut — nothing else in the popover does. Read
+            // the live binding so it shows the user's own shortcut, and drop the
+            // line entirely if they've cleared it.
+            if let shortcut = KeyboardShortcuts.getShortcut(for: .summonQuip) {
+                Text("Summon Quip anytime with \(shortcut.description).")
+                    .font(.caption2)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 4)
+            }
             Spacer()
         }
         .frame(maxWidth: .infinity)
