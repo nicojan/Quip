@@ -23,7 +23,8 @@ Mac app for Apple Silicon that's signed and notarized, with Sparkle updates.
 - **Recently copied.** Quip remembers the GIFs you actually used.
 - **Recent searches.** Click a past search to run it again.
 - **Collections.** Group favorites into named buckets, give each one an emoji,
-  reorder them, and sort them A to Z.
+  reorder them, and sort them A to Z. Drag any GIF straight onto a collection to
+  save and file it in one motion.
 - **Three sizes.** Switch between two, three, and five GIFs per row, all the same
   height, so pick the width you like.
 - **Start at login** and **in-app updates** through Sparkle.
