@@ -3,6 +3,21 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.14] - 2026-07-24
+
+### Added
+
+- The first time you open Quip, it opens on its own and points at its spot in the
+  menu bar, so you can see where it lives and what to do next instead of hunting
+  for a new icon.
+
+### Changed
+
+- Before you add an API key, Quip now shows a link that takes you straight to
+  where you get a free one, and it reminds you which key to pick, since the wrong
+  type looks fine but never works. It also shows the shortcut for summoning Quip,
+  so you learn how to call it up again.
+
 ## [1.1.13] - 2026-07-23
 
 ### Added
