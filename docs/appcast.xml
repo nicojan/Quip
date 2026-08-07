@@ -3,6 +3,26 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.15</title>
+            <pubDate>Thu, 06 Aug 2026 22:47:00 -0700</pubDate>
+            <sparkle:version>18</sparkle:version>
+            <sparkle:shortVersionString>1.1.15</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+<li>Emoji like ❤️, ☀️ and ✏️ can go on a collection chip again. Quip took the newer emoji and quietly dropped the older ones, so you picked one and the chip stayed blank.</li>
+<li>A copy that fails right after one that worked now says so. Before, the "Copied!" mark from the first could sit over the second and tell you a GIF was on the clipboard when nothing was.</li>
+<li>The favorite star sits above the "Copied!" mark. You can save a GIF you just copied without waiting for the mark to fade.</li>
+<li>Dropping a GIF on + while the new-collection box is already open no longer sticks the chip strip open.</li>
+<li>Switch between GIFs and stickers while trending is still loading and the old grid no longer stays up.</li>
+<li>Making a collection during a search no longer filters your favorites down to it when you go back home.</li>
+<li>Settings keeps "Clear image cache" clickable. It used to switch itself off whenever the size beside it had gone stale, which happens as soon as you browse.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.15/Quip-1.1.15.dmg" length="2399935" type="application/octet-stream" sparkle:edSignature="9eT5hnmcr7rAlhvNL8IpOl0pSac4g8xZ3AslRxVR5TVyYCk78j5beu7MmFlLV3fCXoETx7RzwL+Cy657CsYwAQ=="/>
+        </item>
+        <item>
             <title>1.1.14</title>
             <pubDate>Fri, 24 Jul 2026 10:18:52 -0700</pubDate>
             <sparkle:version>17</sparkle:version>
