@@ -1,6 +1,6 @@
-# Quip — Retroactive Usability Notes
+# Quip — Usability Notes
 
-_Reconstructed 2026-07-23, updated 2026-07-24, covering releases 1.0.0 through 1.1.14._
+_Reconstructed 2026-07-23, updated 2026-08-06, covering releases 1.0.0 through 1.1.15._
 
 ## 1. First run and the empty popover
 
@@ -71,6 +71,20 @@ problem look like a crash. The fix scoped the failure down to a brief
 The hover copy icon was light, so on a bright or busy thumbnail it disappeared into
 the image and people couldn't tell copy was even an option there. A **dark outline**
 made it hold up against any background.
+
+**Finding 2.5 — The false "Copied!" came back by a side door.** _(Blocker, 1.1.15)_
+2.2 tied the mark to the result, but success and failure were tracked as two
+separate flags and the cell read the success one first. Copy a GIF, then have a
+second copy of the same GIF fail while the first mark is still up, and the cell
+claimed success over a copy that put nothing on the clipboard. Same lie as 2.2,
+reached by a different route: two flags for one state will eventually disagree.
+Each mark now clears the other.
+
+**Finding 2.6 — The star hid under the "Copied!" mark.** _(Polish, 1.1.15)_
+The copy mark covers the whole thumbnail, and it was painted over the favourite
+star. So for a second and a half after copying, the star you were reaching for
+wasn't there. Copy-then-save is a common pair, which made this worse than it
+sounds. The star now sits on top and stays clickable.
 
 ## 3. The favourite star: reachable and visible
 
@@ -276,6 +290,21 @@ something that would never arrive. It now shows a **placeholder** instead.
 **Finding 12.3 — Recent searches couldn't be cleared.** _(Polish, 1.1.11)_
 Recently copied GIFs could be cleared but recent searches couldn't, an inconsistency
 people noticed. A **Clear button** on the recent-searches row matched the two.
+
+**Finding 12.4 — The emoji picker took half the emoji and threw the rest away.**
+_(Blocker, 1.1.15)_ Naming a collection lets you put an emoji on the chip, picked
+from the macOS Character Viewer. Quip read what the picker inserted and kept only
+what it recognised as an emoji. The test it used rejected every emoji that predates
+the modern blocks: ❤️, ☀️, ✏️, ✂️, ☎️, ✌️. So you opened the picker, clicked
+a heart, and the well stayed empty, with nothing to say why. People retry once and
+then assume the feature is broken. The test now excludes only the ASCII characters
+it was meant to exclude (digits, `#`, `*`), which is all it ever needed to do.
+
+**Finding 12.5 — Settings switched off a button you needed.** _(Polish, 1.1.15)_
+"Clear image cache" greyed itself out when the cache read as empty, but the size is
+measured once when the window opens and goes stale as soon as you browse. Come back
+to Settings later and the button was dead against a cache holding real megabytes.
+Guarding a harmless action on a stale reading costs more than it saves.
 
 ## Patterns worth carrying forward
 

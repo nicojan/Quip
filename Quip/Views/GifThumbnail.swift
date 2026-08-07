@@ -49,7 +49,6 @@ struct GifThumbnail: View {
                 RoundedRectangle(cornerRadius: Theme.thumbCorner)
                     .stroke(Theme.cardStroke, lineWidth: 1)
             )
-            .overlay(alignment: .topTrailing) { star }
             .overlay {
                 if justCopied {
                     copiedOverlay
@@ -59,6 +58,9 @@ struct GifThumbnail: View {
                     copyHint
                 }
             }
+            // Stacked last so the star stays visible — and clickable — on top of
+            // the copy hint and the copied/failed tint.
+            .overlay(alignment: .topTrailing) { star }
             .scaleEffect(hovering ? 1.04 : 1)
             .shadow(color: .black.opacity(hovering ? 0.35 : 0), radius: 6, y: 2)
             .zIndex(hovering ? 1 : 0)

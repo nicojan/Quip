@@ -97,10 +97,13 @@ struct SettingsView: View {
 
             Section("Cache") {
                 LabeledContent("Cached GIFs on disk", value: cacheSizeText)
+                // Always enabled: the size is read when this window opens, so it goes
+                // stale as soon as you browse. Disabling on a stale zero left the
+                // button dead against a cache that had since filled up, and clearing
+                // an already-empty cache costs nothing.
                 Button("Clear image cache") {
                     GifImageCache.clear { refreshCacheSize() }
                 }
-                .disabled(cacheBytes == 0)
                 Text("Favorites and recent GIFs are cached here so Quip doesn't re-download them.")
                     .font(.caption)
                     .foregroundStyle(.secondary)

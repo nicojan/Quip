@@ -48,6 +48,10 @@ final class SearchViewModel {
     /// Guards against overlapping trending fetches — notably the two that fire on
     /// the very first open (onAppear plus the shown notification).
     @ObservationIgnored private var isFetchingTrending = false
+    /// The mode the *next* trending grid should be fetched under. An in-flight fetch
+    /// compares its own inputs against this before publishing, so a settings change
+    /// mid-flight discards the stale result instead of showing it.
+    @ObservationIgnored private var wantedTrendingMode: TrendingMode?
     /// The clock, injectable so tests can drive the inactivity window.
     @ObservationIgnored private let now: () -> Date
     /// When the user last opened, closed, or acted on the popover; nil until the
@@ -201,18 +205,43 @@ final class SearchViewModel {
         if trendingContent != content || trendingRating != rating {
             trending = []
         }
-        guard !isFetchingTrending else { return }
+        // A fetch is already in flight. It was started under whatever mode was
+        // current then, so record what's wanted now — the in-flight task checks this
+        // before publishing, and re-runs when the mode moved under it. Without that
+        // it would publish (and stamp) the old mode's grid, leaving a wrong-mode
+        // trending up that no longer reads as stale.
+        guard !isFetchingTrending else {
+            wantedTrendingMode = TrendingMode(apiKey: apiKey, content: content, rating: rating)
+            return
+        }
         isFetchingTrending = true
+        wantedTrendingMode = TrendingMode(apiKey: apiKey, content: content, rating: rating)
         Task { [weak self] in
             guard let self else { return }
-            defer { self.isFetchingTrending = false }
             let gifs = (try? await self.backend.trending(apiKey: apiKey, content: content, rating: rating)) ?? []
+            self.isFetchingTrending = false
+            // Settings changed while this was in flight: throw the result away and
+            // fetch the mode the user actually wants now.
+            guard self.wantedTrendingMode == TrendingMode(apiKey: apiKey, content: content, rating: rating) else {
+                if let wanted = self.wantedTrendingMode {
+                    self.loadTrending(apiKey: wanted.apiKey, content: wanted.content, rating: wanted.rating)
+                }
+                return
+            }
             if !gifs.isEmpty {
                 self.trending = gifs.dedupedByID()
                 self.trendingContent = content
                 self.trendingRating = rating
             }
         }
+    }
+
+    /// The inputs one trending fetch was made under, so an in-flight fetch can tell
+    /// whether it's still the one wanted by the time it lands.
+    private struct TrendingMode: Equatable {
+        let apiKey: String
+        let content: GiphyClient.Content
+        let rating: String
     }
 
     private func updateSuggestions(apiKey: String) {
@@ -266,6 +295,10 @@ final class SearchViewModel {
 
     private func markCopied(_ id: String) {
         markActive()
+        // Drop any failure overlay first: the two ids are read independently by the
+        // cell, and `justCopied` wins — so a leftover one would misreport the state.
+        copyFailedResetTask?.cancel()
+        copyFailedGifID = nil
         withAnimation { copiedGifID = id }
         copiedResetTask?.cancel()
         copiedResetTask = Task { [weak self] in
@@ -276,6 +309,11 @@ final class SearchViewModel {
     }
 
     private func markCopyFailed(_ id: String) {
+        // Clear a still-showing "Copied!" from an earlier copy of the same GIF —
+        // the cell prefers it over the failure, so leaving it up would claim a
+        // failed copy succeeded and put nothing on the clipboard.
+        copiedResetTask?.cancel()
+        copiedGifID = nil
         withAnimation { copyFailedGifID = id }
         copyFailedResetTask?.cancel()
         copyFailedResetTask = Task { [weak self] in

@@ -387,7 +387,14 @@ struct FilingDrawer: View {
     /// the create editor. It's filed into the collection on Create — but it's already
     /// saved, so cancelling (or hitting the collection cap) can't drop it.
     @MainActor private func beginCreateFromDrag() -> Bool {
-        guard !isEditing, let gif = dragContext.gif else { return false }
+        // The editor is already open, so ＋ has nothing to open. `.disabled` stops the
+        // click but not the drop, so clear the drag here — left set, `isDragging`
+        // stays true and the drawer sits expanded until the popover closes.
+        guard !isEditing else {
+            dragContext.gif = nil
+            return false
+        }
+        guard let gif = dragContext.gif else { return false }
         if !library.isFavorite(gif) { library.toggleFavorite(gif) }
         pendingGif = gif
         dragContext.gif = nil
@@ -456,7 +463,10 @@ struct FilingDrawer: View {
     private func commit(name: String, emoji: String, showsName: Bool) {
         if creating {
             if let created = library.createCollection(named: name, emoji: emoji, showsName: showsName) {
-                selectedID = created.id
+                // Select the new collection only in home, where selection scopes the
+                // favourites grid. Creating one mid-search would otherwise leave home
+                // silently filtered to it on the way back.
+                if role == .home { selectedID = created.id }
                 // A GIF dropped on ＋ waits here to be filed into the new collection.
                 if let gif = pendingGif {
                     library.setMembership(gif, inCollection: created.id, member: true)

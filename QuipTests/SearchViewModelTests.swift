@@ -8,19 +8,30 @@ private actor MockBackend: GifBackend {
     private var searchResults: [Gif]
     private var searchError: Error?
     private var trendingByContent: [GiphyClient.Content: [Gif]]
+    private var fetchError: Error?
+    /// Held until `releaseTrending()` is called, so a test can keep one trending
+    /// fetch in flight while the mode changes under it.
+    private var trendingGate: Bool = false
     private(set) var searchCount = 0
+    private(set) var trendingCount = 0
 
     init(searchResults: [Gif] = [], searchError: Error? = nil,
-         trending: [GiphyClient.Content: [Gif]] = [:]) {
+         trending: [GiphyClient.Content: [Gif]] = [:],
+         gateTrending: Bool = false) {
         self.searchResults = searchResults
         self.searchError = searchError
         self.trendingByContent = trending
+        self.trendingGate = gateTrending
     }
 
     func configure(searchResults: [Gif], searchError: Error?) {
         self.searchResults = searchResults
         self.searchError = searchError
     }
+
+    func configure(fetchError: Error?) { self.fetchError = fetchError }
+
+    func releaseTrending() { trendingGate = false }
 
     func search(_ query: String, apiKey: String,
                 content: GiphyClient.Content, rating: String) async throws -> [Gif] {
@@ -31,11 +42,19 @@ private actor MockBackend: GifBackend {
 
     func trending(apiKey: String, content: GiphyClient.Content,
                   rating: String) async throws -> [Gif] {
-        trendingByContent[content] ?? []
+        trendingCount += 1
+        while trendingGate {
+            try? await Task.sleep(for: .milliseconds(5))
+        }
+        return trendingByContent[content] ?? []
     }
 
     func autocomplete(_ query: String, apiKey: String) async throws -> [String] { [] }
-    func fetchData(for gif: Gif) async throws -> Data { Data() }
+
+    func fetchData(for gif: Gif) async throws -> Data {
+        if let fetchError { throw fetchError }
+        return Data()
+    }
 }
 
 private struct TestError: Error {}
@@ -54,6 +73,16 @@ final class SearchViewModelTests: XCTestCase {
             try? await Task.sleep(for: .milliseconds(5))
         }
         XCTAssertTrue(condition(), "condition not met within \(timeout)s")
+    }
+
+    /// `waitUntil` for a condition that has to await the mock actor.
+    private func waitUntilAsync(timeout: TimeInterval = 2, _ condition: () async -> Bool) async {
+        let deadline = Date().addingTimeInterval(timeout)
+        while !(await condition()), Date() < deadline {
+            try? await Task.sleep(for: .milliseconds(5))
+        }
+        let met = await condition()
+        XCTAssertTrue(met, "condition not met within \(timeout)s")
     }
 
     // MARK: Settings-change refresh (bug #1)
@@ -103,6 +132,62 @@ final class SearchViewModelTests: XCTestCase {
         vm.loadTrending(apiKey: "K", content: .stickers, rating: "pg-13")
         XCTAssertTrue(vm.trending.isEmpty, "stale trending should clear synchronously")
         await waitUntil { vm.trending.map(\.id) == ["s"] }
+    }
+
+    /// A settings change while a trending fetch is in flight must not publish the
+    /// old mode's grid — and must not leave it stamped as current, which would stop
+    /// anything from refetching.
+    func testTrendingInFlightDiscardsResultForAChangedMode() async {
+        let backend = MockBackend(
+            trending: [.gifs: [gif("g")], .stickers: [gif("s")]],
+            gateTrending: true
+        )
+        let vm = SearchViewModel(backend: backend)
+        vm.loadTrending(apiKey: "K", content: .gifs, rating: "pg-13")
+        await waitUntilAsync { await backend.trendingCount == 1 }
+
+        // Stickers wanted now, while the gifs fetch is still held open.
+        vm.loadTrending(apiKey: "K", content: .stickers, rating: "pg-13")
+        await backend.releaseTrending()
+
+        // The gifs result is dropped; the stickers grid replaces it.
+        await waitUntil { vm.trending.map(\.id) == ["s"] }
+    }
+
+    // MARK: Copy overlays
+
+    /// The cell reads `copiedGifID` and `copyFailedGifID` independently and prefers
+    /// "Copied!", so a failure that follows a success on the same GIF has to clear it
+    /// — otherwise a copy that put nothing on the clipboard reports success.
+    func testFailedCopyClearsALiveCopiedOverlay() async {
+        let backend = MockBackend()
+        let vm = SearchViewModel(backend: backend)
+        let library = GifLibrary(defaults: UserDefaults(suiteName: "test-\(UUID().uuidString)")!)
+        let target = gif("a")
+
+        vm.copy(target, into: library)
+        await waitUntil { vm.copiedGifID == "a" }
+
+        await backend.configure(fetchError: TestError())
+        vm.copy(target, into: library)
+        await waitUntil { vm.copyFailedGifID == "a" }
+        XCTAssertNil(vm.copiedGifID, "a failed copy must not leave 'Copied!' up")
+    }
+
+    func testSuccessfulCopyClearsALiveFailureOverlay() async {
+        let backend = MockBackend()
+        await backend.configure(fetchError: TestError())
+        let vm = SearchViewModel(backend: backend)
+        let library = GifLibrary(defaults: UserDefaults(suiteName: "test-\(UUID().uuidString)")!)
+        let target = gif("a")
+
+        vm.copy(target, into: library)
+        await waitUntil { vm.copyFailedGifID == "a" }
+
+        await backend.configure(fetchError: nil)
+        vm.copy(target, into: library)
+        await waitUntil { vm.copiedGifID == "a" }
+        XCTAssertNil(vm.copyFailedGifID)
     }
 
     func testReopenWithinWindowKeepsResults() {

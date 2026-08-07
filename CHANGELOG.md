@@ -3,6 +3,18 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.15] - 2026-08-06
+
+### Fixed
+
+- Emoji like ❤️, ☀️ and ✏️ can go on a collection chip again. Quip took the newer emoji and quietly dropped the older ones, so you picked one and the chip stayed blank.
+- A copy that fails right after one that worked now says so. Before, the "Copied!" mark from the first could sit over the second and tell you a GIF was on the clipboard when nothing was.
+- The favorite star sits above the "Copied!" mark. You can save a GIF you just copied without waiting for the mark to fade.
+- Dropping a GIF on + while the new-collection box is already open no longer sticks the chip strip open.
+- Switch between GIFs and stickers while trending is still loading and the old grid no longer stays up.
+- Making a collection during a search no longer filters your favorites down to it when you go back home.
+- Settings keeps "Clear image cache" clickable. It used to switch itself off whenever the size beside it had gone stale, which happens as soon as you browse.
+
 ## [1.1.14] - 2026-07-24
 
 ### Added

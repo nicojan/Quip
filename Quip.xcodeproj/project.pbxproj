@@ -39,6 +39,7 @@
 		9FEF455E6DA8093FBCD705AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E923A413E48382C48726D7 /* AppDelegate.swift */; };
 		A022D503133729CE8F45487B /* HideVerticalScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE699BB1CB28734C62601B6 /* HideVerticalScroller.swift */; };
 		A43F7877C2E6690D3CDA2F4B /* GifCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE87528A22D99A1B4669C347 /* GifCollection.swift */; };
+		A45CAAAD40DD8BC3FAC71C16 /* EmojiGlyphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262EBE22FAE9F31BBFDEC266 /* EmojiGlyphTests.swift */; };
 		A7C0802AE25F752F0BF1B6D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */; };
 		A87DB63C6C5CA1208378AA76 /* PopoverEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC43E38D0883846EE510BAE /* PopoverEvents.swift */; };
 		B6E3C205794BBDC0CAC012AF /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */; };
@@ -71,6 +72,7 @@
 		15E923A413E48382C48726D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1D7D2ACB961493233251651D /* QuipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuipApp.swift; sourceTree = "<group>"; };
 		201ADAE926E78216EC67B516 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		262EBE22FAE9F31BBFDEC266 /* EmojiGlyphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiGlyphTests.swift; sourceTree = "<group>"; };
 		31EE06D2F7EFEAAC9A727D1A /* CollectionChipEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionChipEditor.swift; sourceTree = "<group>"; };
 		329ED5656C8204B0D481217E /* MenuContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuContentView.swift; sourceTree = "<group>"; };
 		3B106C80CAE0ADFDA212A97C /* Quip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Quip.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -188,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				E92886217B91D982AF428951 /* CollectionDropTests.swift */,
+				262EBE22FAE9F31BBFDEC266 /* EmojiGlyphTests.swift */,
 				F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */,
 				42A601EAED4E5759F30A405D /* GifLibraryTests.swift */,
 				8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */,
@@ -348,6 +351,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1ABC20D41FC52A1FC8DD8338 /* CollectionDropTests.swift in Sources */,
+				A45CAAAD40DD8BC3FAC71C16 /* EmojiGlyphTests.swift in Sources */,
 				DA0629DB3527EBAEACB0C6B9 /* GifCodableTests.swift in Sources */,
 				F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */,
 				EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */,
@@ -414,7 +418,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Quip/Info.plist;
@@ -424,7 +428,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.1.14;
+				MARKETING_VERSION = 1.1.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;
@@ -539,7 +543,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = 3CY4DX3K45;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -550,7 +554,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.1.14;
+				MARKETING_VERSION = 1.1.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;

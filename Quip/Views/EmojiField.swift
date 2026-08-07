@@ -120,13 +120,19 @@ private struct EmojiCaptureField: NSViewRepresentable {
     }
 }
 
-private extension Character {
+extension Character {
     /// True for a real emoji glyph. Excludes the ASCII digits/`#`/`*` that Unicode
     /// also flags as `isEmoji`, so a stray keystroke never fills the well.
+    ///
+    /// The non-ASCII test is what admits the text-default emoji — ❤️ ☺️ ✌️ ☀️ ✏️ ✂️ ☎️
+    /// and the rest of the pre-emoji symbols. Their `Emoji_Presentation` is No and
+    /// they sit below U+1F000, so a code-point floor of 0x1F000 (what this used to
+    /// test) rejected every one of them: the picker inserted the emoji and the well
+    /// stayed empty. Only ASCII needs excluding, so only ASCII is excluded.
     var isEmojiGlyph: Bool {
         unicodeScalars.contains { scalar in
             scalar.properties.isEmojiPresentation
-                || (scalar.properties.isEmoji && scalar.value >= 0x1F000)
+                || (scalar.properties.isEmoji && !scalar.isASCII)
         }
     }
 }
