@@ -25,3 +25,6 @@ Demo/clips/
 
 # Stray temp files
 *.tmp
+
+# Session working state, not shared documentation
+.claude/HANDOFF.md
