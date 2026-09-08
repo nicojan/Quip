@@ -3,6 +3,13 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.16] - 2026-09-07
+
+### Fixed
+
+- Quip stops the GIFs when you close it. They used to keep playing behind the closed window, taking about a sixth of a processor core day and night. Over a two-day run that came to more than eight hours of work, drawing pictures nobody could see.
+- Quip hands memory back. Its memory use used to climb past 900 MB on a machine left running for days, because it kept every GIF it had shown and every frame it had drawn. It now keeps at most 128 MB, and lets the frames go when you close the window.
+
 ## [1.1.15] - 2026-08-06
 
 ### Fixed

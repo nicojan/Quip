@@ -79,6 +79,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .environment(layoutMetrics)
             .environment(dragContext)
             .environment(Credentials.shared)
+            .environment(PopoverVisibility.shared)
         )
 
         // Seed the default shortcut exactly once, so a user who later clears it
@@ -233,6 +234,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.activate(ignoringOtherApps: true)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             popover.contentViewController?.view.window?.makeKey()
+            // After `show`, so the cells' views already have a window when the
+            // resulting update restarts their animation.
+            PopoverVisibility.shared.isOpen = true
             NotificationCenter.default.post(name: .quipPopoverShown, object: nil)
         }
     }
@@ -278,6 +282,7 @@ extension AppDelegate: @preconcurrency NSPopoverDelegate {
         // Re-arm transient auto-close in case it was suspended for emoji picking
         // and the popover closed by another path first.
         popover.behavior = .transient
+        PopoverVisibility.shared.isOpen = false
         NotificationCenter.default.post(name: .quipPopoverClosed, object: nil)
     }
 }

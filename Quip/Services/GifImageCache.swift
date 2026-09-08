@@ -10,10 +10,18 @@ enum GifImageCache {
     /// holds thousands; past this, SDWebImage evicts the oldest entries first.
     static let maxDiskBytes: UInt = 256 * 1024 * 1024
 
-    /// Caps the disk cache so it can't grow without bound during heavy browsing.
-    /// Call once at launch. The default 1-week age limit stays in place.
+    /// Ceiling for the in-memory image cache. SDWebImage leaves this at 0, which
+    /// means *no limit* — so a long-running Quip kept every decoded GIF it had
+    /// ever shown. Two days of ordinary use reached a 503 MB footprint with a
+    /// 938 MB peak. Half the disk ceiling keeps a comfortable working set while
+    /// bounding the growth.
+    static let maxMemoryBytes: UInt = 128 * 1024 * 1024
+
+    /// Caps both caches so they can't grow without bound during heavy browsing.
+    /// Call once at launch. The default 1-week disk age limit stays in place.
     static func configure() {
         SDImageCache.shared.config.maxDiskSize = maxDiskBytes
+        SDImageCache.shared.config.maxMemoryCost = maxMemoryBytes
     }
 
     /// Total bytes the image cache occupies on disk.

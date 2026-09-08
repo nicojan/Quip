@@ -15,6 +15,7 @@ struct GifThumbnail: View {
     let onToggleFavorite: () -> Void
 
     @Environment(DragContext.self) private var dragContext
+    @Environment(PopoverVisibility.self) private var popoverVisibility
 
     @State private var hovering = false
     @State private var loadFailed = false
@@ -31,7 +32,19 @@ struct GifThumbnail: View {
             .frame(height: 92)
             .overlay {
                 if let url = URL(string: gif.gifURL), !loadFailed {
-                    AnimatedImage(url: url)
+                    // Read eagerly, not inside the binding's getter: the read has
+                    // to happen while the body runs for the change to re-render
+                    // this cell. Nothing writes back, so a constant binding is
+                    // enough.
+                    AnimatedImage(url: url, isAnimating: .constant(popoverVisibility.isOpen))
+                        .onViewCreate { view, _ in
+                            // Decoded frames are the bulk of Quip's memory, and
+                            // they outlive the animation unless asked to go: this
+                            // hands them back every time the popover closes and
+                            // stops the player. They decode again on reopen, off
+                            // the still-cached GIF data.
+                            view.clearBufferWhenStopped = true
+                        }
                         .onFailure { _ in loadFailed = true }
                         .resizable()
                         .indicator(.activity)

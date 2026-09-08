@@ -28,6 +28,8 @@
 		5996E590EF1C753135A17814 /* ResultsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */; };
 		5D26FAA4669502592670C855 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC6B3554A631E6327007F7 /* SearchBar.swift */; };
 		647F5462C4DC73977CD4AF50 /* Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BAEA701E5EE511509170FB /* Shortcuts.swift */; };
+		67BE87666D3A68EF1C3304DD /* GifImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C65E867462E105F4B319796 /* GifImageCacheTests.swift */; };
+		6F4E32EF440A338208DB80C7 /* PopoverVisibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E8D4E7D11E9CCFDD7EFEF /* PopoverVisibility.swift */; };
 		795FAFC170B968A10C2FE562 /* QuipDragProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B84AB8C6650894643A55E21 /* QuipDragProvider.swift */; };
 		7C0C44D5B79B3872B8C91945 /* LayoutMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CB116E966C3BDA29250791 /* LayoutMode.swift */; };
 		7CCD4D61429B5909A511E1FC /* LayoutModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C133CD5CB4A9C5A8AA37127 /* LayoutModeTests.swift */; };
@@ -70,6 +72,7 @@
 		07CB116E966C3BDA29250791 /* LayoutMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutMode.swift; sourceTree = "<group>"; };
 		099696AE8697FED5C13E62CD /* QuipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QuipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		15E923A413E48382C48726D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1C65E867462E105F4B319796 /* GifImageCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifImageCacheTests.swift; sourceTree = "<group>"; };
 		1D7D2ACB961493233251651D /* QuipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuipApp.swift; sourceTree = "<group>"; };
 		201ADAE926E78216EC67B516 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		262EBE22FAE9F31BBFDEC266 /* EmojiGlyphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiGlyphTests.swift; sourceTree = "<group>"; };
@@ -83,6 +86,7 @@
 		561B68C798B101F8AA028472 /* LayoutToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutToggle.swift; sourceTree = "<group>"; };
 		5AE024ADE68494F57F80E6F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6BC7C5D217AAF7EECC5D318E /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		6E8E8D4E7D11E9CCFDD7EFEF /* PopoverVisibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverVisibility.swift; sourceTree = "<group>"; };
 		6EAC6B3554A631E6327007F7 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		716D628428853097007870EA /* FilingDrawer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilingDrawer.swift; sourceTree = "<group>"; };
 		7EE699BB1CB28734C62601B6 /* HideVerticalScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideVerticalScroller.swift; sourceTree = "<group>"; };
@@ -192,6 +196,7 @@
 				E92886217B91D982AF428951 /* CollectionDropTests.swift */,
 				262EBE22FAE9F31BBFDEC266 /* EmojiGlyphTests.swift */,
 				F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */,
+				1C65E867462E105F4B319796 /* GifImageCacheTests.swift */,
 				42A601EAED4E5759F30A405D /* GifLibraryTests.swift */,
 				8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */,
 				9C133CD5CB4A9C5A8AA37127 /* LayoutModeTests.swift */,
@@ -218,6 +223,7 @@
 				7EE699BB1CB28734C62601B6 /* HideVerticalScroller.swift */,
 				07CB116E966C3BDA29250791 /* LayoutMode.swift */,
 				EAC43E38D0883846EE510BAE /* PopoverEvents.swift */,
+				6E8E8D4E7D11E9CCFDD7EFEF /* PopoverVisibility.swift */,
 				4B84AB8C6650894643A55E21 /* QuipDragProvider.swift */,
 				D0BE62A05D9034C02F6634FD /* QuipDragType.swift */,
 				86BAEA701E5EE511509170FB /* Shortcuts.swift */,
@@ -353,6 +359,7 @@
 				1ABC20D41FC52A1FC8DD8338 /* CollectionDropTests.swift in Sources */,
 				A45CAAAD40DD8BC3FAC71C16 /* EmojiGlyphTests.swift in Sources */,
 				DA0629DB3527EBAEACB0C6B9 /* GifCodableTests.swift in Sources */,
+				67BE87666D3A68EF1C3304DD /* GifImageCacheTests.swift in Sources */,
 				F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */,
 				EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */,
 				7CCD4D61429B5909A511E1FC /* LayoutModeTests.swift in Sources */,
@@ -386,6 +393,7 @@
 				53FCF696BC6A5FEDAED4F851 /* LoginItem.swift in Sources */,
 				F7CA9DF5B5FD1DF007D841D2 /* MenuContentView.swift in Sources */,
 				A87DB63C6C5CA1208378AA76 /* PopoverEvents.swift in Sources */,
+				6F4E32EF440A338208DB80C7 /* PopoverVisibility.swift in Sources */,
 				C05BA03FF020DFD373E12BF1 /* QuipApp.swift in Sources */,
 				795FAFC170B968A10C2FE562 /* QuipDragProvider.swift in Sources */,
 				F94940FB8260567A726DCAC7 /* QuipDragType.swift in Sources */,
@@ -418,7 +426,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Quip/Info.plist;
@@ -428,7 +436,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.1.15;
+				MARKETING_VERSION = 1.1.16;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;
@@ -543,7 +551,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = 3CY4DX3K45;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -554,7 +562,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.1.15;
+				MARKETING_VERSION = 1.1.16;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;

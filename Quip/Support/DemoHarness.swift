@@ -78,6 +78,7 @@ enum DemoHarness {
             .environment(metrics)
             .environment(dragContext)
             .environment(credentials)
+            .environment(PopoverVisibility(isOpen: true))   // no popover here; keep GIFs animating
             .defaultAppStorage(suite)
 
         let contentSize = NSSize(width: initialMode.width,
