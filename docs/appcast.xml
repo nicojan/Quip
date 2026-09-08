@@ -3,6 +3,21 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.16</title>
+            <pubDate>Tue, 08 Sep 2026 00:01:15 -0700</pubDate>
+            <sparkle:version>19</sparkle:version>
+            <sparkle:shortVersionString>1.1.16</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+<li>Quip stops the GIFs when you close it. They used to keep playing behind the closed window, taking about a sixth of a processor core day and night. Over a two-day run that came to more than eight hours of work, drawing pictures nobody could see.</li>
+<li>Quip hands memory back. Its memory use used to climb past 900 MB on a machine left running for days, because it kept every GIF it had shown and every frame it had drawn. It now keeps at most 128 MB, and lets the frames go when you close the window.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.16/Quip-1.1.16.dmg" length="2403596" type="application/octet-stream" sparkle:edSignature="ToROxxdNmdoQ1Pp0QlN5K/Ty42ez+ulseU+xVGB2/CKtTZUKwwxQFW++hWm2fhpXWmB6ExrXBJcvF+yRWnmwDg=="/>
+        </item>
+        <item>
             <title>1.1.15</title>
             <pubDate>Thu, 06 Aug 2026 22:47:00 -0700</pubDate>
             <sparkle:version>18</sparkle:version>
