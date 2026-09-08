@@ -65,6 +65,29 @@ users.
 
 ---
 
+## Before cutting a release
+
+Run `scripts/check-idle-cost.sh` against a build of the app you are about to ship. It reports what Quip costs while nobody is looking at it, which no test catches and a short session hides.
+
+Open the app, browse a few searches so a screenful of thumbnails loads, close the popover, then run it. The check reads the process, so a Quip that never loaded a thumbnail passes for free — browsing first is what makes the number mean anything.
+
+| Reading | Want | 1.1.15 shipped |
+|---|---|---|
+| `CVDisplayLink` threads, popover closed | 0 | 36 |
+| Footprint after ordinary use | near the 128 MB cache ceiling plus overhead | 503 MB |
+| Peak footprint over days | same | 938 MB |
+
+Why this is a release step and not a test. Both regressions it catches shipped in 1.1.15 and neither was visible in the 82-test suite: the display links only run against a real window server, and the cache only grows over days. Quip found its way to 17% of a processor core with nothing on screen, and 510 minutes of CPU over a two-day run, before anyone thought to look.
+
+Two things distort the reading if you measure a locally-built copy instead of the signed one:
+
+- **Little Snitch** does not match a local build against the rule for `/Applications/Quip.app`, because a local build is ad-hoc signed. Most thumbnails then fail to load, and a `loadFailed` cell never retries, so the grid fills with placeholders that look like a bug in the app. Confirm with `find ~/Library/Caches/com.hackemist.SDImageCache -type f -newermt "-5 minutes" | wc -l` — a blocked build writes almost nothing.
+- **The Keychain** re-prompts on every rebuild, because re-signing changes the ACL identity. `Credentials.shared` reads the key synchronously on the main thread inside `applicationDidFinishLaunching`, so an unanswered prompt hangs the app at launch with no window. This also wedges `xcodebuild test` with "The test runner hung before establishing connection."
+
+Measuring the notarized DMG avoids both.
+
+---
+
 ## Cutting a release
 
 Run from the repo root. Replace `X.Y.Z`. Regenerate the project first if
