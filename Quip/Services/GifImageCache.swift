@@ -17,6 +17,15 @@ enum GifImageCache {
     /// bounding the growth.
     static let maxMemoryBytes: UInt = 128 * 1024 * 1024
 
+    /// Ceiling for one thumbnail's decoded animation frames. These buffers live
+    /// in `SDImageFramePool`, not in `SDImageCache`, so `maxMemoryBytes` above
+    /// never bounds them. Left at SDWebImage's default of 0, each playing view
+    /// sizes its own buffer at 20% of the Mac's total RAM — 7.2 GB per cell on a
+    /// 36 GB machine — and keeps every frame of every visible GIF decoded, which
+    /// is why the footprint grew with the size of the machine. A dozen-odd frames
+    /// of a fill-scaled cell, re-decoding the rest each loop.
+    static let maxFrameBufferBytes: UInt = 2 * 1024 * 1024
+
     /// Caps both caches so they can't grow without bound during heavy browsing.
     /// Call once at launch. The default 1-week disk age limit stays in place.
     static func configure() {

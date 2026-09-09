@@ -44,6 +44,11 @@ struct GifThumbnail: View {
                             // stops the player. They decode again on reopen, off
                             // the still-cached GIF data.
                             view.clearBufferWhenStopped = true
+                            // Frame buffers are the other half, and they are not
+                            // covered by the cache ceiling — see
+                            // GifImageCache.maxFrameBufferBytes for why the
+                            // default grows with the size of the Mac.
+                            view.maxBufferSize = GifImageCache.maxFrameBufferBytes
                         }
                         .onFailure { _ in loadFailed = true }
                         .resizable()

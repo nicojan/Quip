@@ -25,4 +25,14 @@ final class GifImageCacheTests: XCTestCase {
         XCTAssertGreaterThan(GifImageCache.maxDiskBytes, 0)
         XCTAssertLessThanOrEqual(GifImageCache.maxMemoryBytes, GifImageCache.maxDiskBytes)
     }
+
+    /// The frame-buffer cap is the one ceiling SDWebImage will not enforce for us:
+    /// at its default of 0 each playing view budgets 20% of the Mac's total RAM,
+    /// so a bigger machine silently buffers more. It has to be a real byte count,
+    /// and small next to the cache — a per-cell buffer rivalling the whole cache
+    /// would defeat the point.
+    func testFrameBufferCapIsRealAndSmallerThanTheCache() {
+        XCTAssertGreaterThan(GifImageCache.maxFrameBufferBytes, 0)
+        XCTAssertLessThan(GifImageCache.maxFrameBufferBytes, GifImageCache.maxMemoryBytes)
+    }
 }
