@@ -3,6 +3,20 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.17</title>
+            <pubDate>Wed, 09 Sep 2026 18:45:00 -0700</pubDate>
+            <sparkle:version>20</sparkle:version>
+            <sparkle:shortVersionString>1.1.17</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+<li>Quip now lets go of the GIF frames it has drawn when you close the window. The 1.1.16 note claimed this, but the change never took hold: Quip asked for it a moment too early, and the image library it uses put the setting back after each GIF loaded. Closing a window full of GIFs released none of those frames before. It now releases nearly all of them.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.17/Quip-1.1.17.dmg" length="2403452" type="application/octet-stream" sparkle:edSignature="PsyGqC2f65ixdYhEVUU6wssWXCB4+ozFMHiE6A0Mze4zXi3H/lmyoiZuCgKJYBte3YNF3/b5mDBnHRw7Uf7kAg=="/>
+        </item>
+        <item>
             <title>1.1.16</title>
             <pubDate>Tue, 08 Sep 2026 00:01:15 -0700</pubDate>
             <sparkle:version>19</sparkle:version>
