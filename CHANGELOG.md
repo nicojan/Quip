@@ -3,6 +3,12 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.17] - 2026-09-09
+
+### Fixed
+
+- Quip now lets go of the GIF frames it has drawn when you close the window. The 1.1.16 note claimed this, but the change never took hold: Quip asked for it a moment too early, and the image library it uses put the setting back after each GIF loaded. Closing a window full of GIFs released none of those frames before. It now releases nearly all of them.
+
 ## [1.1.16] - 2026-09-07
 
 ### Fixed
