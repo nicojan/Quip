@@ -67,6 +67,10 @@ users.
 
 ## Before cutting a release
 
+Two checks, both of which catch things the 82-test suite cannot see.
+
+### Check what Quip costs while idle
+
 Run `scripts/check-idle-cost.sh` against a build of the app you are about to ship. It reports what Quip costs while nobody is looking at it, which no test catches and a short session hides.
 
 Open the app, browse a few searches so a screenful of thumbnails loads, close the popover, then run it. The check reads the process, so a Quip that never loaded a thumbnail passes for free — browsing first is what makes the number mean anything.
@@ -84,7 +88,25 @@ Two things distort the reading if you measure a locally-built copy instead of th
 - **Little Snitch** does not match a local build against the rule for `/Applications/Quip.app`, because a local build is ad-hoc signed. Most thumbnails then fail to load, and a `loadFailed` cell never retries, so the grid fills with placeholders that look like a bug in the app. Confirm with `find ~/Library/Caches/com.hackemist.SDImageCache -type f -newermt "-5 minutes" | wc -l` — a blocked build writes almost nothing.
 - **The Keychain** re-prompts on every rebuild, because re-signing changes the ACL identity. `Credentials.shared` reads the key synchronously on the main thread inside `applicationDidFinishLaunching`, so an unanswered prompt hangs the app at launch with no window. This also wedges `xcodebuild test` with "The test runner hung before establishing connection."
 
-Measuring the notarized DMG avoids both.
+Measuring the notarized DMG avoids both. One refinement measured on 2026-09-09: it is *ad-hoc* signing that trips Little Snitch, not local building as such. A Release build signed with the Apple Development certificate loaded 4440 raster objects off Giphy trending without complaint.
+
+### Check that closing the popover really frees the frames
+
+Run `scripts/check-buffer-release.sh`. Open the app, browse until a screenful of thumbnails loads, then close the popover while it watches. It reads the process while GIFs animate, waits for the `CVDisplayLink` count to reach zero, reads again, and fails if most of the decoded frames survived.
+
+| Build and content | Popover open | Popover closed |
+|---|---|---|
+| 1.1.16, 12 bundled GIFs | 1404 objects, 70 MB raster | 1404 objects, 70 MB raster |
+| 1.1.17, 12 bundled GIFs | 1404 objects, 15 MB raster | 48 objects, 0 MB raster |
+| 1.1.17, 36 GIFs off Giphy trending | 4440 objects, 47 MB raster, 194 MB footprint | 282 objects, 3 MB raster, 146 MB footprint |
+
+Read the object count, not the megabytes, when comparing rows: the two open readings for the same 12 GIFs differ (70 MB against 15 MB) for reasons never established, which is the same non-reproducibility noted below. Within a row the drop is the thing that matters.
+
+Why this is a release step and not a test, and it is a sharper case than the idle check above. 1.1.16 set `clearBufferWhenStopped = true` inside `.onViewCreate`, and SDWebImageSwiftUI's `configureView` runs from `finishUpdateView` after every load finishes and stamps the property back to `false` unless the value is recorded in its `imageConfiguration`. The flag was on for an instant at view creation and off before a single frame decoded. It freed nothing for the whole of 1.1.16, the CHANGELOG told users it did, and the 82-test suite was green throughout: a unit test can assert the value we ask for, never the value the view ends up holding. Set these through the `.purgeable(_:)` and `.maxBufferSize(_:)` modifiers, never on the view.
+
+Two notes on reading the output. It compares before and after **inside one process**, because absolute footprints are not reproducible between launches on this machine (the same build measured 63-74 MB on one run and 190-203 MB on another, cause never established), so comparing two launches proves nothing. And a failed `sample` reports empty rather than 0, because 0 display links is the reading that means all is well, and a broken measurement must never be able to impersonate a pass.
+
+To drive the open and close without touching the keyboard: `defaults delete com.nicojan.Quip didShowFirstRun` makes the app open its popover on the next launch, and activating any other app dismisses the transient popover. The app writes the flag back itself.
 
 ---
 
