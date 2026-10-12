@@ -99,6 +99,7 @@ struct MenuContentView: View {
                 onSubmit: runSearch,
                 onChange: { vm.liveSearch(apiKey: apiKey, content: content, rating: rating) }
             )
+            .demoAnchor("search")
 
             suggestionsOrRecents
 
@@ -126,6 +127,7 @@ struct MenuContentView: View {
             }
 
             footer
+                .demoAnchor("footer")
         }
         .padding(12)
         .frame(
@@ -152,6 +154,12 @@ struct MenuContentView: View {
             withAnimation(.easeInOut(duration: 0.25)) {
                 selectedCollectionID = note.object as? String
             }
+        }
+        // Lets the demo director press the layout toggle, animated the way the real
+        // popover's resize is, so a clip can show the window changing size.
+        .onReceive(NotificationCenter.default.publisher(for: .quipDemoSetLayout)) { note in
+            guard let raw = note.object as? String, LayoutMode(rawValue: raw) != nil else { return }
+            withAnimation(.easeInOut(duration: 0.3)) { layoutModeRaw = raw }
         }
         #endif
         .onChange(of: layoutModeRaw) { _, _ in
@@ -188,6 +196,7 @@ struct MenuContentView: View {
                 get: { layoutMode },
                 set: { layoutModeRaw = $0.rawValue }
             ))
+            .demoAnchor("layout")
             Button { openSettings() } label: {
                 Image(systemName: "gearshape")
             }

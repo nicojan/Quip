@@ -31,6 +31,11 @@ enum DemoHarness {
         NSApp.setActivationPolicy(.accessory)
 
         TempClips.prepare()          // copy writes a temp .gif; give it a home
+        // A cache folder of the demo's own, set before anything touches
+        // SDImageCache.shared. Both builds share a bundle id, so the default folder
+        // is the installed Quip's cache, and the clear below would wipe it.
+        SDImageCache.defaultDiskCacheDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("com.nicojan.Quip.demo-image-cache").path
         GifImageCache.configure()
 
         // The bundled filenames are stable but their content can change (refreshed
@@ -38,15 +43,25 @@ enum DemoHarness {
         // Synchronous (unlike GifImageCache.clear) so it finishes before views load.
         SDImageCache.shared.clearMemory()
         try? FileManager.default.removeItem(atPath: SDImageCache.shared.diskCachePath)
+        print("DEMO_IMAGE_CACHE=\(SDImageCache.shared.diskCachePath)")
 
         let assetsDir = ProcessInfo.processInfo.environment["QUIP_DEMO_ASSETS"]
             .map { URL(fileURLWithPath: $0) }
             ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
                 .appendingPathComponent("Demo/assets")
 
+        DemoAnchors.shared.isEnabled = true
+
         let source = DemoGifSource(assetsDir: assetsDir)
+        // A snapshot of a real library (QUIP_DEMO_LIBRARY, exported JSON plus local
+        // GIF copies) replaces the made-up seed. It goes into the demo suite, never
+        // back into the real defaults.
+        let libraryDir = ProcessInfo.processInfo.environment["QUIP_DEMO_LIBRARY"]
+            .map { URL(fileURLWithPath: $0) }
+        if let libraryDir { DemoLibraryImport.load(from: libraryDir, into: suite) }
         let library = GifLibrary(defaults: suite)
-        DemoData.seed(into: library, from: source.all)
+        if libraryDir == nil { DemoData.seed(into: library, from: source.all) }
+        let stage = ProcessInfo.processInfo.environment["QUIP_DEMO_STAGE"] == "1"
 
         // Initial layout preset, set before the view builds so @AppStorage reads it
         // (a runtime change to the suite doesn't reliably propagate; the layout clip
@@ -58,7 +73,9 @@ enum DemoHarness {
         // The API key now lives in the Keychain-backed Credentials store; seed an
         // in-memory one so the demo runs with a non-empty key (search enabled) and
         // never touches the real Keychain.
-        let credentials = Credentials(store: InMemorySecretStore([Credentials.account: "demo-key"]))
+        // QUIP_DEMO_NOKEY=1 starts with no key, to show the screen a new user sees.
+        let noKey = ProcessInfo.processInfo.environment["QUIP_DEMO_NOKEY"] == "1"
+        let credentials = Credentials(store: InMemorySecretStore(noKey ? [:] : [Credentials.account: "demo-key"]))
 
         // Prefs the real app keeps in @AppStorage, seeded in the isolated suite.
         suite.set(initialMode.rawValue, forKey: "layoutMode")
@@ -66,30 +83,48 @@ enum DemoHarness {
         suite.set(false, forKey: "useStickers")
 
         let vm = SearchViewModel(backend: source, recentSearchDefaults: suite)
-        vm.recentSearches = ["celebrate", "thumbs up", "party", "wow"]
+        if libraryDir == nil { vm.recentSearches = ["celebrate", "thumbs up", "party", "wow"] }
+        // Copies land on a private pasteboard, so a take never overwrites the
+        // clipboard of whoever is at the machine.
+        vm.pasteboard = NSPasteboard(name: NSPasteboard.Name("com.nicojan.Quip.demo"))
         vm.trending = source.all       // fill trending up front so there's no empty flash
 
-        let metrics = LayoutMetrics(launchScreenHeight: 900)   // fixed ⇒ stable `tall` height
+        // Fixed ⇒ a stable `tall` height. The stage uses a shorter screen (a 700-pt
+        // popover, still three rows to a strip) so the popover's shadow fades out
+        // inside the stage's 50-pt margins instead of being cut off at its edges.
+        let screenHeight: CGFloat = stage ? 875 : 900
+        let metrics = LayoutMetrics(launchScreenHeight: screenHeight)
         let dragContext = DragContext()
 
         let cursor = DemoCursor()
+        let ghost = DemoGhost()
         let content = MenuContentView(openSettings: {}, closePopover: {}, viewModel: vm)
             .environment(library)
             .environment(metrics)
             .environment(dragContext)
             .environment(credentials)
             .environment(PopoverVisibility(isOpen: true))   // no popover here; keep GIFs animating
+            // The demo window never becomes key (it must not take focus), so AppKit
+            // would draw every control in its inactive, background-window state. The
+            // real popover is key while it's open; draw the controls that way.
+            .environment(\.controlActiveState, .key)
             .defaultAppStorage(suite)
 
         let contentSize = NSSize(width: initialMode.width,
-                                 height: initialMode.height(forScreenHeight: 900))
-        let root = ZStack(alignment: .topLeading) {
-            content
-            DemoCursorOverlay(cursor: cursor)
-                .frame(width: contentSize.width, height: contentSize.height)
+                                 height: initialMode.height(forScreenHeight: screenHeight))
+        let hosting: NSViewController
+        if stage {
+            hosting = NSHostingController(rootView: DemoStage(
+                background: Color(demoHex: ProcessInfo.processInfo.environment["QUIP_DEMO_BG"] ?? "FFFFFF"),
+                topInset: 50, cursor: cursor, ghost: ghost, callouts: DemoCallouts.shared
+            ) { content })
+        } else {
+            hosting = NSHostingController(rootView: ZStack(alignment: .topLeading) {
+                content
+                DemoCursorOverlay(cursor: cursor)
+                    .frame(width: contentSize.width, height: contentSize.height)
+            })
         }
-
-        let hosting = NSHostingController(rootView: root)
         let window = NSWindow(contentViewController: hosting)
         window.title = "Quip"
         // Chrome-less so a recorded clip matches the real menu-bar popover (just the
@@ -101,10 +136,12 @@ enum DemoHarness {
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
         window.standardWindowButton(.zoomButton)?.isHidden = true
         window.isMovableByWindowBackground = true
-        window.setContentSize(
-            NSSize(width: initialMode.width,
-                   height: initialMode.height(forScreenHeight: 900))
-        )
+        if stage {
+            // No title bar at all: the stage is exactly its fixed size, with square
+            // corners, so the recorded frame holds nothing but the stage.
+            window.styleMask = [.borderless]
+        }
+        window.setContentSize(stage ? DemoStage<EmptyView>.size : contentSize)
         window.appearance = NSAppearance(named: .darkAqua)
         window.isReleasedWhenClosed = false
         // Click-through, so it can never intercept the user's clicks or be
@@ -134,7 +171,8 @@ enum DemoHarness {
         // If a scene was requested, run the scripted storyboard (see DemoDirector).
         DemoDirector.begin(
             scene: ProcessInfo.processInfo.environment["QUIP_DEMO_SCENE"],
-            vm: vm, library: library, window: window, suite: suite, cursor: cursor
+            vm: vm, library: library, window: window, suite: suite, cursor: cursor,
+            dragContext: dragContext, ghost: ghost
         )
     }
 }
@@ -149,6 +187,10 @@ final class DemoCursor {
     var visible = false
     /// Bumped once per click; the overlay watches it to fire a ripple.
     var clickCount = 0
+    /// Held down, as while carrying a dragged GIF.
+    var pressed = false
+    /// How long a glide to a new position takes.
+    var moveDuration: Double = 0.55
 }
 
 /// Draws the synthetic cursor — a soft, semi-transparent disc in the style of
@@ -157,14 +199,13 @@ final class DemoCursor {
 /// waypoints point straight at their targets with no offset.
 struct DemoCursorOverlay: View {
     let cursor: DemoCursor
+    /// The content is pushed down by the (hidden) title-bar safe area, but this
+    /// overlay isn't — so waypoints (measured against the content) render this much
+    /// too low without correcting for it. The stage ignores the safe area, so 0.
+    var yCorrection: CGFloat = -30
     @State private var rippleScale: CGFloat = 0.4
     @State private var rippleOpacity: Double = 0
     @State private var pressScale: CGFloat = 1
-
-    /// The content is pushed down by the (hidden) title-bar safe area, but this
-    /// overlay isn't — so waypoints (measured against the content) render this much
-    /// too low without correcting for it.
-    private let yCorrection: CGFloat = -30
 
     var body: some View {
         ZStack {
@@ -179,12 +220,13 @@ struct DemoCursorOverlay: View {
                 .fill(Color.white.opacity(0.35))
                 .overlay(Circle().stroke(Color.white.opacity(0.7), lineWidth: 1.5))
                 .frame(width: 34, height: 34)
-                .scaleEffect(pressScale)
+                .scaleEffect(pressScale * (cursor.pressed ? 0.8 : 1))
                 .shadow(color: .black.opacity(0.35), radius: 3)
         }
         .position(x: cursor.position.x, y: cursor.position.y + yCorrection)
         .opacity(cursor.visible ? 1 : 0)
-        .animation(.easeInOut(duration: 0.55), value: cursor.position)
+        .animation(.easeInOut(duration: cursor.moveDuration), value: cursor.position)
+        .animation(.easeOut(duration: 0.12), value: cursor.pressed)
         .animation(.easeInOut(duration: 0.3), value: cursor.visible)
         .allowsHitTesting(false)
         .onChange(of: cursor.clickCount) { _, _ in
@@ -233,22 +275,27 @@ enum Waypoint {
 /// (`QUIP_DEMO_GO`) so the take never starts mid-setup.
 @MainActor
 enum DemoDirector {
-    private static var vm: SearchViewModel!
-    private static var library: GifLibrary!
+    static var vm: SearchViewModel!
+    static var library: GifLibrary!
     private static weak var window: NSWindow?
     private static var suite: UserDefaults!
-    private static var cursor: DemoCursor!
+    static var cursor: DemoCursor!
+    static var dragContext: DragContext!
+    static var ghost: DemoGhost!
 
     /// Rough wall-clock length of each scene, so the recorder knows how long to
     /// roll. Printed as `SCENE_DURATION=` at start. Includes the cursor moves.
     private static let durations: [String: Int] = [
         "search": 10, "favorites": 12, "collections": 15, "overview": 9,
+        "p-collections": 17, "p-copy": 12, "p-layout": 13,
     ]
 
     static func begin(scene: String?, vm: SearchViewModel, library: GifLibrary,
-                      window: NSWindow, suite: UserDefaults, cursor: DemoCursor) {
+                      window: NSWindow, suite: UserDefaults, cursor: DemoCursor,
+                      dragContext: DragContext, ghost: DemoGhost) {
         self.vm = vm; self.library = library; self.window = window
         self.suite = suite; self.cursor = cursor
+        self.dragContext = dragContext; self.ghost = ghost
         guard let scene, !scene.isEmpty else { return }   // no scene ⇒ leave window static
 
         print("SCENE_DURATION=\(durations[scene] ?? 10)")
@@ -276,6 +323,10 @@ enum DemoDirector {
         case "search":      await searchScene()
         case "favorites":   await favoritesScene()
         case "collections": await collectionsScene()
+        case "p-collections": await portfolioCollectionsScene()
+        case "p-copy":      await portfolioCopyScene()
+        case "p-layout":    await portfolioLayoutScene()
+        case "p-still":     await portfolioStillScene()
         default:            await overviewScene()
         }
     }
@@ -357,11 +408,11 @@ enum DemoDirector {
 
     // MARK: Helpers
 
-    private static func pause(_ ms: Int) async { try? await Task.sleep(for: .milliseconds(ms)) }
+    static func pause(_ ms: Int) async { try? await Task.sleep(for: .milliseconds(ms)) }
 
     /// Types into the search field one character at a time (drives the real
     /// live-search via SearchBar's onChange).
-    private static func type(_ text: String, perCharMs: Int = 95) async {
+    static func type(_ text: String, perCharMs: Int = 95) async {
         for ch in text {
             vm.query.append(ch)
             await pause(perCharMs)
@@ -369,14 +420,15 @@ enum DemoDirector {
     }
 
     /// Glides the synthetic cursor to a point and waits for the move to finish.
-    private static func move(to point: CGPoint, settleMs: Int = 650) async {
+    static func move(to point: CGPoint, settleMs: Int = 650, duration: Double = 0.55) async {
         cursor.visible = true
+        cursor.moveDuration = duration
         cursor.position = point
         await pause(settleMs)
     }
 
     /// Glides to a point, then fires a click ripple and pauses briefly.
-    private static func click(_ point: CGPoint) async {
+    static func click(_ point: CGPoint) async {
         await move(to: point)
         cursor.clickCount += 1
         await pause(400)
@@ -385,7 +437,7 @@ enum DemoDirector {
     /// Selects a collection chip (nil = "All"). Driven through a DEBUG-only
     /// notification the LibraryView listens for, since the selection is its
     /// private view state.
-    private static func select(_ collectionID: String?) {
+    static func select(_ collectionID: String?) {
         NotificationCenter.default.post(name: .quipDemoSelectCollection, object: collectionID)
     }
 }
@@ -394,6 +446,25 @@ extension Notification.Name {
     /// DEBUG demo: asks LibraryView to select a collection chip (object = id String,
     /// or nil for "All").
     static let quipDemoSelectCollection = Notification.Name("quipDemoSelectCollection")
+    /// DEBUG demo: sets the layout preset (object = `LayoutMode` raw value).
+    static let quipDemoSetLayout = Notification.Name("quipDemoSetLayout")
+    /// DEBUG demo: the chip a dragged GIF is over (object = collection id, "all",
+    /// or nil for none).
+    static let quipDemoDragTarget = Notification.Name("quipDemoDragTarget")
+    /// DEBUG demo: drop the dragged GIF on a chip (object = collection id or "all").
+    static let quipDemoDrop = Notification.Name("quipDemoDrop")
+    /// DEBUG demo: the GIF under the drawn cursor (object = gif id, or nil).
+    static let quipDemoHover = Notification.Name("quipDemoHover")
+}
+
+extension Color {
+    /// DEBUG demo: a colour from "RRGGBB".
+    init(demoHex hex: String) {
+        let value = UInt32(hex.trimmingCharacters(in: CharacterSet(charactersIn: "#")), radix: 16) ?? 0xFFFFFF
+        self.init(red: Double((value >> 16) & 0xFF) / 255,
+                  green: Double((value >> 8) & 0xFF) / 255,
+                  blue: Double(value & 0xFF) / 255)
+    }
 }
 
 /// Offline `GifBackend` for the demo: serves the bundled GIF files as both search
@@ -401,7 +472,7 @@ extension Notification.Name {
 struct DemoGifSource: GifBackend {
     /// Every demo GIF, in a fixed order (drives trending and search results).
     let all: [Gif]
-    private let bytesByID: [String: Data]
+    private let searchSets: [String: [Gif]]
 
     /// (file id, display title), ordered so neighbouring cells look distinct.
     static let catalog: [(id: String, title: String)] = [
@@ -413,22 +484,54 @@ struct DemoGifSource: GifBackend {
 
     init(assetsDir: URL) {
         var gifs: [Gif] = []
-        var bytes: [String: Data] = [:]
         for entry in Self.catalog {
             let fileURL = assetsDir.appendingPathComponent("\(entry.id).gif")
             guard FileManager.default.fileExists(atPath: fileURL.path) else { continue }
             let urlString = fileURL.absoluteString
             gifs.append(Gif(id: entry.id, gifURL: urlString, previewURL: urlString, title: entry.title))
-            bytes[entry.id] = try? Data(contentsOf: fileURL)
         }
         self.all = gifs
-        self.bytesByID = bytes
+        self.searchSets = Self.loadSearchSets(assetsDir)
     }
 
     func search(_ query: String, apiKey: String,
                 content: GiphyClient.Content, rating: String) async throws -> [Gif] {
+        // Saved real results come back in about the time Giphy takes; the bundled
+        // set keeps the longer pause the older scenes were timed against.
+        if let saved = searchSets[Self.slug(query)] {
+            try? await Task.sleep(for: .milliseconds(200))
+            return saved
+        }
         try? await Task.sleep(for: .milliseconds(450))   // let the spinner breathe
         return all
+    }
+
+    /// Real results saved for a query, so a search shows GIFs that match what was
+    /// typed: `<assets>/search/<slug>/manifest.json` (`[{"id", "title"}]`) beside
+    /// `<id>.gif` files. Queries with no saved set get the bundled GIFs.
+    private static func loadSearchSets(_ assetsDir: URL) -> [String: [Gif]] {
+        let root = assetsDir.appendingPathComponent("search")
+        let slugs = (try? FileManager.default.contentsOfDirectory(atPath: root.path)) ?? []
+        var sets: [String: [Gif]] = [:]
+        for slug in slugs {
+            let dir = root.appendingPathComponent(slug)
+            guard let data = try? Data(contentsOf: dir.appendingPathComponent("manifest.json")),
+                  let entries = try? JSONDecoder().decode([[String: String]].self, from: data)
+            else { continue }
+            sets[slug] = entries.compactMap { entry in
+                guard let id = entry["id"] else { return nil }
+                let file = dir.appendingPathComponent("\(id).gif")
+                guard FileManager.default.fileExists(atPath: file.path) else { return nil }
+                return Gif(id: id, gifURL: file.absoluteString, previewURL: file.absoluteString,
+                           title: entry["title"] ?? "")
+            }
+        }
+        return sets
+    }
+
+    static func slug(_ query: String) -> String {
+        query.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            .split(separator: " ").joined(separator: "-")
     }
 
     func trending(apiKey: String, content: GiphyClient.Content,
@@ -443,8 +546,11 @@ struct DemoGifSource: GifBackend {
         return ["\(term) reaction", "\(term) meme", "\(term) funny", "\(term) gif"]
     }
 
+    /// Every demo GIF is a local file — bundled, a saved search result, or a copy
+    /// from the imported library — so a copy reads it straight off disk.
     func fetchData(for gif: Gif) async throws -> Data {
-        guard let data = bytesByID[gif.id] else { throw GiphyClient.GiphyError.badResponse }
+        guard let url = URL(string: gif.gifURL), url.isFileURL,
+              let data = try? Data(contentsOf: url) else { throw GiphyClient.GiphyError.badResponse }
         return data
     }
 }

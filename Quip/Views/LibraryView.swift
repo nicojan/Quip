@@ -78,7 +78,7 @@ struct LibraryView: View {
 
                 if !library.recents.isEmpty {
                     Section {
-                        horizontalGrid(library.recents)
+                        horizontalGrid(library.recents, anchorPrefix: "recent")
                     } header: {
                         pinnedHeader {
                             HStack {
@@ -147,7 +147,7 @@ struct LibraryView: View {
         } else if filteredFavorites.isEmpty {
             hint("No favorites match “\(favoriteFilter)”.")
         } else {
-            horizontalGrid(filteredFavorites)
+            horizontalGrid(filteredFavorites, anchorPrefix: "fav")
         }
     }
 
@@ -177,7 +177,7 @@ struct LibraryView: View {
     /// the first is full, a third once the second is full, then it scrolls sideways
     /// — so a handful of favourites never sits in a tall, mostly-empty strip.
     /// (`LazyHGrid` fills column-major, so capping the row count does exactly this.)
-    private func horizontalGrid(_ gifs: [Gif]) -> some View {
+    private func horizontalGrid(_ gifs: [Gif], anchorPrefix: String) -> some View {
         let perRow = max(1, columns.count)
         let needed = (gifs.count + perRow - 1) / perRow   // ceil(count / perRow)
         let rowCount = max(1, min(libraryRows, needed))
@@ -190,6 +190,7 @@ struct LibraryView: View {
             LazyHGrid(rows: rows, alignment: .top, spacing: 8) {
                 ForEach(gifs) { gif in
                     cell(gif).frame(width: cellWidth)
+                        .demoAnchor("\(anchorPrefix):\(gif.id)")
                 }
             }
             .padding(.vertical, 6)   // breathing room for the hover magnify

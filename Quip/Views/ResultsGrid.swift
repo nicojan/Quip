@@ -26,6 +26,7 @@ struct ResultsGrid: View {
                         onCopyLink: { onCopyLink(gif) },
                         onToggleFavorite: { onToggleFavorite(gif) }
                     )
+                    .demoAnchor("result:\(gif.id)")
                 }
             }
             .padding(.vertical, 2)

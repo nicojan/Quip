@@ -41,6 +41,9 @@ final class SearchViewModel {
     @ObservationIgnored private var suggestTask: Task<Void, Never>?
     @ObservationIgnored private var copiedResetTask: Task<Void, Never>?
     @ObservationIgnored private var copyFailedResetTask: Task<Void, Never>?
+    /// Where a copy lands. The demo harness swaps in a private named pasteboard so
+    /// a recorded take never overwrites the clipboard of whoever is at the machine.
+    @ObservationIgnored var pasteboard: NSPasteboard = .general
     /// Set when the query is changed programmatically (a chip/suggestion tap), so
     /// the `onChange`-driven live search that echoes the change is skipped instead
     /// of cancelling the explicit search and re-running it after the debounce.
@@ -270,9 +273,8 @@ final class SearchViewModel {
                 let data = try await self.backend.fetchData(for: gif)
                 let file = TempClips.newGifURL()
                 try data.write(to: file)
-                let pasteboard = NSPasteboard.general
-                pasteboard.clearContents()
-                pasteboard.writeObjects([file as NSURL])
+                self.pasteboard.clearContents()
+                self.pasteboard.writeObjects([file as NSURL])
                 library.addRecent(gif)
                 self.markCopied(gif.id)
             } catch {
@@ -287,7 +289,6 @@ final class SearchViewModel {
     /// that prefer a link over a file — it unfurls to a preview in most of them.
     /// Falls back to the media URL for older records with no page URL.
     func copyLink(_ gif: Gif) {
-        let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(gif.pageURL, forType: .string)
         markCopied(gif.id)

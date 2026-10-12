@@ -100,6 +100,13 @@ struct GifThumbnail: View {
                 dragPreview
             }
             .onHover { hovering = $0 }
+            #if DEBUG
+            // The demo cursor is drawn, not real, so it can't trigger onHover; the
+            // director names the GIF it is over instead (object: gif id, or nil).
+            .onReceive(NotificationCenter.default.publisher(for: .quipDemoHover)) { note in
+                hovering = (note.object as? String) == gif.id
+            }
+            #endif
             .help("Click to copy · ⌥-click to copy link · drag to insert, or onto a collection to file")
             // The tap target is a plain view, so spell out the actions for
             // VoiceOver — otherwise there's no way to copy a GIF without a mouse.

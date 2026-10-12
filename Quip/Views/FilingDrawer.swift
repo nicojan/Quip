@@ -95,6 +95,20 @@ struct FilingDrawer: View {
                 cancelEditing()
                 draggingID = nil
             }
+            #if DEBUG
+            // The demo director can't make a real drag session, so it names the chip
+            // a dragged GIF is over (object: a collection id, "all", or nil) and then
+            // drops on it, through the same highlight and drop handlers a drag uses.
+            .onReceive(NotificationCenter.default.publisher(for: .quipDemoDragTarget)) { note in
+                let target = note.object as? String
+                activeTargetID = target == "all" ? allID : target
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .quipDemoDrop)) { note in
+                guard let target = note.object as? String else { return }
+                activeTargetID = nil
+                _ = target == "all" ? favouriteOnly() : fileIntoCollection(target)
+            }
+            #endif
     }
 
     @ViewBuilder private var content: some View {
@@ -208,6 +222,7 @@ struct FilingDrawer: View {
             favouriteOnly()
         }
         .help("Drag a GIF here to save it")
+        .demoAnchor("chip:all")
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
     }
 
@@ -220,6 +235,7 @@ struct FilingDrawer: View {
         let isReorderTarget = activeTargetID == id && draggingID != nil
             && draggingID != id && dragContext.gif == nil
         return chipButton(collection)
+            .demoAnchor("chip:\(id)")
             .overlay(fileHighlight(active: isFiling || flashID == id))
             .overlay(
                 Capsule()
