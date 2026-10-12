@@ -44,6 +44,21 @@ starting size and can't follow a live resize.
 Both scripts build the Debug app into `build/dd-demo` first. Grant Screen
 Recording permission to whatever runs them (Terminal, etc.) once.
 
+## Portfolio clips
+
+`Demo/record-portfolio.py take <clip>` records one of three portfolio clips (`1-collections`, `2-copy`, `3-sizes`) with the Cap CLI and exports a readme (1920x1200, white), website (2560x1600, warm grey) and social (1080x1080 square) version, matching the Chorus clips. It then scans every frame for anything touching the edge or a missing popover, and writes contact sheets and numbered stills. Takes land in `clips/portfolio/<date>/<clip>/t<n>/`; the picked ones go in `clips/FINAL/` with a `REVIEW.md`. It never uploads.
+
+What it relies on in the harness:
+
+- **The stage** (`QUIP_DEMO_STAGE=1`, `QUIP_DEMO_BG=RRGGBB`): a borderless 1280x800-pt window with the popover pinned 50 pt from the top and centred. The window never changes size, so Cap, locked to it by window id, films the popover resizing inside it. Each clip is two takes of the same scene, one per background.
+- **Anchors** (`demoAnchor` in `Support/DemoAnchors.swift`): chips, cells, the search field and the size toggle report their frames, so the scenes aim at them at any size instead of at hand-measured points.
+- **A real library** (`QUIP_DEMO_LIBRARY`): a JSON snapshot of your favourites, recents, collections and recent searches, exported from the real defaults, with a local copy of each GIF, in `assets/library/`. It loads into the demo suite; the real defaults are only ever read, once, to make the snapshot.
+- **Saved searches**: `Demo/fetch-search.sh shocked celebrate` saves real Giphy results for the words the scenes type, in `assets/search/<word>/`. It reads your key from the Keychain (macOS asks) and never prints it.
+
+The harness keeps its own image cache and copies to a private pasteboard, so a take touches neither the installed Quip's cache nor your clipboard.
+
+Known trap: hovering the first "shocked" result (`bGPTxLislwm3u`) sends the window into an AppKit layout loop that crashes it, every time. The collections scene drags the second result instead (`QUIP_DEMO_INDEX`). Not yet checked in the real app.
+
 ## Sample GIFs
 
 `assets/` holds real Giphy GIFs, fetched with the key stored in your Quip
