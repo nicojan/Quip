@@ -112,6 +112,17 @@ enum DemoHarness {
 
         let contentSize = NSSize(width: initialMode.width,
                                  height: initialMode.height(forScreenHeight: screenHeight))
+        if ProcessInfo.processInfo.environment["QUIP_DEMO_POPOVER"] == "1" {
+            // The content in a real NSPopover, resized by the real PopoverMorpher, to
+            // check the morph itself. No stage, no drawn cursor.
+            let anchor = DemoPopover.show(content, size: contentSize, screenHeight: screenHeight)
+            DemoDirector.begin(
+                scene: ProcessInfo.processInfo.environment["QUIP_DEMO_SCENE"],
+                vm: vm, library: library, window: anchor, suite: suite, cursor: cursor,
+                dragContext: dragContext, ghost: ghost
+            )
+            return
+        }
         let hosting: NSViewController
         if stage {
             hosting = NSHostingController(rootView: DemoStage(

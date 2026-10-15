@@ -156,11 +156,11 @@ struct MenuContentView: View {
                 selectedCollectionID = note.object as? String
             }
         }
-        // Lets the demo director press the layout toggle, animated the way the real
-        // popover's resize is, so a clip can show the window changing size.
+        // Lets the demo director press the layout toggle, with the same morph a real
+        // click gets, so a clip can show the window changing size.
         .onReceive(NotificationCenter.default.publisher(for: .quipDemoSetLayout)) { note in
             guard let raw = note.object as? String, LayoutMode(rawValue: raw) != nil else { return }
-            withAnimation(.easeInOut(duration: 0.3)) { layoutModeRaw = raw }
+            withAnimation(SizeMorph.animation(reduceMotion: reduceMotion)) { layoutModeRaw = raw }
         }
         #endif
         .onChange(of: layoutModeRaw) { _, _ in

@@ -139,6 +139,55 @@ enum DemoLibraryImport {
     }
 }
 
+/// Shows the demo content in a real NSPopover hung under a stand-in for the
+/// menu-bar icon at the top centre of the Retina display (the real icon may be
+/// hidden by a menu-bar manager), wired to `PopoverMorpher` exactly as AppDelegate
+/// wires it. For checking the morph in a real popover window.
+@MainActor
+enum DemoPopover {
+    private static var popover: NSPopover?
+    private static var morpher: PopoverMorpher?
+
+    /// Returns the stand-in icon's window, which anchors the popover.
+    static func show<Content: View>(_ content: Content, size: NSSize, screenHeight: CGFloat) -> NSWindow {
+        let screen = NSScreen.screens.max(by: { $0.backingScaleFactor < $1.backingScaleFactor }) ?? NSScreen.main
+        let visible = screen?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 875)
+        let anchor = NSWindow(contentRect: NSRect(x: visible.midX - 11, y: visible.maxY - 22, width: 22, height: 22),
+                              styleMask: .borderless, backing: .buffered, defer: false)
+        anchor.isOpaque = false
+        anchor.backgroundColor = .clear
+        anchor.ignoresMouseEvents = true
+        anchor.level = .statusBar
+        anchor.isReleasedWhenClosed = false
+        anchor.orderFrontRegardless()
+
+        let popover = NSPopover()
+        popover.behavior = .applicationDefined
+        popover.appearance = NSAppearance(named: .darkAqua)
+        popover.contentSize = size
+        popover.contentViewController = PopoverMorpher.host(content)
+        popover.show(relativeTo: anchor.contentView!.bounds, of: anchor.contentView!, preferredEdge: .minY)
+        let morpher = PopoverMorpher(popover: popover)
+        NotificationCenter.default.addObserver(forName: .quipLayoutModeChanged, object: nil, queue: .main) { _ in
+            MainActor.assumeIsolated {
+                let mode = LayoutMode(rawValue: DemoHarness.suite.string(forKey: "layoutMode") ?? "") ?? .narrow
+                morpher.resize(to: NSSize(width: mode.width, height: mode.height(forScreenHeight: screenHeight)),
+                               animated: !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion)
+            }
+        }
+        self.popover = popover
+        self.morpher = morpher
+        if let window = popover.contentViewController?.view.window {
+            print("DEMO_POPOVER_WINDOW_ID=\(window.windowNumber)")
+            print("DEMO_POPOVER_FRAME=\(NSStringFromRect(window.frame))")
+            print("DEMO_SCREEN_FRAME=\(NSStringFromRect(screen?.frame ?? .zero))")
+        }
+        print("DEMO_WINDOW_ID=\(anchor.windowNumber)")
+        fflush(stdout)
+        return anchor
+    }
+}
+
 // MARK: - Portfolio scenes
 
 extension DemoDirector {
