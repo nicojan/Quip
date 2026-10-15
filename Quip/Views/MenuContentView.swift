@@ -172,7 +172,7 @@ struct MenuContentView: View {
         // click gets, so a clip can show the window changing size.
         .onReceive(NotificationCenter.default.publisher(for: .quipDemoSetLayout)) { note in
             guard let raw = note.object as? String, LayoutMode(rawValue: raw) != nil else { return }
-            withAnimation(SizeMorph.animation(reduceMotion: reduceMotion)) { layoutModeRaw = raw }
+            setLayout(raw)
         }
         #endif
         .onChange(of: layoutModeRaw) { _, raw in
