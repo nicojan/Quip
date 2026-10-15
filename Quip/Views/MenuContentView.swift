@@ -66,6 +66,12 @@ struct MenuContentView: View {
         GifWarmup.warm(GifWarmup.gridGifs(
             vm.query.isEmpty ? vm.trending : vm.results,
             popoverHeight: layoutMode.height(forScreenHeight: metrics.launchScreenHeight)))
+        var reduceMotion = reduceMotion
+        #if DEBUG
+        // QUIP_DEMO_REDUCE_MOTION=1: the demo checks the Reduce Motion path
+        // without touching the system setting.
+        if DemoPopover.forceReduceMotion { reduceMotion = true }
+        #endif
         withAnimation(SizeMorph.animation(reduceMotion: reduceMotion)) { shownLayoutRaw = raw }
         layoutModeRaw = raw
     }

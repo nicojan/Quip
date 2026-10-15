@@ -145,6 +145,7 @@ enum DemoLibraryImport {
 /// wires it. For checking the morph in a real popover window.
 @MainActor
 enum DemoPopover {
+    static let forceReduceMotion = ProcessInfo.processInfo.environment["QUIP_DEMO_REDUCE_MOTION"] == "1"
     private static var popover: NSPopover?
     private static var morpher: PopoverMorpher?
 
@@ -172,7 +173,7 @@ enum DemoPopover {
             MainActor.assumeIsolated {
                 let mode = LayoutMode(rawValue: DemoHarness.suite.string(forKey: "layoutMode") ?? "") ?? .narrow
                 morpher.resize(to: NSSize(width: mode.width, height: mode.height(forScreenHeight: screenHeight)),
-                               animated: !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion)
+                               animated: !(forceReduceMotion || NSWorkspace.shared.accessibilityDisplayShouldReduceMotion))
             }
         }
         self.popover = popover
@@ -331,6 +332,11 @@ extension DemoDirector {
     /// Sizes: two, three and five GIFs per row, all the same height, switched live
     /// with the toggle, ending where it started so the clip loops.
     static func portfolioLayoutScene() async {
+        // QUIP_DEMO_QUERY runs the same switches over a page of search results.
+        if let query = ProcessInfo.processInfo.environment["QUIP_DEMO_QUERY"] {
+            await type(query, perCharMs: 40)
+            await pause(1500)
+        }
         await pause(1300)
         for mode in [LayoutMode.tall, .wide, .narrow] {
             guard let toggle = DemoAnchors.shared.frame("layout") else { return }

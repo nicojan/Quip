@@ -27,6 +27,7 @@ struct ResultsGrid: View {
                         onToggleFavorite: { onToggleFavorite(gif) }
                     )
                     .demoAnchor("result:\(gif.id)")
+                    .transition(.opacity)
                 }
             }
             .padding(.vertical, 2)
