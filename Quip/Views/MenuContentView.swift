@@ -14,6 +14,7 @@ struct MenuContentView: View {
     @AppStorage("useStickers") private var useStickers = false
     @State private var vm: SearchViewModel
     @FocusState private var searchFocused: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// Selected collection chip; nil is "All". Owned here (not in LibraryView) so the
     /// one filing drawer above the content can drive it in both the library and the
     /// search grid.
@@ -186,7 +187,13 @@ struct MenuContentView: View {
             Spacer()
             LayoutToggle(mode: Binding(
                 get: { layoutMode },
-                set: { layoutModeRaw = $0.rawValue }
+                set: { mode in
+                    // Every GIF slides from its old slot to its new one while the
+                    // popover resizes around it on the same curve (SizeMorph).
+                    withAnimation(SizeMorph.animation(reduceMotion: reduceMotion)) {
+                        layoutModeRaw = mode.rawValue
+                    }
+                }
             ))
             Button { openSettings() } label: {
                 Image(systemName: "gearshape")
