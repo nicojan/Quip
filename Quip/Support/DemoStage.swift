@@ -29,9 +29,13 @@ final class DemoCallouts {
 /// can't follow.
 struct DemoStage<Content: View>: View {
     static var size: NSSize { NSSize(width: 1280, height: 800) }
+    /// QUIP_DEMO_BG=clear: a transparent stage with no shadow, for an alpha master.
+    static var isClear: Bool { ProcessInfo.processInfo.environment["QUIP_DEMO_BG"] == "clear" }
 
     let background: Color
     let topInset: CGFloat
+    let width: DemoStageWidth
+    let height: CGFloat
     let cursor: DemoCursor
     let ghost: DemoGhost
     let callouts: DemoCallouts
@@ -41,6 +45,7 @@ struct DemoStage<Content: View>: View {
         ZStack(alignment: .top) {
             background
             content
+                .frame(width: width.value)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -53,7 +58,7 @@ struct DemoStage<Content: View>: View {
                         .fill(Theme.surface)
                         // Kept inside the 50-pt margin below the popover, so it fades out
                         // before the frame's edge instead of being cut off by it.
-                        .shadow(color: .black.opacity(0.22), radius: 22, y: 8)
+                        .shadow(color: .black.opacity(Self.isClear ? 0 : 0.22), radius: 22, y: 8)
                 )
                 .padding(.top, topInset)
             DemoGhostOverlay(cursor: cursor, ghost: ghost)
@@ -68,10 +73,83 @@ struct DemoStage<Content: View>: View {
                     .allowsHitTesting(false)
             }
             DemoCursorOverlay(cursor: cursor, yCorrection: 0)
+                // On the cut-out stage nothing may show outside the popover: not a
+                // click ripple past its top edge, not the fading cursor.
+                .mask(alignment: .top) {
+                    if Self.isClear {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .frame(width: width.value, height: height)
+                            .padding(.top, topInset)
+                    } else {
+                        Color.black
+                    }
+                }
         }
         .frame(width: Self.size.width, height: Self.size.height)
         .ignoresSafeArea()
     }
+}
+
+/// The popover's width on the stage, moved frame by frame along SizeMorph's
+/// curve when the layout changes, the way PopoverMorpher moves the real popover
+/// window. The content lays out live at each width, so the stage shows exactly
+/// what the app does.
+@MainActor
+@Observable
+final class DemoStageWidth {
+    private(set) var value: CGFloat
+    @ObservationIgnored private var link: CADisplayLink?
+    @ObservationIgnored private var start: CGFloat = 0
+    @ObservationIgnored private var target: CGFloat = 0
+    @ObservationIgnored private var startTime: CFTimeInterval?   // first frame, as PopoverMorpher
+    @ObservationIgnored private lazy var ticker = DemoTicker { [weak self] link in self?.step(link) }
+
+    init(_ value: CGFloat) {
+        self.value = value
+        NotificationCenter.default.addObserver(forName: .quipLayoutModeChanged, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                let mode = LayoutMode(rawValue: DemoHarness.suite.string(forKey: "layoutMode") ?? "") ?? .narrow
+                self?.morph(to: mode.width)
+            }
+        }
+    }
+
+    private func morph(to width: CGFloat) {
+        guard !DemoPopover.forceReduceMotion, !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion,
+              let screen = NSScreen.screens.max(by: { $0.backingScaleFactor < $1.backingScaleFactor }) else {
+            value = width
+            return
+        }
+        start = value
+        target = width
+        startTime = nil
+        if link == nil {
+            let link = screen.displayLink(target: ticker, selector: #selector(DemoTicker.tick(_:)))
+            link.add(to: .main, forMode: .common)
+            self.link = link
+        }
+    }
+
+    private func step(_ link: CADisplayLink) {
+        let startTime = self.startTime ?? link.timestamp
+        self.startTime = startTime
+        let elapsed = link.targetTimestamp - startTime
+        if SizeMorph.isFinished(elapsed: elapsed) {
+            value = target
+            link.invalidate()
+            self.link = nil
+        } else {
+            value = SizeMorph.size(from: CGSize(width: start, height: 0),
+                                   to: CGSize(width: target, height: 0), elapsed: elapsed).width
+        }
+    }
+}
+
+/// An Objective-C target for a display link, forwarding each tick to a closure.
+final class DemoTicker: NSObject {
+    private let action: (CADisplayLink) -> Void
+    init(_ action: @escaping (CADisplayLink) -> Void) { self.action = action }
+    @objc func tick(_ link: CADisplayLink) { action(link) }
 }
 
 /// Draws the dragged GIF under the cursor, matching `GifThumbnail.dragPreview`.
@@ -327,6 +405,48 @@ extension DemoDirector {
         await pause(800)
         print("STILL_READY"); fflush(stdout)
         await pause(60_000)   // hold until the recorder quits the app
+    }
+
+    /// The size morph, as a loop: two per row, three, five and back to two, each
+    /// held about a second, starting and ending on two per row with no cursor.
+    /// Prints SCENE_START / SCENE_END as host times (CACurrentMediaTime), which the
+    /// recorder uses to cut the loop exactly.
+    static func portfolioMorphScene() async {
+        func segment(_ mode: LayoutMode) -> CGPoint? {
+            guard let toggle = DemoAnchors.shared.frame("layout") else { return nil }
+            let index = CGFloat([LayoutMode.narrow, .tall, .wide].firstIndex(of: mode) ?? 0)
+            return CGPoint(x: toggle.minX + toggle.width / 3 * (index + 0.5), y: toggle.midY)
+        }
+        func press(_ mode: LayoutMode) {
+            cursor.clickCount += 1
+            NotificationCenter.default.post(name: .quipDemoSetLayout, object: mode.rawValue)
+        }
+        guard let tall = segment(.tall) else { return }
+        // The cursor waits, unseen, a little below the toggle.
+        cursor.moveDuration = 0
+        cursor.position = CGPoint(x: tall.x + 30, y: tall.y + 70)
+        await pause(200)
+        print("SCENE_START=\(CACurrentMediaTime())"); fflush(stdout)
+
+        await pause(300)
+        cursor.visible = true                         // fades in over 0.3 s
+        await move(to: tall, settleMs: 650, duration: 0.5)
+        press(.tall)
+        await pause(300 + 600)                        // the morph, then a beat
+        if let wide = segment(.wide) { await move(to: wide, settleMs: 450, duration: 0.4) }
+        press(.wide)
+        await pause(300 + 600)
+        if let narrow = segment(.narrow) { await move(to: narrow, settleMs: 450, duration: 0.4) }
+        press(.narrow)
+        // The narrow popover shrinks out from under the pointer, so it fades out
+        // with this last click, riding along with the toggle (whose right edge moves
+        // in by half the width change) so it never hangs past the popover's edge.
+        cursor.visible = false
+        cursor.moveDuration = SizeMorph.duration
+        cursor.position.x -= (LayoutMode.wide.width - LayoutMode.narrow.width) / 2
+        await pause(300 + 1100)
+        print("SCENE_END=\(CACurrentMediaTime())"); fflush(stdout)
+        await pause(500)
     }
 
     /// Sizes: two, three and five GIFs per row, all the same height, switched live

@@ -126,8 +126,11 @@ enum DemoHarness {
         let hosting: NSViewController
         if stage {
             hosting = NSHostingController(rootView: DemoStage(
-                background: Color(demoHex: ProcessInfo.processInfo.environment["QUIP_DEMO_BG"] ?? "FFFFFF"),
-                topInset: 50, cursor: cursor, ghost: ghost, callouts: DemoCallouts.shared
+                background: DemoStage<EmptyView>.isClear ? .clear
+                    : Color(demoHex: ProcessInfo.processInfo.environment["QUIP_DEMO_BG"] ?? "FFFFFF"),
+                topInset: 50, width: DemoStageWidth(initialMode.width),
+                height: initialMode.height(forScreenHeight: screenHeight),
+                cursor: cursor, ghost: ghost, callouts: DemoCallouts.shared
             ) { content })
         } else {
             hosting = NSHostingController(rootView: ZStack(alignment: .topLeading) {
@@ -151,6 +154,13 @@ enum DemoHarness {
             // No title bar at all: the stage is exactly its fixed size, with square
             // corners, so the recorded frame holds nothing but the stage.
             window.styleMask = [.borderless]
+            if DemoStage<EmptyView>.isClear {
+                // QUIP_DEMO_BG=clear: nothing behind the popover, so a capture of
+                // this window has an alpha channel (the cut-out master).
+                window.isOpaque = false
+                window.backgroundColor = .clear
+                window.hasShadow = false
+            }
         }
         window.setContentSize(stage ? DemoStage<EmptyView>.size : contentSize)
         window.appearance = NSAppearance(named: .darkAqua)
@@ -298,7 +308,7 @@ enum DemoDirector {
     /// roll. Printed as `SCENE_DURATION=` at start. Includes the cursor moves.
     private static let durations: [String: Int] = [
         "search": 10, "favorites": 12, "collections": 15, "overview": 9,
-        "p-collections": 17, "p-copy": 12, "p-layout": 13,
+        "p-collections": 17, "p-copy": 12, "p-layout": 13, "p-morph": 8,
     ]
 
     static func begin(scene: String?, vm: SearchViewModel, library: GifLibrary,
@@ -337,6 +347,7 @@ enum DemoDirector {
         case "p-collections": await portfolioCollectionsScene()
         case "p-copy":      await portfolioCopyScene()
         case "p-layout":    await portfolioLayoutScene()
+        case "p-morph":     await portfolioMorphScene()
         case "p-still":     await portfolioStillScene()
         default:            await overviewScene()
         }
