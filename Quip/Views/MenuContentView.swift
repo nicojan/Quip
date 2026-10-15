@@ -15,6 +15,11 @@ struct MenuContentView: View {
     @State private var vm: SearchViewModel
     @FocusState private var searchFocused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The layout on screen. The toggle sets it inside the morph's animation;
+    /// `layoutModeRaw` alone can't carry one, because an @AppStorage write reaches
+    /// the view in a later, unanimated update, and the GIFs would jump to their new
+    /// slots. Nil until the first change, so it follows the saved value.
+    @State private var shownLayoutRaw: String?
     /// Selected collection chip; nil is "All". Owned here (not in LibraryView) so the
     /// one filing drawer above the content can drive it in both the library and the
     /// search grid.
@@ -52,7 +57,14 @@ struct MenuContentView: View {
         !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private var layoutMode: LayoutMode { LayoutMode(rawValue: layoutModeRaw) ?? .narrow }
+    private var layoutMode: LayoutMode { LayoutMode(rawValue: shownLayoutRaw ?? layoutModeRaw) ?? .narrow }
+
+    /// Switches the layout: every GIF slides from its old slot to its new one while
+    /// the popover resizes around it on the same curve (see SizeMorph).
+    private func setLayout(_ raw: String) {
+        withAnimation(SizeMorph.animation(reduceMotion: reduceMotion)) { shownLayoutRaw = raw }
+        layoutModeRaw = raw
+    }
 
     private var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 8), count: layoutMode.columns)
@@ -163,7 +175,9 @@ struct MenuContentView: View {
             withAnimation(SizeMorph.animation(reduceMotion: reduceMotion)) { layoutModeRaw = raw }
         }
         #endif
-        .onChange(of: layoutModeRaw) { _, _ in
+        .onChange(of: layoutModeRaw) { _, raw in
+            // A change from Settings lands here without the toggle: follow it.
+            if shownLayoutRaw != raw { shownLayoutRaw = raw }
             // Let AppDelegate resize the popover so its arrow re-anchors — the
             // SwiftUI frame change alone leaves the arrow at the old width.
             NotificationCenter.default.post(name: .quipLayoutModeChanged, object: nil)
@@ -195,13 +209,7 @@ struct MenuContentView: View {
             Spacer()
             LayoutToggle(mode: Binding(
                 get: { layoutMode },
-                set: { mode in
-                    // Every GIF slides from its old slot to its new one while the
-                    // popover resizes around it on the same curve (SizeMorph).
-                    withAnimation(SizeMorph.animation(reduceMotion: reduceMotion)) {
-                        layoutModeRaw = mode.rawValue
-                    }
-                }
+                set: { setLayout($0.rawValue) }
             ))
             .demoAnchor("layout")
             Button { openSettings() } label: {
