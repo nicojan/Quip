@@ -160,7 +160,8 @@ struct LibraryView: View {
     /// Trending: the main vertical grid that fills the popover and scrolls down.
     private func grid(_ gifs: [Gif]) -> some View {
         LazyVGrid(columns: columns, spacing: 8) {
-            ForEach(gifs) { gif in cell(gif) }
+            // Fades out a GIF a size change pushes below the fold (see ResultsGrid).
+            ForEach(gifs) { gif in cell(gif).transition(.opacity) }
         }
     }
 
