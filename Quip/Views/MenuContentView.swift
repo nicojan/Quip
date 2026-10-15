@@ -62,6 +62,10 @@ struct MenuContentView: View {
     /// Switches the layout: every GIF slides from its old slot to its new one while
     /// the popover resizes around it on the same curve (see SizeMorph).
     private func setLayout(_ raw: String) {
+        // The grid rows a wider layout pulls into view, ready before they arrive.
+        GifWarmup.warm(GifWarmup.gridGifs(
+            vm.query.isEmpty ? vm.trending : vm.results,
+            popoverHeight: layoutMode.height(forScreenHeight: metrics.launchScreenHeight)))
         withAnimation(SizeMorph.animation(reduceMotion: reduceMotion)) { shownLayoutRaw = raw }
         layoutModeRaw = raw
     }
@@ -174,6 +178,9 @@ struct MenuContentView: View {
     /// open and any rating/stickers change.
     private func refreshOnOpen() {
         vm.handlePopoverOpen()   // reset to home if it's been idle a while
+        // The strip cells a size change can slide into view, ready before it does.
+        GifWarmup.warm(GifWarmup.stripGifs(
+            favorites: library.favorites, recents: library.recents, rows: libraryRows))
         focusSearchSoon()
         vm.loadTrending(apiKey: apiKey, content: content, rating: rating)
         // Re-run the active query if stickers/rating changed while we were closed,
