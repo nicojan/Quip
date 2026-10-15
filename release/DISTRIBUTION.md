@@ -95,6 +95,8 @@ Measuring the notarized DMG avoids both. One refinement measured on 2026-09-09: 
 
 Open the popover on a ProMotion display and switch sizes a few times each way (two to three, three to five, five to two), on the home view and on a page of search results. The popover should widen and narrow over about 0.3 s with the arrow on the icon and the top edge still, the GIFs should keep playing, and no cell should arrive empty. Then turn on Reduce Motion (System Settings › Accessibility › Display) and check the change is quick again, as in 1.1.17. Then close the popover and run the idle check above: the morph clock row must read 0.
 
+This needs you at the machine. On 2026-10-15 the exported, Developer ID-signed 1.1.18 candidate, copied over 1.1.17 in `/Applications`, still stopped at launch on "Quip wants to use your confidential information stored in "com.nicojan.Quip"" and waited for the login password, so an unattended run can't get past launch. The global shortcut also ignores synthetic keystrokes; `defaults delete com.nicojan.Quip didShowFirstRun` opens the popover on the next launch instead.
+
 Why by hand: the unit tests drive `PopoverMorpher` with a stand-in popover and a fake frame clock, so they prove the logic, not that NSPopover accepts a new `contentSize` on every frame. That is the part a macOS update could break.
 
 ### Check that closing the popover really frees the frames
