@@ -180,8 +180,7 @@ Quip/
 ## Verification
 
 - Builds via `xcodebuild -scheme Quip -destination 'platform=macOS'`.
-- Unit tests for `GifLibrary` (favorites/recents/persistence) and `GiphyClient`
-  URL building + response parsing.
+- Unit tests for `GifLibrary` (favorites/recents/persistence) and `GiphyClient` URL building + response parsing, plus the size morph (`SizeMorph`, `PopoverMorpher`, strip widths, `GifWarmup`). Run them with `TEST_RUNNER_QUIP_DEMO=1` so the test host skips the Keychain (see `release/DISTRIBUTION.md`).
 - Manual smoke test: no-key prompt → enter key → search → copy → paste; favorite
   and recents populate; layout toggle resizes; start-at-login registers.
 
