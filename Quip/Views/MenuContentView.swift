@@ -141,10 +141,13 @@ struct MenuContentView: View {
             footer
         }
         .padding(12)
-        .frame(
-            width: layoutMode.width,
-            height: layoutMode.height(forScreenHeight: metrics.launchScreenHeight)
-        )
+        // The width comes from the window, not the layout: during a size change the
+        // popover passes through every width in between (see PopoverMorpher), and
+        // the content lays out live at each one, the way any window does while it's
+        // resized. Together with the animated column change, each GIF then travels
+        // in a straight line from its old slot to its new one.
+        .frame(maxWidth: .infinity)
+        .frame(height: layoutMode.height(forScreenHeight: metrics.launchScreenHeight))
         .background(Theme.surface)
         .overlay(alignment: .top) { filedConfirmation }
         .onAppear { refreshOnOpen() }
