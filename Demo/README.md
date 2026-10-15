@@ -59,6 +59,19 @@ The harness keeps its own image cache and copies to a private pasteboard, so a t
 
 Known trap: hovering the first "shocked" result (`bGPTxLislwm3u`) sends the window into an AppKit layout loop that crashes it, every time. The collections scene drags the second result instead (`QUIP_DEMO_INDEX`). Not yet checked in the real app.
 
+## The size-morph clip (cut-out)
+
+`Demo/record-morph.sh [outdir]` records the size toggle going two, three, five and back to two per row, with the popover resizing live, as a loop on a transparent background. It writes a ProRes 4444 master with alpha (30 fps, 2x), the same frames as PNGs, an H.264 preview on grey and a contact sheet with a frame every 150 ms, to `~/Movies/quip-sizes-morph-<date>/` by default. It then checks every frame: the popover's top edge stays put, and nothing outside the popover has any alpha.
+
+What it relies on:
+
+- **A clear stage** (`QUIP_DEMO_BG=clear`): the stage window is transparent and drops the popover's shadow. The stage moves the popover's width frame by frame on the same curve as the real popover (`DemoStageWidth`), so the content lays out live at each width, as it does in the app.
+- **The `p-morph` scene**: the cursor fades in near the toggle, clicks through the three sizes with about a second on each, and fades out with the last click. It prints `SCENE_START` and `SCENE_END` on the host clock, and the recorder prints the time of its first frame on the same clock, so the loop is cut to the frame.
+- **`Demo/tools/record-window.swift`**: records one window with ScreenCaptureKit, alpha included. Cap and `screencapture -v` both flatten it.
+- **An optimised build** in `build/dd-demo-opt`: Debug (so the harness is in it) with release optimisation, so the morph runs as smoothly as in the shipped app. It is signed ad hoc with the hardened runtime off, so the ad-hoc Sparkle framework loads. It is for recording only.
+
+`QUIP_DEMO_POPOVER=1` shows the content in a real NSPopover hung under a stand-in menu-bar icon at the top of the Retina screen, resized by the real `PopoverMorpher`. Use it to check the morph itself. `QUIP_DEMO_REDUCE_MOTION=1` takes the Reduce Motion path without changing the system setting.
+
 ## Sample GIFs
 
 `assets/` holds real Giphy GIFs, fetched with the key stored in your Quip

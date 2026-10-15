@@ -25,6 +25,11 @@ enum SizeMorph {
     }
 
     static func isFinished(elapsed: Double) -> Bool { elapsed >= duration }
+
+    /// Each morph frame lays the whole popover out again at a new width. At a
+    /// ProMotion display's 120 Hz that work overruns some frames and the edge
+    /// stutters; held to 60 Hz every frame lands on time.
+    static let frameRateRange = CAFrameRateRange(minimum: 30, maximum: 60, preferred: 60)
 }
 
 /// What `PopoverMorpher` needs from a popover. NSPopover has it all; tests use
@@ -165,6 +170,7 @@ private final class DisplayLinkTicker: NSObject, MorphTicker {
         self.onFrame = onFrame
         super.init()
         link = view.displayLink(target: self, selector: #selector(tick(_:)))
+        link?.preferredFrameRateRange = SizeMorph.frameRateRange
         link?.add(to: .main, forMode: .common)
     }
 

@@ -125,6 +125,7 @@ final class DemoStageWidth {
         startTime = nil
         if link == nil {
             let link = screen.displayLink(target: ticker, selector: #selector(DemoTicker.tick(_:)))
+            link.preferredFrameRateRange = SizeMorph.frameRateRange
             link.add(to: .main, forMode: .common)
             self.link = link
         }
