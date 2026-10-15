@@ -5,9 +5,6 @@ import SwiftUI
 struct LibraryView: View {
     @Environment(GifLibrary.self) private var library
     let columns: [GridItem]
-    /// Fixed width of a cell in the horizontal Favorites / Recently-copied strips,
-    /// matched to the vertical Trending grid (computed by MenuContentView).
-    let cellWidth: CGFloat
     /// Number of rows in each horizontal strip (2 or 3, by popover height).
     let libraryRows: Int
     let trending: [Gif]
@@ -163,7 +160,8 @@ struct LibraryView: View {
     /// Trending: the main vertical grid that fills the popover and scrolls down.
     private func grid(_ gifs: [Gif]) -> some View {
         LazyVGrid(columns: columns, spacing: 8) {
-            ForEach(gifs) { gif in cell(gif) }
+            // Fades out a GIF a size change pushes below the fold (see ResultsGrid).
+            ForEach(gifs) { gif in cell(gif).transition(.opacity) }
         }
     }
 
@@ -171,7 +169,7 @@ struct LibraryView: View {
     /// scrolls sideways, so a long list stays capped instead of pushing Trending
     /// off the bottom. No enclosing box — the cells sit directly, left-aligned with
     /// the section header and the Trending grid; the half-shown next cell (see
-    /// `libraryCellWidth`) is the only scroll cue.
+    /// `LayoutMode.stripCellWidth`) is the only scroll cue.
     ///
     /// Rows grow with the content: one row until it fills the width, a second once
     /// the first is full, a third once the second is full, then it scrolls sideways
@@ -189,7 +187,12 @@ struct LibraryView: View {
         return ScrollView(.horizontal, showsIndicators: false) {
             LazyHGrid(rows: rows, alignment: .top, spacing: 8) {
                 ForEach(gifs) { gif in
-                    cell(gif).frame(width: cellWidth)
+                    // Sized from the strip's live width, not the layout preset, so
+                    // a size change moves the cells with the window instead of
+                    // jumping them to the new preset's size on the first frame.
+                    cell(gif).containerRelativeFrame(.horizontal) { length, _ in
+                        LayoutMode.stripCellWidth(contentWidth: length)
+                    }
                 }
             }
             .padding(.vertical, 6)   // breathing room for the hover magnify

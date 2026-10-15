@@ -85,6 +85,9 @@ enum DemoHarness {
                                  height: initialMode.height(forScreenHeight: 900))
         let root = ZStack(alignment: .topLeading) {
             content
+                // The content takes the width it's given (the popover drives it
+                // during a size change), so pin it to the preset here.
+                .frame(width: contentSize.width, height: contentSize.height)
             DemoCursorOverlay(cursor: cursor)
                 .frame(width: contentSize.width, height: contentSize.height)
         }

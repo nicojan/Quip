@@ -33,3 +33,30 @@ final class LayoutModeTests: XCTestCase {
         XCTAssertEqual(LayoutMode(legacyIsCompact: false).width, 320)
     }
 }
+
+final class StripCellWidthTests: XCTestCase {
+    /// At each preset's own width, a strip shows the same cells as before:
+    /// 1.5 for narrow, 2.5 for tall, 4.5 for wide (content = width minus 24 pt).
+    func testMatchesEachPresetAtItsWidth() {
+        XCTAssertEqual(LayoutMode.stripCellWidth(contentWidth: 296), 186)
+        XCTAssertEqual(LayoutMode.stripCellWidth(contentWidth: 416), 156)
+        XCTAssertEqual(LayoutMode.stripCellWidth(contentWidth: 616), 128)
+    }
+
+    /// Between presets it moves smoothly and one way, so a morph that passes
+    /// through every width in between never jumps or wobbles.
+    func testChangesSmoothlyBetweenPresets() {
+        var previous = LayoutMode.stripCellWidth(contentWidth: 296)
+        for width in stride(from: 297.0, through: 616.0, by: 1.0) {
+            let cell = LayoutMode.stripCellWidth(contentWidth: width)
+            XCTAssertLessThanOrEqual(cell, previous)
+            XCTAssertLessThan(previous - cell, 1)
+            previous = cell
+        }
+    }
+
+    func testClampsOutsideThePresets() {
+        XCTAssertEqual(LayoutMode.stripCellWidth(contentWidth: 100), 186)
+        XCTAssertEqual(LayoutMode.stripCellWidth(contentWidth: 2000), 128)
+    }
+}
