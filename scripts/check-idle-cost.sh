@@ -29,6 +29,9 @@ if ! [ "$LINKS" -eq "$LINKS" ] 2>/dev/null; then
   echo "ERROR: could not count display links. Nothing was measured."
   exit 2
 fi
+# The size-change morph runs its own display link on the main thread, which the
+# CVDisplayLink count above can't see. It must be gone once the popover shuts.
+MORPH=$(command grep -ac 'PopoverMorpher\|DisplayLinkTicker' "$TMP")
 FOOT=$(footprint -p "$PID" 2>/dev/null | command grep -a "phys_footprint:" | awk '{print $2, $3}')
 PEAK=$(footprint -p "$PID" 2>/dev/null | command grep -a "phys_footprint_peak:" | awk '{print $2, $3}')
 RASTER=$(footprint -p "$PID" 2>/dev/null | command grep -a "CG raster data" | awk '{print $1, $2}')
@@ -38,6 +41,7 @@ echo "Quip pid $PID, up $UPTIME"
 echo "  (0 links only means something if you browsed first: a Quip that never"
 echo "   loaded a thumbnail has nothing to animate and passes for free.)"
 echo "  display links   $LINKS      (want 0 with the popover closed; 1.1.15 shipped 36)"
+echo "  morph clock     $MORPH      (want 0: frames inside the size-change morph)"
 echo "  footprint       $FOOT"
 echo "  peak footprint  $PEAK   (1.1.15 reached 938 MB over two days)"
 echo "  CG raster       $RASTER"
@@ -45,6 +49,11 @@ echo
 if [ "$LINKS" -gt 0 ]; then
   echo "FAIL: $LINKS display links are still running with the popover shut."
   echo "      Check that PopoverVisibility.isOpen reaches GifThumbnail."
+  exit 1
+fi
+if [ "$MORPH" -gt 0 ]; then
+  echo "FAIL: the size-change morph is still ticking with the popover shut."
+  echo "      Check that popoverWillClose / popoverDidClose call morpher.finish()."
   exit 1
 fi
 echo "Display links are stopped. Read the footprint yourself: it should sit"

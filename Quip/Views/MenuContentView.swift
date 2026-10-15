@@ -14,6 +14,12 @@ struct MenuContentView: View {
     @AppStorage("useStickers") private var useStickers = false
     @State private var vm: SearchViewModel
     @FocusState private var searchFocused: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The layout on screen. The toggle sets it inside the morph's animation;
+    /// `layoutModeRaw` alone can't carry one, because an @AppStorage write reaches
+    /// the view in a later, unanimated update, and the GIFs would jump to their new
+    /// slots. Nil until the first change, so it follows the saved value.
+    @State private var shownLayoutRaw: String?
     /// Selected collection chip; nil is "All". Owned here (not in LibraryView) so the
     /// one filing drawer above the content can drive it in both the library and the
     /// search grid.
@@ -51,22 +57,29 @@ struct MenuContentView: View {
         !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private var layoutMode: LayoutMode { LayoutMode(rawValue: layoutModeRaw) ?? .narrow }
+    private var layoutMode: LayoutMode { LayoutMode(rawValue: shownLayoutRaw ?? layoutModeRaw) ?? .narrow }
+
+    /// Loads the GIFs a wider layout slides into view (the next strip cells, the
+    /// next grid rows) into memory, so none arrives empty mid-morph. Run when the
+    /// pointer reaches the size toggle, a moment before the click, so a user who
+    /// never changes size never pays for it. Cache-only: no network.
+    private func warmForSizeChange() {
+        GifWarmup.warm(
+            GifWarmup.stripGifs(favorites: library.favorites, recents: library.recents, rows: libraryRows)
+            + GifWarmup.gridGifs(vm.query.isEmpty ? vm.trending : vm.results,
+                                 popoverHeight: layoutMode.height(forScreenHeight: metrics.launchScreenHeight)))
+    }
+
+    /// Switches the layout: every GIF slides from its old slot to its new one while
+    /// the popover resizes around it on the same curve (see SizeMorph).
+    private func setLayout(_ raw: String) {
+        warmForSizeChange()   // for a change made without hovering (keyboard, VoiceOver)
+        withAnimation(SizeMorph.animation(reduceMotion: reduceMotion)) { shownLayoutRaw = raw }
+        layoutModeRaw = raw
+    }
 
     private var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 8), count: layoutMode.columns)
-    }
-
-    /// Width of one GIF cell in the horizontal Favorites / Recently-copied strips.
-    /// Sized so *half* of the next cell shows past the last full one — an obvious
-    /// "peep" that the strip scrolls sideways. So a 2-up layout shows 1.5 cells,
-    /// 3-up shows 2.5, 5-up shows 4.5. `content` is the popover width minus the
-    /// 12pt outer padding on each side.
-    private var libraryCellWidth: CGFloat {
-        let cols = CGFloat(layoutMode.columns)
-        let visible = cols - 0.5
-        let content = layoutMode.width - 24
-        return ((content - 8 * cols) / visible).rounded(.down)
     }
 
     /// Rows in each horizontal strip, by popover height (all layouts are now the
@@ -128,10 +141,13 @@ struct MenuContentView: View {
             footer
         }
         .padding(12)
-        .frame(
-            width: layoutMode.width,
-            height: layoutMode.height(forScreenHeight: metrics.launchScreenHeight)
-        )
+        // The width comes from the window, not the layout: during a size change the
+        // popover passes through every width in between (see PopoverMorpher), and
+        // the content lays out live at each one, the way any window does while it's
+        // resized. Together with the animated column change, each GIF then travels
+        // in a straight line from its old slot to its new one.
+        .frame(maxWidth: .infinity)
+        .frame(height: layoutMode.height(forScreenHeight: metrics.launchScreenHeight))
         .background(Theme.surface)
         .overlay(alignment: .top) { filedConfirmation }
         .onAppear { refreshOnOpen() }
@@ -140,6 +156,8 @@ struct MenuContentView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .quipPopoverClosed)) { _ in
             vm.handlePopoverClose()
+            // Follow the saved layout again, in case Settings changes it while closed.
+            shownLayoutRaw = nil
             // A drag that ended by leaving the popover (drag-out to another app)
             // never hit a chip, so clear it here — otherwise the drawer would reopen
             // still expanded.
@@ -154,7 +172,9 @@ struct MenuContentView: View {
             }
         }
         #endif
-        .onChange(of: layoutModeRaw) { _, _ in
+        .onChange(of: layoutModeRaw) { _, raw in
+            // A change from Settings lands here without the toggle: follow it.
+            if shownLayoutRaw != raw { shownLayoutRaw = raw }
             // Let AppDelegate resize the popover so its arrow re-anchors — the
             // SwiftUI frame change alone leaves the arrow at the old width.
             NotificationCenter.default.post(name: .quipLayoutModeChanged, object: nil)
@@ -186,8 +206,9 @@ struct MenuContentView: View {
             Spacer()
             LayoutToggle(mode: Binding(
                 get: { layoutMode },
-                set: { layoutModeRaw = $0.rawValue }
+                set: { setLayout($0.rawValue) }
             ))
+            .onHover { if $0 { warmForSizeChange() } }
             Button { openSettings() } label: {
                 Image(systemName: "gearshape")
             }
@@ -234,7 +255,6 @@ struct MenuContentView: View {
         } else if vm.query.isEmpty {
             LibraryView(
                 columns: columns,
-                cellWidth: libraryCellWidth,
                 libraryRows: libraryRows,
                 trending: vm.trending,
                 filing: filing,

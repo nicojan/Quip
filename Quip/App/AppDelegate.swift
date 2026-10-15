@@ -12,6 +12,8 @@ import KeyboardShortcuts
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private let popover = NSPopover()
+    /// Animates the popover between layout sizes (see `SizeMorph`).
+    private lazy var morpher = PopoverMorpher(popover: popover)
     private var settingsWindow: NSWindow?
 
     /// Usable height of the display the popover opens on (`visibleFrame`, so it
@@ -70,8 +72,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // render dark-on-dark when the OS is in light mode.
         popover.appearance = NSAppearance(named: .darkAqua)
         popover.contentSize = NSSize(width: 320, height: 600)
-        popover.contentViewController = NSHostingController(
-            rootView: MenuContentView(
+        popover.contentViewController = PopoverMorpher.host(
+            MenuContentView(
                 openSettings: { [weak self] in self?.openSettings() },
                 closePopover: { [weak self] in self?.popover.performClose(nil) }
             )
@@ -117,16 +119,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         // Resize through NSPopover when the layout mode changes while open, so the
-        // anchor arrow re-anchors instead of stranding at the previous width.
+        // anchor arrow re-anchors instead of stranding at the previous width. The
+        // window morphs in step with the content; under Reduce Motion it takes
+        // NSPopover's own quick resize, as it always did.
         NotificationCenter.default.addObserver(
             forName: .quipLayoutModeChanged, object: nil, queue: .main
         ) { [weak self] _ in
-            guard let self, self.popover.isShown else { return }
-            let mode = LayoutMode(rawValue: UserDefaults.standard.string(forKey: "layoutMode") ?? "") ?? .narrow
-            self.popover.contentSize = NSSize(
-                width: mode.width,
-                height: mode.height(forScreenHeight: self.layoutMetrics.launchScreenHeight)
-            )
+            MainActor.assumeIsolated {
+                guard let self, self.popover.isShown else { return }
+                let mode = LayoutMode(rawValue: UserDefaults.standard.string(forKey: "layoutMode") ?? "") ?? .narrow
+                self.morpher.resize(
+                    to: NSSize(width: mode.width,
+                               height: mode.height(forScreenHeight: self.layoutMetrics.launchScreenHeight)),
+                    animated: !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+                )
+            }
         }
     }
 
@@ -229,7 +236,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let screenHeight = (button.window?.screen ?? NSScreen.main)?.visibleFrame.height ?? 800
             layoutMetrics.launchScreenHeight = screenHeight
             let mode = LayoutMode(rawValue: UserDefaults.standard.string(forKey: "layoutMode") ?? "") ?? .narrow
-            popover.contentSize = NSSize(width: mode.width, height: mode.height(forScreenHeight: screenHeight))
+            morpher.resize(to: NSSize(width: mode.width, height: mode.height(forScreenHeight: screenHeight)),
+                           animated: false)
 
             NSApp.activate(ignoringOtherApps: true)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
@@ -278,10 +286,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 // MARK: - Popover close events
 
 extension AppDelegate: @preconcurrency NSPopoverDelegate {
+    /// Ends a morph before the popover goes, so its close animation (switched off
+    /// during a morph) still plays.
+    func popoverWillClose(_ notification: Notification) {
+        morpher.finish()
+    }
+
     func popoverDidClose(_ notification: Notification) {
         // Re-arm transient auto-close in case it was suspended for emoji picking
         // and the popover closed by another path first.
         popover.behavior = .transient
+        morpher.finish()   // never leave the display link running behind a closed popover
         PopoverVisibility.shared.isOpen = false
         NotificationCenter.default.post(name: .quipPopoverClosed, object: nil)
     }
