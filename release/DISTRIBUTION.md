@@ -78,6 +78,7 @@ Open the app, browse a few searches so a screenful of thumbnails loads, close th
 | Reading | Want | 1.1.15 shipped |
 |---|---|---|
 | `CVDisplayLink` threads, popover closed | 0 | 36 |
+| Morph clock (`PopoverMorpher` frames), popover closed | 0 | did not exist (added after 1.1.17) |
 | Footprint after ordinary use | near the 128 MB cache ceiling plus overhead | 503 MB |
 | Peak footprint over days | same | 938 MB |
 
@@ -86,9 +87,15 @@ Why this is a release step and not a test. Both regressions it catches shipped i
 Two things distort the reading if you measure a locally-built copy instead of the signed one:
 
 - **Little Snitch** does not match a local build against the rule for `/Applications/Quip.app`, because a local build is ad-hoc signed. Most thumbnails then fail to load, and a `loadFailed` cell never retries, so the grid fills with placeholders that look like a bug in the app. Confirm with `find ~/Library/Caches/com.hackemist.SDImageCache -type f -newermt "-5 minutes" | wc -l` — a blocked build writes almost nothing.
-- **The Keychain** re-prompts on every rebuild, because re-signing changes the ACL identity. `Credentials.shared` reads the key synchronously on the main thread inside `applicationDidFinishLaunching`, so an unanswered prompt hangs the app at launch with no window. This also wedges `xcodebuild test` with "The test runner hung before establishing connection."
+- **The Keychain** re-prompts on every rebuild, because re-signing changes the ACL identity. `Credentials.shared` reads the key synchronously on the main thread inside `applicationDidFinishLaunching`, so an unanswered prompt hangs the app at launch with no window. This also wedges `xcodebuild test` with "The test runner hung before establishing connection." For tests, run `TEST_RUNNER_QUIP_DEMO=1 xcodebuild test -scheme Quip -destination 'platform=macOS'`: the test host then starts the DEBUG demo harness, which keeps the key in memory and never opens the Keychain.
 
 Measuring the notarized DMG avoids both. One refinement measured on 2026-09-09: it is *ad-hoc* signing that trips Little Snitch, not local building as such. A Release build signed with the Apple Development certificate loaded 4440 raster objects off Giphy trending without complaint.
+
+### Check the size change in the real popover
+
+Open the popover on a ProMotion display and switch sizes a few times each way (two to three, three to five, five to two), on the home view and on a page of search results. The popover should widen and narrow over about 0.3 s with the arrow on the icon and the top edge still, the GIFs should keep playing, and no cell should arrive empty. Then turn on Reduce Motion (System Settings › Accessibility › Display) and check the change is quick again, as in 1.1.17. Then close the popover and run the idle check above: the morph clock row must read 0.
+
+Why by hand: the unit tests drive `PopoverMorpher` with a stand-in popover and a fake frame clock, so they prove the logic, not that NSPopover accepts a new `contentSize` on every frame. That is the part a macOS update could break.
 
 ### Check that closing the popover really frees the frames
 
