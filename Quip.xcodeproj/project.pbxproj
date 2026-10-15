@@ -21,10 +21,12 @@
 		3EC860C9A026F8B1E62DEB07 /* DemoHarness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435F47DBE07F6C2DB2F3C385 /* DemoHarness.swift */; };
 		465FFF72C28DD5B8F9582F5B /* FilingDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 716D628428853097007870EA /* FilingDrawer.swift */; };
 		468D9C5C270E472712F22B69 /* UpdaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */; };
+		47C6E674E0CDC85FE5F6C114 /* SizeMorphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570DB6BA41FBCC9278DFE1B5 /* SizeMorphTests.swift */; };
 		4CD43D15E9A9323F63EBC7B2 /* EmojiField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F97FB6D8431120DE9BF151 /* EmojiField.swift */; };
 		53857FCF1F6F4BA2DAA30C15 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C83A68E9C8860698D8C44B /* Theme.swift */; };
 		53FCF696BC6A5FEDAED4F851 /* LoginItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA19FE181D760F4BDA356692 /* LoginItem.swift */; };
 		5524DF7B4D9D90EDF0350376 /* GifThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20AEE5F8920C4B47860662B /* GifThumbnail.swift */; };
+		563DBCBF8D45879A13643621 /* GifWarmup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE77DBD369C97BC54F75A4E /* GifWarmup.swift */; };
 		5996E590EF1C753135A17814 /* ResultsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */; };
 		5D26FAA4669502592670C855 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC6B3554A631E6327007F7 /* SearchBar.swift */; };
 		647F5462C4DC73977CD4AF50 /* Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BAEA701E5EE511509170FB /* Shortcuts.swift */; };
@@ -40,6 +42,7 @@
 		9F2B2B9526ED0144C025C94D /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 8660C02B6E3D000D231E2FF2 /* KeyboardShortcuts */; };
 		9FEF455E6DA8093FBCD705AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E923A413E48382C48726D7 /* AppDelegate.swift */; };
 		A022D503133729CE8F45487B /* HideVerticalScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE699BB1CB28734C62601B6 /* HideVerticalScroller.swift */; };
+		A31590218D1BC59545034157 /* GifWarmupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8FF9FC42151065556174A /* GifWarmupTests.swift */; };
 		A43F7877C2E6690D3CDA2F4B /* GifCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE87528A22D99A1B4669C347 /* GifCollection.swift */; };
 		A45CAAAD40DD8BC3FAC71C16 /* EmojiGlyphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262EBE22FAE9F31BBFDEC266 /* EmojiGlyphTests.swift */; };
 		A7C0802AE25F752F0BF1B6D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */; };
@@ -55,6 +58,7 @@
 		F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A601EAED4E5759F30A405D /* GifLibraryTests.swift */; };
 		F7CA9DF5B5FD1DF007D841D2 /* MenuContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329ED5656C8204B0D481217E /* MenuContentView.swift */; };
 		F94940FB8260567A726DCAC7 /* QuipDragType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BE62A05D9034C02F6634FD /* QuipDragType.swift */; };
+		FD9B7EDBDFDAAB48C637C3AB /* SizeMorph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B57E825CF3F168B93E8E6A1 /* SizeMorph.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +88,7 @@
 		47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsGrid.swift; sourceTree = "<group>"; };
 		4B84AB8C6650894643A55E21 /* QuipDragProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuipDragProvider.swift; sourceTree = "<group>"; };
 		561B68C798B101F8AA028472 /* LayoutToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutToggle.swift; sourceTree = "<group>"; };
+		570DB6BA41FBCC9278DFE1B5 /* SizeMorphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeMorphTests.swift; sourceTree = "<group>"; };
 		5AE024ADE68494F57F80E6F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6BC7C5D217AAF7EECC5D318E /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		6E8E8D4E7D11E9CCFDD7EFEF /* PopoverVisibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverVisibility.swift; sourceTree = "<group>"; };
@@ -92,10 +97,12 @@
 		7EE699BB1CB28734C62601B6 /* HideVerticalScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideVerticalScroller.swift; sourceTree = "<group>"; };
 		85847C7B3D4B89D42C149EEF /* CollectionFiling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionFiling.swift; sourceTree = "<group>"; };
 		86BAEA701E5EE511509170FB /* Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcuts.swift; sourceTree = "<group>"; };
+		8AE8FF9FC42151065556174A /* GifWarmupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifWarmupTests.swift; sourceTree = "<group>"; };
 		8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyClientTests.swift; sourceTree = "<group>"; };
 		9961B7E67492052A1F97CB3B /* Gif.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gif.swift; sourceTree = "<group>"; };
 		99C83A68E9C8860698D8C44B /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		9AC3724BAC12DBAE5CD9BBD9 /* Quip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Quip.entitlements; sourceTree = "<group>"; };
+		9B57E825CF3F168B93E8E6A1 /* SizeMorph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeMorph.swift; sourceTree = "<group>"; };
 		9C133CD5CB4A9C5A8AA37127 /* LayoutModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutModeTests.swift; sourceTree = "<group>"; };
 		9F498A8774C73FC92103DC0A /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		A19CC2C3EF3219E3B802972E /* SearchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelTests.swift; sourceTree = "<group>"; };
@@ -116,6 +123,7 @@
 		F8F97FB6D8431120DE9BF151 /* EmojiField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiField.swift; sourceTree = "<group>"; };
 		FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
 		FD662B3C125B123FE10FFC0D /* GifLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifLibrary.swift; sourceTree = "<group>"; };
+		FFE77DBD369C97BC54F75A4E /* GifWarmup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifWarmup.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +147,7 @@
 				9F498A8774C73FC92103DC0A /* Credentials.swift */,
 				C9E1DC6F296F4E8BE7F18ADE /* GifImageCache.swift */,
 				FD662B3C125B123FE10FFC0D /* GifLibrary.swift */,
+				FFE77DBD369C97BC54F75A4E /* GifWarmup.swift */,
 				EBFF15A2C60060D053FAEEE9 /* GiphyClient.swift */,
 				BA19FE181D760F4BDA356692 /* LoginItem.swift */,
 			);
@@ -198,9 +207,11 @@
 				F52D28C8CA2118B7C0D755F1 /* GifCodableTests.swift */,
 				1C65E867462E105F4B319796 /* GifImageCacheTests.swift */,
 				42A601EAED4E5759F30A405D /* GifLibraryTests.swift */,
+				8AE8FF9FC42151065556174A /* GifWarmupTests.swift */,
 				8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */,
 				9C133CD5CB4A9C5A8AA37127 /* LayoutModeTests.swift */,
 				A19CC2C3EF3219E3B802972E /* SearchViewModelTests.swift */,
+				570DB6BA41FBCC9278DFE1B5 /* SizeMorphTests.swift */,
 			);
 			path = QuipTests;
 			sourceTree = "<group>";
@@ -227,6 +238,7 @@
 				4B84AB8C6650894643A55E21 /* QuipDragProvider.swift */,
 				D0BE62A05D9034C02F6634FD /* QuipDragType.swift */,
 				86BAEA701E5EE511509170FB /* Shortcuts.swift */,
+				9B57E825CF3F168B93E8E6A1 /* SizeMorph.swift */,
 				E507AEEF4F8AF976662A154E /* TempClips.swift */,
 				99C83A68E9C8860698D8C44B /* Theme.swift */,
 				FD0F2757A4CCB2118ED1BAF3 /* UpdaterView.swift */,
@@ -361,9 +373,11 @@
 				DA0629DB3527EBAEACB0C6B9 /* GifCodableTests.swift in Sources */,
 				67BE87666D3A68EF1C3304DD /* GifImageCacheTests.swift in Sources */,
 				F74C0E8173281798C044D7BE /* GifLibraryTests.swift in Sources */,
+				A31590218D1BC59545034157 /* GifWarmupTests.swift in Sources */,
 				EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */,
 				7CCD4D61429B5909A511E1FC /* LayoutModeTests.swift in Sources */,
 				291B9AF7B3D5F439017FC21A /* SearchViewModelTests.swift in Sources */,
+				47C6E674E0CDC85FE5F6C114 /* SizeMorphTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -385,6 +399,7 @@
 				91E68197A4440754F55C63AC /* GifImageCache.swift in Sources */,
 				36A042FE879EADCC29BA532C /* GifLibrary.swift in Sources */,
 				5524DF7B4D9D90EDF0350376 /* GifThumbnail.swift in Sources */,
+				563DBCBF8D45879A13643621 /* GifWarmup.swift in Sources */,
 				2B6886FA998CD123C8B74ACC /* GiphyClient.swift in Sources */,
 				A022D503133729CE8F45487B /* HideVerticalScroller.swift in Sources */,
 				7C0C44D5B79B3872B8C91945 /* LayoutMode.swift in Sources */,
@@ -403,6 +418,7 @@
 				3B38857BCF6329F14195ACFD /* SearchViewModel.swift in Sources */,
 				090BA255191D69993B6B55DB /* SettingsView.swift in Sources */,
 				647F5462C4DC73977CD4AF50 /* Shortcuts.swift in Sources */,
+				FD9B7EDBDFDAAB48C637C3AB /* SizeMorph.swift in Sources */,
 				E89291B978D8DE6B2D32119D /* TempClips.swift in Sources */,
 				53857FCF1F6F4BA2DAA30C15 /* Theme.swift in Sources */,
 				468D9C5C270E472712F22B69 /* UpdaterView.swift in Sources */,

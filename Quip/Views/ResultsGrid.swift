@@ -26,6 +26,10 @@ struct ResultsGrid: View {
                         onCopyLink: { onCopyLink(gif) },
                         onToggleFavorite: { onToggleFavorite(gif) }
                     )
+                    // A size change that pushes a GIF below the fold drops it from
+                    // the lazy grid at once; fading it lets it slide off instead of
+                    // vanishing mid-morph.
+                    .transition(.opacity)
                 }
             }
             .padding(.vertical, 2)
