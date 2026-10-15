@@ -30,6 +30,7 @@
 		563DBCBF8D45879A13643621 /* GifWarmup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE77DBD369C97BC54F75A4E /* GifWarmup.swift */; };
 		5996E590EF1C753135A17814 /* ResultsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47320566AEF3A7E7DE02B739 /* ResultsGrid.swift */; };
 		5D26FAA4669502592670C855 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC6B3554A631E6327007F7 /* SearchBar.swift */; };
+		6017C94CD2753CA839CF0333 /* PopoverMorpherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA37C58FFCF49D6258B35F4 /* PopoverMorpherTests.swift */; };
 		647F5462C4DC73977CD4AF50 /* Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BAEA701E5EE511509170FB /* Shortcuts.swift */; };
 		67BE87666D3A68EF1C3304DD /* GifImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C65E867462E105F4B319796 /* GifImageCacheTests.swift */; };
 		6F4E32EF440A338208DB80C7 /* PopoverVisibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E8D4E7D11E9CCFDD7EFEF /* PopoverVisibility.swift */; };
@@ -77,6 +78,7 @@
 		07510BAD11D2DA590C44CE42 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		07CB116E966C3BDA29250791 /* LayoutMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutMode.swift; sourceTree = "<group>"; };
 		099696AE8697FED5C13E62CD /* QuipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QuipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0DA37C58FFCF49D6258B35F4 /* PopoverMorpherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverMorpherTests.swift; sourceTree = "<group>"; };
 		15E923A413E48382C48726D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1C65E867462E105F4B319796 /* GifImageCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifImageCacheTests.swift; sourceTree = "<group>"; };
 		1D7D2ACB961493233251651D /* QuipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuipApp.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 				8AE8FF9FC42151065556174A /* GifWarmupTests.swift */,
 				8F90930B90A8FAAAA7B20227 /* GiphyClientTests.swift */,
 				9C133CD5CB4A9C5A8AA37127 /* LayoutModeTests.swift */,
+				0DA37C58FFCF49D6258B35F4 /* PopoverMorpherTests.swift */,
 				A19CC2C3EF3219E3B802972E /* SearchViewModelTests.swift */,
 				570DB6BA41FBCC9278DFE1B5 /* SizeMorphTests.swift */,
 			);
@@ -382,6 +385,7 @@
 				A31590218D1BC59545034157 /* GifWarmupTests.swift in Sources */,
 				EAFDA0189E8635576464D3E1 /* GiphyClientTests.swift in Sources */,
 				7CCD4D61429B5909A511E1FC /* LayoutModeTests.swift in Sources */,
+				6017C94CD2753CA839CF0333 /* PopoverMorpherTests.swift in Sources */,
 				291B9AF7B3D5F439017FC21A /* SearchViewModelTests.swift in Sources */,
 				47C6E674E0CDC85FE5F6C114 /* SizeMorphTests.swift in Sources */,
 			);

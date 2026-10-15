@@ -1,4 +1,5 @@
 import XCTest
+import SDWebImage
 @testable import Quip
 
 final class GifWarmupTests: XCTestCase {
@@ -30,5 +31,16 @@ final class GifWarmupTests: XCTestCase {
     func testGridTakesTheWidestLayoutsVisibleCells() {
         let picked = GifWarmup.gridGifs(gifs("g", 100), popoverHeight: 700)
         XCTAssertEqual(picked.count, 35)   // 7 rows of 100 pt in 700 pt, 5 across
+    }
+}
+
+final class GifWarmupOptionsTests: XCTestCase {
+    /// Warming must never download: a GIF not yet on disk is skipped.
+    func testNetworkGifsAreCacheOnly() {
+        XCTAssertTrue(GifWarmup.options(for: URL(string: "https://media.giphy.com/a.gif")!).contains(.fromCacheOnly))
+    }
+
+    func testLocalFilesAreRead() {
+        XCTAssertFalse(GifWarmup.options(for: URL(fileURLWithPath: "/tmp/a.gif")).contains(.fromCacheOnly))
     }
 }

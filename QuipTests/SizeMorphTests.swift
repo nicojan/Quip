@@ -25,8 +25,8 @@ final class SizeMorphTests: XCTestCase {
         XCTAssertFalse(SizeMorph.isFinished(elapsed: SizeMorph.duration / 2))
     }
 
-    /// The height and top edge stay put: only the width moves.
-    func testHeightNeverChanges() {
+    /// Every layout shares one height, so a morph between them moves only the width.
+    func testSameHeightStaysPutWhileTheWidthMoves() {
         for step in 0...30 {
             let elapsed = SizeMorph.duration * Double(step) / 30
             XCTAssertEqual(SizeMorph.size(from: narrow, to: wide, elapsed: elapsed).height, 700)

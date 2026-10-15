@@ -120,8 +120,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Resize through NSPopover when the layout mode changes while open, so the
         // anchor arrow re-anchors instead of stranding at the previous width. The
-        // window morphs in step with the content; under Reduce Motion it changes
-        // at once, as it always did.
+        // window morphs in step with the content; under Reduce Motion it takes
+        // NSPopover's own quick resize, as it always did.
         NotificationCenter.default.addObserver(
             forName: .quipLayoutModeChanged, object: nil, queue: .main
         ) { [weak self] _ in
@@ -286,6 +286,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 // MARK: - Popover close events
 
 extension AppDelegate: @preconcurrency NSPopoverDelegate {
+    /// Ends a morph before the popover goes, so its close animation (switched off
+    /// during a morph) still plays.
+    func popoverWillClose(_ notification: Notification) {
+        morpher.finish()
+    }
+
     func popoverDidClose(_ notification: Notification) {
         // Re-arm transient auto-close in case it was suspended for emoji picking
         // and the popover closed by another path first.

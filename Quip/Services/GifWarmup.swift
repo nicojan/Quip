@@ -38,11 +38,17 @@ enum GifWarmup {
         for url in urls {
             SDWebImageManager.shared.loadImage(
                 with: url,
-                options: url.isFileURL ? [] : [.fromCacheOnly],
+                options: options(for: url),
                 context: context,
                 progress: nil
             ) { _, _, _, _, _, _ in }
         }
+    }
+
+    /// Cache-only for anything on the network; local files (the DEBUG demo) are
+    /// read directly.
+    static func options(for url: URL) -> SDWebImageOptions {
+        url.isFileURL ? [] : [.fromCacheOnly]
     }
 
     private static func unique(_ gifs: [Gif]) -> [Gif] {

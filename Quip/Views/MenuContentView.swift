@@ -59,13 +59,21 @@ struct MenuContentView: View {
 
     private var layoutMode: LayoutMode { LayoutMode(rawValue: shownLayoutRaw ?? layoutModeRaw) ?? .narrow }
 
+    /// Loads the GIFs a wider layout slides into view (the next strip cells, the
+    /// next grid rows) into memory, so none arrives empty mid-morph. Run when the
+    /// pointer reaches the size toggle, a moment before the click, so a user who
+    /// never changes size never pays for it. Cache-only: no network.
+    private func warmForSizeChange() {
+        GifWarmup.warm(
+            GifWarmup.stripGifs(favorites: library.favorites, recents: library.recents, rows: libraryRows)
+            + GifWarmup.gridGifs(vm.query.isEmpty ? vm.trending : vm.results,
+                                 popoverHeight: layoutMode.height(forScreenHeight: metrics.launchScreenHeight)))
+    }
+
     /// Switches the layout: every GIF slides from its old slot to its new one while
     /// the popover resizes around it on the same curve (see SizeMorph).
     private func setLayout(_ raw: String) {
-        // The grid rows a wider layout pulls into view, ready before they arrive.
-        GifWarmup.warm(GifWarmup.gridGifs(
-            vm.query.isEmpty ? vm.trending : vm.results,
-            popoverHeight: layoutMode.height(forScreenHeight: metrics.launchScreenHeight)))
+        warmForSizeChange()   // for a change made without hovering (keyboard, VoiceOver)
         var reduceMotion = reduceMotion
         #if DEBUG
         // QUIP_DEMO_REDUCE_MOTION=1: the demo checks the Reduce Motion path
@@ -156,6 +164,8 @@ struct MenuContentView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .quipPopoverClosed)) { _ in
             vm.handlePopoverClose()
+            // Follow the saved layout again, in case Settings changes it while closed.
+            shownLayoutRaw = nil
             // A drag that ended by leaving the popover (drag-out to another app)
             // never hit a chip, so clear it here — otherwise the drawer would reopen
             // still expanded.
@@ -171,6 +181,11 @@ struct MenuContentView: View {
         }
         // Lets the demo director press the layout toggle, with the same morph a real
         // click gets, so a clip can show the window changing size.
+        // The drawn cursor can't hover, so the director says when it reaches the
+        // size toggle; the app warms the GIFs there as it would for a real pointer.
+        .onReceive(NotificationCenter.default.publisher(for: .quipDemoHoverLayout)) { _ in
+            warmForSizeChange()
+        }
         .onReceive(NotificationCenter.default.publisher(for: .quipDemoSetLayout)) { note in
             guard let raw = note.object as? String, LayoutMode(rawValue: raw) != nil else { return }
             setLayout(raw)
@@ -192,9 +207,6 @@ struct MenuContentView: View {
     /// open and any rating/stickers change.
     private func refreshOnOpen() {
         vm.handlePopoverOpen()   // reset to home if it's been idle a while
-        // The strip cells a size change can slide into view, ready before it does.
-        GifWarmup.warm(GifWarmup.stripGifs(
-            favorites: library.favorites, recents: library.recents, rows: libraryRows))
         focusSearchSoon()
         vm.loadTrending(apiKey: apiKey, content: content, rating: rating)
         // Re-run the active query if stickers/rating changed while we were closed,
@@ -215,6 +227,7 @@ struct MenuContentView: View {
                 get: { layoutMode },
                 set: { setLayout($0.rawValue) }
             ))
+            .onHover { if $0 { warmForSizeChange() } }
             .demoAnchor("layout")
             Button { openSettings() } label: {
                 Image(systemName: "gearshape")

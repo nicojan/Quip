@@ -135,6 +135,9 @@ enum DemoHarness {
         } else {
             hosting = NSHostingController(rootView: ZStack(alignment: .topLeading) {
                 content
+                    // The content takes the width it's given (the popover drives it
+                    // during a size change), so pin it to the preset here.
+                    .frame(width: contentSize.width, height: contentSize.height)
                 DemoCursorOverlay(cursor: cursor)
                     .frame(width: contentSize.width, height: contentSize.height)
             })
@@ -470,6 +473,8 @@ extension Notification.Name {
     static let quipDemoSelectCollection = Notification.Name("quipDemoSelectCollection")
     /// DEBUG demo: sets the layout preset (object = `LayoutMode` raw value).
     static let quipDemoSetLayout = Notification.Name("quipDemoSetLayout")
+    /// DEBUG demo: the drawn cursor has reached the size toggle (a stand-in hover).
+    static let quipDemoHoverLayout = Notification.Name("quipDemoHoverLayout")
     /// DEBUG demo: the chip a dragged GIF is over (object = collection id, "all",
     /// or nil for none).
     static let quipDemoDragTarget = Notification.Name("quipDemoDragTarget")

@@ -430,6 +430,8 @@ extension DemoDirector {
 
         await pause(300)
         cursor.visible = true                         // fades in over 0.3 s
+        // A real pointer enters the toggle on its way to the segment.
+        NotificationCenter.default.post(name: .quipDemoHoverLayout, object: nil)
         await move(to: tall, settleMs: 650, duration: 0.5)
         press(.tall)
         await pause(300 + 600)                        // the morph, then a beat
