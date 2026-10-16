@@ -75,12 +75,14 @@ Run `scripts/check-idle-cost.sh` against a build of the app you are about to shi
 
 Open the app, browse a few searches so a screenful of thumbnails loads, close the popover, then run it. The check reads the process, so a Quip that never loaded a thumbnail passes for free — browsing first is what makes the number mean anything.
 
-| Reading | Want | 1.1.15 shipped |
-|---|---|---|
-| `CVDisplayLink` threads, popover closed | 0 | 36 |
-| Morph clock (`PopoverMorpher` frames), popover closed | 0 | did not exist (added after 1.1.17) |
-| Footprint after ordinary use | near the 128 MB cache ceiling plus overhead | 503 MB |
-| Peak footprint over days | same | 938 MB |
+| Reading | Want | 1.1.15 shipped | 1.1.18 at release |
+|---|---|---|---|
+| `CVDisplayLink` threads, popover closed | 0 | 36 | 0 |
+| Morph clock (`PopoverMorpher` frames), popover closed | 0 | did not exist | 0 |
+| Footprint after ordinary use | near the 128 MB cache ceiling plus overhead | 503 MB | 125 MB |
+| Peak footprint over days | same | 938 MB | 408 MB after 9 minutes |
+
+The 1.1.18 column was read on 2026-10-15 from the signed build after about nine minutes of hard use: search results at five per row and repeated size changes. Its 408 MB peak has no 1.1.17 reading taken the same way to compare against, so take one with the same steps at the next release before reading anything into it.
 
 Why this is a release step and not a test. Both regressions it catches shipped in 1.1.15 and neither was visible in the 82-test suite: the display links only run against a real window server, and the cache only grows over days. Quip found its way to 17% of a processor core with nothing on screen, and 510 minutes of CPU over a two-day run, before anyone thought to look.
 
