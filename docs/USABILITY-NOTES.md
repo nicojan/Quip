@@ -262,7 +262,7 @@ Changing the layout size while the popover was open left its pointer arrow detac
 from the menu-bar icon — the window looked unmoored. Every layout size was also made
 the **same height** (only width and columns change), and the arrow now stays put.
 
-**Finding 10.3 — Changing size snapped in one frame.** _(Polish, after 1.1.17, unreleased)_
+**Finding 10.3 — Changing size snapped in one frame.** _(Polish, 1.1.18)_
 The size toggle swapped the popover from one width to the next in a single frame, which read as a hard cut. NSPopover's own resize was no help: it is fixed at about 90 ms, freezes the GIFs while it runs, and moves the content to its new width before the window catches up. The popover now **widens and narrows over 0.3 s** (ease-out, no bounce) while each GIF slides to its new place, the collection pills re-wrap row by row, and the GIFs keep playing. With **Reduce Motion** on, the change stays quick, as before. Known rough edges: a small hitch at the start of five-to-two, and on a full page of search results, gaps open between the GIFs as they travel.
 
 ## 11. Sharing and the API key

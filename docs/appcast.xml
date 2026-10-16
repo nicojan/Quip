@@ -3,6 +3,20 @@
     <channel>
         <title>Quip</title>
         <item>
+            <title>1.1.18</title>
+            <pubDate>Thu, 15 Oct 2026 17:08:06 -0700</pubDate>
+            <sparkle:version>21</sparkle:version>
+            <sparkle:shortVersionString>1.1.18</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+<h3>Changed</h3>
+<ul>
+<li>Switching between the three sizes now changes the window smoothly instead of in one jump. The window widens or narrows over about a third of a second, each GIF slides to its new place, and the GIFs keep playing while it moves. If Reduce Motion is on in your Mac's accessibility settings, the size still changes at once.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/nicojan/Quip/releases/download/v1.1.18/Quip-1.1.18.dmg" length="2431997" type="application/octet-stream" sparkle:edSignature="pdAo3hyZIfPPJgLi2AQG2qDUE1iopMdXPX7MvecXxKZ9sBObp+MwzCR3QenKc2C2Hie7WPhwC0BWH39IQEbuAQ=="/>
+        </item>
+        <item>
             <title>1.1.17</title>
             <pubDate>Wed, 09 Sep 2026 18:45:00 -0700</pubDate>
             <sparkle:version>20</sparkle:version>

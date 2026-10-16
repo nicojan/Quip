@@ -3,6 +3,12 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.18] - 2026-10-15
+
+### Changed
+
+- Switching between the three sizes now changes the window smoothly instead of in one jump. The window widens or narrows over about a third of a second, each GIF slides to its new place, and the GIFs keep playing while it moves. If Reduce Motion is on in your Mac's accessibility settings, the size still changes at once.
+
 ## [1.1.17] - 2026-09-09
 
 ### Fixed
