@@ -67,7 +67,7 @@ users.
 
 ## Before cutting a release
 
-Two checks, both of which catch things the 82-test suite cannot see.
+These checks catch things the test suite (107 tests at 1.1.19) cannot see.
 
 ### Check what Quip costs while idle
 
@@ -118,6 +118,21 @@ Why this is a release step and not a test, and it is a sharper case than the idl
 Two notes on reading the output. It compares before and after **inside one process**, because absolute footprints are not reproducible between launches on this machine (the same build measured 63-74 MB on one run and 190-203 MB on another, cause never established), so comparing two launches proves nothing. And a failed `sample` reports empty rather than 0, because 0 display links is the reading that means all is well, and a broken measurement must never be able to impersonate a pass.
 
 To drive the open and close without touching the keyboard: `defaults delete com.nicojan.Quip didShowFirstRun` makes the app open its popover on the next launch, and activating any other app dismisses the transient popover. The app writes the flag back itself.
+
+### Check that the shortcut recorder records
+
+Open Settings, click the Summon Quip box while it already holds a shortcut, and press a new one. The box must show the new keys, and `defaults read com.nicojan.Quip KeyboardShortcuts_summonQuip` must show them too. Then set your own shortcut back.
+
+Why by hand. Through 1.1.18 the recorder ignored keys on macOS 26 and later whenever the box already held a shortcut: the keys went in as text, and Delete erased the saved shortcut. The cause was KeyboardShortcuts 2.4.0 (upstream issue #241); 1.1.19 moved to 3.1.0. `QuipTests/ShortcutRecorderTests` covers focus, capture and save, but it passes on 2.4.0 as well: a test host never becomes the active app, so its window is never key and AppKit never restarts the editing that broke the recorder. A macOS update or a library bump can break this again with the suite green.
+
+This check can run without you at the machine, against the exported Developer ID build:
+
+1. Quit the installed Quip and open the export. A signed copy run from anywhere but `/Applications` asks for the Keychain password, because the item trusts the installed copy. Denying it is harmless. Ad-hoc debug builds hang on the same prompt, so use the signed build.
+2. Read the status item's place with System Events (`position of menu bar item 1 of menu bar 2` of process "Quip"), right-click it with `cliclick rc:<x+16>,14`, then click the "Settings…" menu item by name.
+3. Find the recorder, the text field whose description is "search text field", click its centre with `cliclick`, and send `keystroke "k" using {command down, option down}`.
+4. Expect `{"carbonModifiers":2304,"carbonKeyCode":40}` (⌥⌘K). The same steps on 1.1.18 left the old shortcut in place, which is the control that shows the check can fail.
+
+Synthetic keys reach the recorder, which reads them through a local event monitor, but not the global shortcut, which macOS delivers through Carbon. So this check proves recording, and pressing the shortcut still needs a person.
 
 ---
 
