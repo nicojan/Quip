@@ -17,7 +17,7 @@ packages:
     majorVersion: 5.19.0
   KeyboardShortcuts:
     url: https://github.com/sindresorhus/KeyboardShortcuts
-    majorVersion: 2.0.0
+    majorVersion: 3.1.0
 
 targets:
   Quip:
@@ -36,8 +36,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nicojan.Quip
         PRODUCT_NAME: Quip
-        MARKETING_VERSION: "1.1.18"
-        CURRENT_PROJECT_VERSION: "21"
+        MARKETING_VERSION: "1.1.19"
+        CURRENT_PROJECT_VERSION: "22"
         SWIFT_VERSION: "6.0"
         MACOSX_DEPLOYMENT_TARGET: "14.6"
         INFOPLIST_FILE: Quip/Info.plist

@@ -3,6 +3,12 @@
 All notable changes to Quip are documented here. The format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.19] - 2026-11-04
+
+### Fixed
+
+- You can change the shortcut that opens Quip again. On macOS 26 and later, if you already had a shortcut, clicking the shortcut box in Settings and pressing new keys did nothing: the keys went into the box as text, and pressing Delete there erased the old shortcut. Quip now records the keys you press. Lost yours? Open Settings and set it again.
+
 ## [1.1.18] - 2026-10-15
 
 ### Changed

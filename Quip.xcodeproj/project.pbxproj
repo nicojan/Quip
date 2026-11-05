@@ -46,6 +46,7 @@
 		A31590218D1BC59545034157 /* GifWarmupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8FF9FC42151065556174A /* GifWarmupTests.swift */; };
 		A43F7877C2E6690D3CDA2F4B /* GifCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE87528A22D99A1B4669C347 /* GifCollection.swift */; };
 		A45CAAAD40DD8BC3FAC71C16 /* EmojiGlyphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262EBE22FAE9F31BBFDEC266 /* EmojiGlyphTests.swift */; };
+		A4F49B7432986A4BF7667FD6 /* ShortcutRecorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC6B9BFB42CD583EE315A24 /* ShortcutRecorderTests.swift */; };
 		A7C0802AE25F752F0BF1B6D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2DE7FFAE1B08BB068A56ECB /* Assets.xcassets */; };
 		A87DB63C6C5CA1208378AA76 /* PopoverEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC43E38D0883846EE510BAE /* PopoverEvents.swift */; };
 		B6E3C205794BBDC0CAC012AF /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB3462E4A425848D6767EA89 /* SDWebImageSwiftUI */; };
@@ -115,6 +116,7 @@
 		CE87528A22D99A1B4669C347 /* GifCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCollection.swift; sourceTree = "<group>"; };
 		D0BE62A05D9034C02F6634FD /* QuipDragType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuipDragType.swift; sourceTree = "<group>"; };
 		DCE69FCADC29D43ACC52A748 /* RecentSearchesRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchesRow.swift; sourceTree = "<group>"; };
+		DEC6B9BFB42CD583EE315A24 /* ShortcutRecorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderTests.swift; sourceTree = "<group>"; };
 		E507AEEF4F8AF976662A154E /* TempClips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempClips.swift; sourceTree = "<group>"; };
 		E92886217B91D982AF428951 /* CollectionDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDropTests.swift; sourceTree = "<group>"; };
 		E9FDFEE258111A2313E42762 /* DragContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragContext.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 				9C133CD5CB4A9C5A8AA37127 /* LayoutModeTests.swift */,
 				0DA37C58FFCF49D6258B35F4 /* PopoverMorpherTests.swift */,
 				A19CC2C3EF3219E3B802972E /* SearchViewModelTests.swift */,
+				DEC6B9BFB42CD583EE315A24 /* ShortcutRecorderTests.swift */,
 				570DB6BA41FBCC9278DFE1B5 /* SizeMorphTests.swift */,
 			);
 			path = QuipTests;
@@ -381,6 +384,7 @@
 				7CCD4D61429B5909A511E1FC /* LayoutModeTests.swift in Sources */,
 				6017C94CD2753CA839CF0333 /* PopoverMorpherTests.swift in Sources */,
 				291B9AF7B3D5F439017FC21A /* SearchViewModelTests.swift in Sources */,
+				A4F49B7432986A4BF7667FD6 /* ShortcutRecorderTests.swift in Sources */,
 				47C6E674E0CDC85FE5F6C114 /* SizeMorphTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -446,7 +450,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Quip/Info.plist;
@@ -456,7 +460,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.1.18;
+				MARKETING_VERSION = 1.1.19;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;
@@ -571,7 +575,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Quip/Quip.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_TEAM = 3CY4DX3K45;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -582,7 +586,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.1.18;
+				MARKETING_VERSION = 1.1.19;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicojan.Quip;
 				PRODUCT_NAME = Quip;
 				SDKROOT = macosx;
@@ -700,7 +704,7 @@
 			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 3.1.0;
 			};
 		};
 		E0624EA61C9DC374A25818D9 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
