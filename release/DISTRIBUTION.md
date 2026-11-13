@@ -186,7 +186,8 @@ Run from the repo root. Replace `X.Y.Z`. Regenerate the project first if
 
 6. **Publish the DMG as a GitHub Release:**
    ```sh
-   gh release create vX.Y.Z build/Quip-X.Y.Z.dmg \
+   cp build/Quip-X.Y.Z.dmg build/Quip.dmg  # stable name: the README's Download button points at releases/latest/download/Quip.dmg
+   gh release create vX.Y.Z build/Quip-X.Y.Z.dmg build/Quip.dmg \
      --repo nicojan/Quip --title "Quip X.Y.Z" --notes "Release notes…"
    ```
 

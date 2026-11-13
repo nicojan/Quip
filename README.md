@@ -1,5 +1,9 @@
 # Quip
 
+<p align="center">
+  <a href="https://github.com/nicojan/Quip/releases/latest/download/Quip.dmg"><img src="https://img.shields.io/github/v/release/nicojan/Quip?label=Download%20for%20macOS&style=for-the-badge&logo=apple&color=0A84FF" alt="Download Quip for macOS" height="40"></a>
+</p>
+
 Quip is a macOS menu-bar app for finding a GIF and dropping it into whatever
 you're typing. Search, click, paste. It lives in the menu bar, keeps your
 favorites and the GIFs you've already used close by, and runs on your own free
