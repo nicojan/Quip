@@ -24,3 +24,7 @@ App Store.
 
 Apply this at commit time and at update/release time — do not commit or cut a
 release with user-facing copy that hasn't passed both.
+
+## Releasing
+
+Follow `release/DISTRIBUTION.md`. Every release must attach an unversioned copy, `Quip.dmg`, next to `Quip-X.Y.Z.dmg` (step 6 there). The README's Download button links to `releases/latest/download/Quip.dmg`, so a release without it serves the previous version.
